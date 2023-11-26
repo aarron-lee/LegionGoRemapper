@@ -4,7 +4,8 @@ import { ControllerType, RemapActions, RemappableButtons } from './constants';
 export enum ServerAPIMethods {
   RGB_ON = 'rgb_on',
   RGB_OFF = 'rgb_off',
-  REMAP_BUTTON = 'remap_button'
+  REMAP_BUTTON = 'remap_button',
+  LOG_INFO = 'log_info'
 }
 
 const createRgbOn =
@@ -30,10 +31,17 @@ const createRemapButtons =
     });
   };
 
+const createLogInfo = (serverAPI: ServerAPI) => async (info: any) => {
+  await serverAPI.callPluginMethod(ServerAPIMethods.LOG_INFO, {
+    info: JSON.stringify(info)
+  });
+};
+
 export const createServerApiHelpers = (serverAPI: ServerAPI) => {
   return {
     rgbOn: createRgbOn(serverAPI),
     rgbOff: createRgbOff(serverAPI),
-    remapButton: createRemapButtons(serverAPI)
+    remapButton: createRemapButtons(serverAPI),
+    logInfo: createLogInfo(serverAPI)
   };
 };

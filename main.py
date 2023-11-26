@@ -40,6 +40,27 @@ class Plugin:
         rgb_off_command = legion_configurator.create_rgb_on_off_command(controller_code, False)
         legion_configurator.send_command(rgb_off_command)
 
+    async def remap_button(self, button: str, action: str):
+        decky_plugin.logger.info(f"remap_button {button} {action}")
+        controller_code = None
+        if button in ['Y3', 'M2', 'M3']:
+            # remap command for right
+            controller_code = controller_enums.Controller['RIGHT'].value
+        elif button in ['Y1', 'Y2']:
+            controller_code = controller_enums.Controller['LEFT'].value
+        if not controller_code:
+            return
+        btn_code = controller_enums.RemappableButtons[button].value
+        action_code = controller_enums.RemapActions[action].value
+        remap_command = legion_configurator.create_button_remap_command(controller_code, btn_code, action_code)
+
+        legion_configurator.send_command(remap_command)
+
+        
+
+    async def log_info(self, info):
+        logging.info(info)
+
     # Function called first during the unload process, utilize this to handle your plugin being removed
     async def _unload(self):
         decky_plugin.logger.info("Goodbye World!")

@@ -17,6 +17,9 @@ import { FaShip } from 'react-icons/fa';
 // import logo from '../assets/logo.png';
 import RightControllerPanel from './components/RightControllerPanel';
 import LeftControllerPanel from './components/LeftControllerPanel';
+// import RemapActionDropdown from './components/RemapActionDropdown';
+// import { createServerApiHelpers } from './backend/utils';
+import RemapButtons from './components/RemapButtons';
 // import { createServerApiHelpers } from './backend/utils';
 
 // interface AddMethodArgs {
@@ -25,8 +28,16 @@ import LeftControllerPanel from './components/LeftControllerPanel';
 // }
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
+  // const { remapButton, logInfo } = createServerApiHelpers(serverAPI);
   return (
     <>
+      <RemapButtons serverAPI={serverAPI} />
+      {/* <RemapActionDropdown
+        label="Remap Buttons"
+        description="remap description"
+        onChange={remapButton}
+        logInfo={logInfo}
+      /> */}
       <RightControllerPanel serverAPI={serverAPI} />
       <LeftControllerPanel serverAPI={serverAPI} />
     </>
