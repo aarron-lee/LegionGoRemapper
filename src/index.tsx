@@ -15,6 +15,7 @@ import { VFC } from "react";
 import { FaShip } from "react-icons/fa";
 
 import logo from "../assets/logo.png";
+import { createServerApiHelpers } from "./backend/utils";
 
 // interface AddMethodArgs {
 //   left: number;
@@ -22,20 +23,7 @@ import logo from "../assets/logo.png";
 // }
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
-  // const [result, setResult] = useState<number | undefined>();
-
-  // const onClick = async () => {
-  //   const result = await serverAPI.callPluginMethod<AddMethodArgs, number>(
-  //     "add",
-  //     {
-  //       left: 2,
-  //       right: 2,
-  //     }
-  //   );
-  //   if (result.success) {
-  //     setResult(result.result);
-  //   }
-  // };
+  const { rgbOn } = createServerApiHelpers(serverAPI)
 
   return (
     <PanelSection title="Panel Section">
@@ -78,28 +66,28 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
   );
 };
 
-const DeckyPluginRouterTest: VFC = () => {
-  return (
-    <div style={{ marginTop: "50px", color: "white" }}>
-      Hello World!
-      <DialogButton onClick={() => Router.NavigateToLibraryTab()}>
-        Go to Library
-      </DialogButton>
-    </div>
-  );
-};
+// const DeckyPluginRouterTest: VFC = () => {
+//   return (
+//     <div style={{ marginTop: "50px", color: "white" }}>
+//       Hello World!
+//       <DialogButton onClick={() => Router.NavigateToLibraryTab()}>
+//         Go to Library
+//       </DialogButton>
+//     </div>
+//   );
+// };
 
 export default definePlugin((serverApi: ServerAPI) => {
-  serverApi.routerHook.addRoute("/decky-plugin-test", DeckyPluginRouterTest, {
-    exact: true,
-  });
+  // serverApi.routerHook.addRoute("/decky-plugin-test", DeckyPluginRouterTest, {
+  //   exact: true,
+  // });
 
   return {
-    title: <div className={staticClasses.Title}>Example Plugin</div>,
+    title: <div className={staticClasses.Title}>LegionGoRemapper</div>,
     content: <Content serverAPI={serverApi} />,
     icon: <FaShip />,
-    onDismount() {
-      serverApi.routerHook.removeRoute("/decky-plugin-test");
-    },
+    // onDismount() {
+    //   serverApi.routerHook.removeRoute("/decky-plugin-test");
+    // },
   };
 });
