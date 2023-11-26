@@ -86,7 +86,7 @@ class Plugin:
         rgb_on_command = create_rgb_on_off_command(CONTROLLER[controller], True)
         send_command(rgb_on_command)
 
-    async def rgb_on(self, controller: str):
+    async def rgb_off(self, controller: str):
         rgb_off_command = create_rgb_on_off_command(CONTROLLER[controller], False)
         send_command(rgb_off_command)
 

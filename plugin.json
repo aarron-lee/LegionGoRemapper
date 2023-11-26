@@ -1,10 +1,10 @@
 {
-  "name": "Example Plugin",
-  "author": "John Doe",
+  "name": "LegionGoRemapper",
+  "author": "Aarron Lee",
   "flags": ["root"],
   "publish": {
     "tags": ["root"],
-    "description": "Decky example plugin.",
+    "description": "plugin for Legion Go Buttons, RGB, etc",
     "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
   }
 }
