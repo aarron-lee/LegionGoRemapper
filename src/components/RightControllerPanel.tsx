@@ -6,6 +6,7 @@ const CONTROLLER = 'RIGHT';
 
 const RightControllerPanel: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
   const { rgbOn, rgbOff } = createServerApiHelpers(serverAPI);
+
   return (
     <PanelSection title="Right Controller RGB">
       <div

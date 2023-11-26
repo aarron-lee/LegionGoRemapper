@@ -8,6 +8,9 @@ import LegionConfiguratior as LLG
 # or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
 
 import decky_plugin
+import legion_configurator
+import controller_enums
+
 
 try:
     LOG_LOCATION = f"/tmp/legionGoRemapper.log"
@@ -19,58 +22,6 @@ try:
         force = True)
 except Exception as e:
     logging.error(f"exception|{e}")
-
-
-VENDOR_ID = 0x17EF
-PRODUCT_ID_MATCH = lambda x: x & 0xFFF0 == 0x6180
-USAGE_PAGE = 0xFFA0
-
-CONTROLLER = {
-    "LEFT": 0x03,
-    "RIGHT": 0x04
-}
-
-def get_usb_device_config():
-    config = None
-    for dev in hid.enumerate(VENDOR_ID):
-        if PRODUCT_ID_MATCH(dev["product_id"]) and dev["usage_page"] == USAGE_PAGE:
-            config = dev
-            break
-
-    if not config:
-        logging.info("Legion go configuration device not found.")
-    else:
-        logging.info(config)
-        return config
-    
-def send_command(command):
-    config = get_usb_device_config()
-    assert len(command) == 64 and config
-    try:
-        with hid.Device(path=config['path']) as device:
-            device.write(command)
-            logging.info(f"Command {command} sent successfully.")
-    except IOError as e:
-        logging.error(f"Error opening HID device: {e}")
-
-def create_rgb_on_off_command(controller, on):
-    """
-    Create a command to turn the RGB LEDs on or off.
-
-    :param controller: byte - The controller byte (e.g., 0x03 for left, 0x04 for right)
-    :param on: bool - True to turn on, False to turn off
-    :return: bytes - The command byte array
-    """
-    on_off_byte = 0x01 if on else 0x00
-    command = [
-        0x05, 0x06,  # Report ID and Length
-        0x70,        # Command (Nibble 7 + 0)
-        0x02,        # Sub-parameter
-        controller,  # Controller
-        on_off_byte, # On/Off
-        0x01         # Command end marker
-    ]
-    return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
 class Plugin:
     # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
@@ -101,14 +52,37 @@ class Plugin:
         
 
     async def rgb_on(self, controller: str):
-        rgb_on_command = LLG.create_rgb_on_off_command(CONTROLLER[controller], True)
-        decky_plugin.logger.info(rgb_on_command)
+        controller_code = controller_enums.Controller[controller].value
+        rgb_on_command = legion_configurator.LLG.create_rgb_on_off_command(controller_code, True)
+        legion_configurator.decky_plugin.logger.info(rgb_on_command)
         LLG.send_command(rgb_on_command)
 
     async def rgb_off(self, controller: str):
-        rgb_off_command = LLG.create_rgb_on_off_command(CONTROLLER[controller], False)
-        decky_plugin.logger.info(rgb_off_command)
+        controller_code = controller_enums.Controller[controller].value
+        rgb_off_command = legion_configurator.LLG.create_rgb_on_off_command(controller_code, False)
+        legion_configurator.decky_plugin.logger.info(rgb_off_command)
         LLG.send_command(rgb_off_command)
+
+    async def remap_button(self, button: str, action: str):
+        decky_plugin.logger.info(f"remap_button {button} {action}")
+        controller_code = None
+        if button in ['Y3', 'M2', 'M3']:
+            # remap command for right
+            controller_code = controller_enums.Controller['RIGHT'].value
+        elif button in ['Y1', 'Y2']:
+            controller_code = controller_enums.Controller['LEFT'].value
+        if not controller_code:
+            return
+        btn_code = controller_enums.RemappableButtons[button].value
+        action_code = controller_enums.RemapActions[action].value
+        remap_command = legion_configurator.create_button_remap_command(controller_code, btn_code, action_code)
+
+        legion_configurator.send_command(remap_command)
+
+        
+
+    async def log_info(self, info):
+        logging.info(info)
 
     async def touchpad_toggle(self, enable: bool):
         t_toggle = LLG.create_touchpad_command(enable)
