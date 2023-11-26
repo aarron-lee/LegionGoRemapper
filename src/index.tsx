@@ -20,6 +20,7 @@ import LeftControllerPanel from './components/LeftControllerPanel';
 // import RemapActionDropdown from './components/RemapActionDropdown';
 // import { createServerApiHelpers } from './backend/utils';
 import RemapButtons from './components/RemapButtons';
+import ControllerLightingPanel from './components/ControllerLightingPanel';
 // import { createServerApiHelpers } from './backend/utils';
 
 // interface AddMethodArgs {
@@ -38,8 +39,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
         onChange={remapButton}
         logInfo={logInfo}
       /> */}
-      <RightControllerPanel serverAPI={serverAPI} />
-      <LeftControllerPanel serverAPI={serverAPI} />
+      <ControllerLightingPanel serverAPI={serverAPI}/>
     </>
   );
 };

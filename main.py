@@ -5,6 +5,7 @@ import hid
 # The decky plugin module is located at decky-loader/plugin
 # For easy intellisense checkout the decky-loader code one directory up
 # or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
+
 import decky_plugin
 import legion_configurator
 import controller_enums
@@ -30,14 +31,35 @@ class Plugin:
     async def _main(self):
         decky_plugin.logger.info("Hello World!")
 
+        # get_usb_device_config()
+    async def rgb_brightness(self, controller: str, value_str: int, red, blue, green):
+        hex_brightness = int(value_str)
+        color = bytes([red, green, blue])
+        controller_code = controller_enums.Controller[controller].value
+        decky_plugin.logger.info(f"Hex Brightness: {hex_brightness}")
+        rgb = legion_configurator.create_rgb_control_command(controller_code,0x01,color, hex_brightness, 0x01)
+        decky_plugin.logger.info(list(rgb))
+        legion_configurator.send_command(rgb)
+
+    async def rgb_color(self, controller: str, red, blue, green, brightness):
+        hex_brightness = int(brightness)
+        color = bytes([red, green, blue])
+        controller_code = controller_enums.Controller[controller].value
+        rgb = legion_configurator.create_rgb_control_command(controller_code,0x01,color, hex_brightness, 0x01)
+        decky_plugin.logger.info(list(rgb))
+        legion_configurator.send_command(rgb)
+        
+
     async def rgb_on(self, controller: str):
         controller_code = controller_enums.Controller[controller].value
-        rgb_on_command = legion_configurator.create_rgb_on_off_command(controller_code, True)
+        rgb_on_command = legion_configurator.legion_configurator.create_rgb_on_off_command(controller_code, True)
+        decky_plugin.logger.info(rgb_on_command)
         legion_configurator.send_command(rgb_on_command)
 
     async def rgb_off(self, controller: str):
         controller_code = controller_enums.Controller[controller].value
-        rgb_off_command = legion_configurator.create_rgb_on_off_command(controller_code, False)
+        rgb_off_command = legion_configurator.legion_configurator.create_rgb_on_off_command(controller_code, False)
+        decky_plugin.logger.info(rgb_off_command)
         legion_configurator.send_command(rgb_off_command)
 
     async def remap_button(self, button: str, action: str):
@@ -60,6 +82,12 @@ class Plugin:
 
     async def log_info(self, info):
         logging.info(info)
+
+    async def touchpad_toggle(self, enable: bool):
+        t_toggle = legion_configurator.create_touchpad_command(enable)
+        decky_plugin.logger.info(t_toggle)
+
+        legion_configurator.send_command(t_toggle)
 
     # Function called first during the unload process, utilize this to handle your plugin being removed
     async def _unload(self):
