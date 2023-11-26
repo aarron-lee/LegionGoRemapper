@@ -1,5 +1,5 @@
 import hid
-
+import time
 # Global variables
 vendor_id = 0x17EF
 product_id_match = lambda x: x & 0xFFF0 == 0x6180
@@ -59,7 +59,7 @@ def create_rgb_control_command(controller, mode, color, brightness, profile):
     :param controller: byte - The controller byte (e.g., 0x03, 0x04)
     :param mode: byte - The LED mode (e.g., 0x01 for solid)
     :param color: bytes - The RGB color value (e.g., b'\xFF\x00\x00' for red)
-    :param brightness: byte - The brightness value
+    :param brightness: byte - The brightness value 0x00 -> 0x64
     :param profile: byte - The profile number
     :return: bytes - The command byte array
     """
@@ -110,9 +110,18 @@ def create_button_remap_command(controller, button, action):
     """
     Create a command for button remapping.
 
-    :param controller: byte - The controller byte (e.g., 0x03, 0x04)
-    :param button: byte - The button to remap
-    :param action: byte - The action to assign to the button
+    :param controller: byte - The controller byte (0x03 for left, 0x04 for right)
+    :param button: byte - The button to remap. Button codes:
+                    0x1c: Y1, 0x1d: Y2, 0x1e: Y3, 0x21: M2, 0x22: M3
+    :param action: byte - The action to assign to the button. Action codes:
+                   0x00: Disabled, 0x03: Left Stick Click, 0x04: Left Stick Up,
+                   0x05: Left Stick Down, 0x06: Left Stick Left, 0x07: Left Stick Right,
+                   0x08: Right Stick Click, 0x09: Right Stick Up, 0x0a: Right Stick Down,
+                   0x0b: Right Stick Left, 0x0c: Right Stick Right, 0x0d: D-Pad Up,
+                   0x0e: D-Pad Down, 0x0f: D-Pad Left, 0x10: D-Pad Right,
+                   0x12: A, 0x13: B, 0x14: X, 0x15: Y, 0x16: Left Bumper,
+                   0x17: Left Trigger, 0x18: Right Bumper, 0x19: Right Trigger,
+                   0x23: View, 0x24: Menu
     :return: bytes - The command byte array
     """
     command = [
@@ -123,26 +132,47 @@ def create_button_remap_command(controller, button, action):
     ]
     return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
+def create_vibration_command(controller, vibration_level):
+    """
+    Create a command to control the vibration of the controller.
 
-# Example usage of gyro remap command
-gyro_remap_command = create_gyro_remap_command(0x01, 0x01)
-send_command(gyro_remap_command)
+    :param controller: byte - The controller byte (0x03 for left, 0x04 for right)
+    :param vibration_level: byte - Vibration level (0x00: Off, 0x01: Weak, 0x02: Medium, 0x03: Strong)
+    :return: bytes - The command byte array
+    """
+    command = [
+        0x05, 0x06,  # Report ID and Length
+        0x67,        # Command (Nibble 6 + 7)
+        0x02,        # Sub-parameter
+        controller, vibration_level,
+        0x01         # Command end marker
+    ]
+    return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
-# Example usage of RGB remap command
-rgb_command = create_rgb_control_command(
-    controller=0x04,     # Right Controller
-    mode=0x01,           # Solid color mode
-    color=b'\xFF\x00\x00',  # Red color
-    brightness=0xFF,     # Full brightness
-    profile=0x01         # Profile number 1
-)
+def create_fps_remap_command(controller, profile, button, action):
+    """
+    Create a command for FPS remapping.
 
-send_command(rgb_command)
+    :param controller: byte - The controller byte (0x03 for left, 0x04 for right)
+    :param profile: byte - The profile number (from 0x01 to 0x04)
+    :param button: byte - The button to remap
+    :param action: byte - The action to assign to the button
+    :return: bytes - The command byte array
+    """
+    command = [
+        0x05, 0x08,  # Report ID and Length
+        0x6c,        # Command (Nibble 6 + c)
+        0x04,        # Sub-parameter
+        controller, profile, button, action,
+        0x01         # Command end marker
+    ]
+    return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
-touchpad_disable_command = create_touchpad_command(True)
-send_command(touchpad_disable_command)
-
-
-# Turn the RGB LEDs on (right controller)
-rgb_on_command = create_rgb_on_off_command(0x03, True)
-send_command(rgb_on_command)
+# # vibration_command = create_vibration_command(0x04, 0x01)  # Strong vibration on right 
+# # send_command(vibration_command)
+# # vibration_command = create_vibration_command(0x03, 0x03)  # Strong vibration on right controller
+# send_command(vibration_command)
+# gyro_left = create_gyro_remap_command(0x02, 0x02)
+# send_command(gyro_left)
+# gyro_right = create_gyro_remap_command(0x01, 0x00)
+# send_command(gyro_right)
