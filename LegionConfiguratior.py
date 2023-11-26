@@ -149,6 +149,25 @@ def create_vibration_command(controller, vibration_level):
     ]
     return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
+def create_fps_remap_command(controller, profile, button, action):
+    """
+    Create a command for FPS remapping.
+
+    :param controller: byte - The controller byte (0x03 for left, 0x04 for right)
+    :param profile: byte - The profile number (from 0x01 to 0x04)
+    :param button: byte - The button to remap
+    :param action: byte - The action to assign to the button
+    :return: bytes - The command byte array
+    """
+    command = [
+        0x05, 0x08,  # Report ID and Length
+        0x6c,        # Command (Nibble 6 + c)
+        0x04,        # Sub-parameter
+        controller, profile, button, action,
+        0x01         # Command end marker
+    ]
+    return bytes(command) + bytes([0xCD] * (64 - len(command)))
+
 # # vibration_command = create_vibration_command(0x04, 0x01)  # Strong vibration on right 
 # # send_command(vibration_command)
 # # vibration_command = create_vibration_command(0x03, 0x03)  # Strong vibration on right controller
