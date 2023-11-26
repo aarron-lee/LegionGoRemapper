@@ -31,16 +31,6 @@ class Plugin:
     async def _main(self):
         decky_plugin.logger.info("Hello World!")
 
-        # get_usb_device_config()
-    async def rgb_brightness(self, controller: str, value_str: int, red, blue, green):
-        hex_brightness = int(value_str)
-        color = bytes([red, green, blue])
-        controller_code = controller_enums.Controller[controller].value
-        decky_plugin.logger.info(f"Hex Brightness: {hex_brightness}")
-        rgb = legion_configurator.create_rgb_control_command(controller_code,0x01,color, hex_brightness, 0x01)
-        decky_plugin.logger.info(list(rgb))
-        legion_configurator.send_command(rgb)
-
     async def rgb_color(self, controller: str, red, blue, green, brightness):
         hex_brightness = int(brightness)
         color = bytes([red, green, blue])

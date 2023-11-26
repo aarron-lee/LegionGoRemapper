@@ -3,122 +3,62 @@ import {
   SliderField,
   PanelSection,
   ServerAPI,
-  Dropdown,
-  DropdownItem,
-  TextField,
-  ButtonItem,
   Button
 } from 'decky-frontend-lib';
 import { VFC } from 'react';
 import { useState } from 'react';
+import useRgb from '../hooks/useRgb';
 const DEFAULT_STATE = {
-  ledR_b: 50,
-  ledL_b: 50,
-  isRigthRgbOn: false,
-  isLeftRgbOn: false,
-  isTouchpad: true,
-
-  red: 255,
-  green: 255,
-  blue: 255
+  isTouchpad: true
 };
 
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   serverAPI
 }) => {
-  const [ledRightBrightness, setRightLedBrightness] = useState(
-    DEFAULT_STATE.ledR_b
-  );
-  const [ledLeftBrightness, setLeftLedBrightness] = useState(
-    DEFAULT_STATE.ledL_b
-  );
-  const [isLeftRgbOn, setIsLeftRgbOn] = useState(DEFAULT_STATE.isLeftRgbOn);
-  const [isRightRgbOn, setIsRightRgbOn] = useState(DEFAULT_STATE.isRigthRgbOn);
   const [isTouchpad, setIsTouchpad] = useState(DEFAULT_STATE.isTouchpad);
-
-  const [redR, setRedR] = useState(DEFAULT_STATE.red);
-  const [greenR, setGreenR] = useState(DEFAULT_STATE.green);
-  const [blueR, setBlueR] = useState(DEFAULT_STATE.blue);
-  const [redL, setRedL] = useState(DEFAULT_STATE.red);
-  const [greenL, setGreenL] = useState(DEFAULT_STATE.green);
-  const [blueL, setBlueL] = useState(DEFAULT_STATE.blue);
 
   const [showRightOptions, setShowRightOptions] = useState(false);
   const [showLeftOptions, setShowLeftOptions] = useState(false);
 
-  const handleSliderChange = (controller: string, newValue: number) => {
-    let r = 100;
-    let g = 100;
-    let b = 100;
-    if (controller === 'LEFT') {
-      setLeftLedBrightness(newValue);
-      r = redL;
-      g = greenL;
-      b = blueL;
-    } else if (controller === 'RIGHT') {
-      setRightLedBrightness(newValue);
-      r = redR;
-      g = greenR;
-      b = blueR;
-    }
-    console.log(`New brightness: ${newValue}`);
-    serverAPI!.callPluginMethod('rgb_brightness', {
-      controller: controller,
-      value_str: newValue,
-      red: r,
-      blue: b,
-      green: g
-    });
-  };
-  const handleToggleChange = (controller: string, value: boolean) => {
-    if (controller === 'LEFT') {
-      setIsLeftRgbOn(value);
-    } else if (controller === 'RIGHT') {
-      setIsRightRgbOn(value);
-    }
-    console.log(`Toggle value: ${value}`);
-    const method = value ? 'rgb_on' : 'rgb_off';
-    serverAPI!.callPluginMethod(method, { controller: controller });
-  };
+  const [
+    {
+      enabled: isLeftRgbOn,
+      red: redL,
+      green: greenL,
+      blue: blueL,
+      brightness: brightnessL
+    },
+    setIsLeftRgbOn,
+    setLeftColor,
+    setLeftLedBrightness
+  ] = useRgb('LEFT', serverAPI);
+
+  const [
+    {
+      enabled: isRightRgbOn,
+      red: redR,
+      green: greenR,
+      blue: blueR,
+      brightness: brightnessR
+    },
+    setIsRightRgbOn,
+    setRightColor,
+    setRightLedBrightness
+  ] = useRgb('RIGHT', serverAPI);
+
   const TPadToggleChange = (value: boolean) => {
     setIsTouchpad(value);
     console.log(`Toggle value: ${value}`);
     serverAPI!.callPluginMethod('set_touchpad', { enable: value });
   };
 
-  const handleColorChange = (controller: string) => {
-    let ledB = 100;
-    let r = 100;
-    let g = 100;
-    let b = 100;
-    if (controller === 'LEFT') {
-      ledB = ledLeftBrightness;
-      r = redL;
-      g = greenL;
-      b = blueL;
-    } else if (controller === 'RIGHT') {
-      ledB = ledRightBrightness;
-      r = redR;
-      g = greenR;
-      b = blueR;
-    }
-    const rgbColor = `rgb(${r}, ${g}, ${b})`;
-    console.log(rgbColor);
-    serverAPI!.callPluginMethod('rgb_color', {
-      controller: controller,
-      red: r,
-      blue: b,
-      green: g,
-      brightness: ledB
-    });
-  };
   return (
     <PanelSection title="Controller Lighting">
       <div>
         <ToggleField
           label="Right Controller LED"
           checked={isRightRgbOn}
-          onChange={(value) => handleToggleChange('RIGHT', value)}
+          onChange={setIsRightRgbOn}
         ></ToggleField>
         {isRightRgbOn && (
           <>
@@ -134,12 +74,12 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
           <>
             <SliderField
               label="Right Stick Brightness"
-              value={ledRightBrightness}
+              value={brightnessR}
               showValue={true}
               min={0}
               max={100}
               validValues="range"
-              onChange={(value) => handleSliderChange('RIGHT', value)}
+              onChange={(value) => setRightLedBrightness(value)}
             ></SliderField>
             <>
               <SliderField
@@ -150,8 +90,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 max={255}
                 validValues="range"
                 onChange={(value) => {
-                  setRedR(value);
-                  handleColorChange('RIGHT');
+                  setRightColor('red', value);
                 }}
               />
               <SliderField
@@ -162,8 +101,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 max={255}
                 validValues="range"
                 onChange={(value) => {
-                  setGreenR(value);
-                  handleColorChange('RIGHT');
+                  setRightColor('green', value);
                 }}
               />
               <SliderField
@@ -174,8 +112,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 max={255}
                 validValues="range"
                 onChange={(value) => {
-                  setBlueR(value);
-                  handleColorChange('RIGHT');
+                  setRightColor('blue', value);
                 }}
               />
               <div
@@ -194,7 +131,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
         <ToggleField
           label="Left Controller LED"
           checked={isLeftRgbOn}
-          onChange={(value) => handleToggleChange('LEFT', value)}
+          onChange={setIsLeftRgbOn}
         />
         {isLeftRgbOn && (
           <>
@@ -210,12 +147,12 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
           <>
             <SliderField
               label="Left Stick Brightness"
-              value={ledLeftBrightness}
+              value={brightnessL}
               showValue={true}
               min={0}
               max={100}
               validValues="range"
-              onChange={(value) => handleSliderChange('LEFT', value)}
+              onChange={(value) => setLeftLedBrightness(value)}
             ></SliderField>
             <>
               <SliderField
@@ -226,8 +163,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 max={255}
                 validValues="range"
                 onChange={(value) => {
-                  setRedL(value);
-                  handleColorChange('LEFT');
+                  setLeftColor('red', value);
                 }}
               />
               <SliderField
@@ -238,8 +174,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 max={255}
                 validValues="range"
                 onChange={(value) => {
-                  setGreenL(value);
-                  handleColorChange('LEFT');
+                  setLeftColor('green', value);
                 }}
               />
               <SliderField
@@ -250,8 +185,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 max={255}
                 validValues="range"
                 onChange={(value) => {
-                  setBlueL(value);
-                  handleColorChange('LEFT');
+                  setLeftColor('blue', value);
                 }}
               />
               <div
