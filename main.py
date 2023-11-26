@@ -2,11 +2,12 @@ import os
 import logging
 import hid
 
+import LegionConfiguratior as LLG
 # The decky plugin module is located at decky-loader/plugin
 # For easy intellisense checkout the decky-loader code one directory up
 # or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
-import decky_plugin
 
+import decky_plugin
 
 try:
     LOG_LOCATION = f"/tmp/legionGoRemapper.log"
@@ -81,14 +82,39 @@ class Plugin:
         decky_plugin.logger.info("Hello World!")
 
         # get_usb_device_config()
+    async def rgb_brightness(self, controller: str, value_str: int, red, blue, green):
+        hex_brightness = int(value_str)
+        # hex_brightness = int(format(brightness, '02x'), 16)
+        color = bytes([red, green, blue])
+
+        decky_plugin.logger.info(f"Hex Brightness: {hex_brightness}")
+        rgb = LLG.create_rgb_control_command(CONTROLLER[controller],0x01,color, hex_brightness, 0x01)
+        decky_plugin.logger.info(list(rgb))
+        send_command(rgb)
+
+    async def rgb_color(self, controller: str, red, blue, green, brightness):
+        hex_brightness = int(brightness)
+        color = bytes([red, green, blue])
+        rgb = LLG.create_rgb_control_command(CONTROLLER[controller],0x01,color, hex_brightness, 0x01)
+        decky_plugin.logger.info(list(rgb))
+        send_command(rgb)
+        
 
     async def rgb_on(self, controller: str):
-        rgb_on_command = create_rgb_on_off_command(CONTROLLER[controller], True)
-        send_command(rgb_on_command)
+        rgb_on_command = LLG.create_rgb_on_off_command(CONTROLLER[controller], True)
+        decky_plugin.logger.info(rgb_on_command)
+        LLG.send_command(rgb_on_command)
 
     async def rgb_off(self, controller: str):
-        rgb_off_command = create_rgb_on_off_command(CONTROLLER[controller], False)
-        send_command(rgb_off_command)
+        rgb_off_command = LLG.create_rgb_on_off_command(CONTROLLER[controller], False)
+        decky_plugin.logger.info(rgb_off_command)
+        LLG.send_command(rgb_off_command)
+
+    async def touchpad_toggle(self, enable: bool):
+        t_toggle = LLG.create_touchpad_command(enable)
+        decky_plugin.logger.info(t_toggle)
+
+        send_command(t_toggle)
 
     # Function called first during the unload process, utilize this to handle your plugin being removed
     async def _unload(self):
