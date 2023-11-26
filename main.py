@@ -52,13 +52,13 @@ class Plugin:
 
     async def rgb_on(self, controller: str):
         controller_code = controller_enums.Controller[controller].value
-        rgb_on_command = legion_configurator.legion_configurator.create_rgb_on_off_command(controller_code, True)
+        rgb_on_command = legion_configurator.create_rgb_on_off_command(controller_code, True)
         decky_plugin.logger.info(rgb_on_command)
         legion_configurator.send_command(rgb_on_command)
 
     async def rgb_off(self, controller: str):
         controller_code = controller_enums.Controller[controller].value
-        rgb_off_command = legion_configurator.legion_configurator.create_rgb_on_off_command(controller_code, False)
+        rgb_off_command = legion_configurator.create_rgb_on_off_command(controller_code, False)
         decky_plugin.logger.info(rgb_off_command)
         legion_configurator.send_command(rgb_off_command)
 
@@ -78,12 +78,7 @@ class Plugin:
 
         legion_configurator.send_command(remap_command)
 
-        
-
-    async def log_info(self, info):
-        logging.info(info)
-
-    async def touchpad_toggle(self, enable: bool):
+    async def set_touchpad(self, enable: bool):
         t_toggle = legion_configurator.create_touchpad_command(enable)
         decky_plugin.logger.info(t_toggle)
 
@@ -113,3 +108,6 @@ class Plugin:
         decky_plugin.migrate_runtime(
             os.path.join(decky_plugin.DECKY_HOME, "template"),
             os.path.join(decky_plugin.DECKY_USER_HOME, ".local", "share", "decky-template"))
+
+    async def log_info(self, info):
+        logging.info(info)
