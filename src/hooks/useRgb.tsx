@@ -1,7 +1,9 @@
 import { ServerAPI } from 'decky-frontend-lib';
 import { useReducer, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { ControllerType } from '../backend/constants';
-import { extractCurrentGameId } from '../backend/utils';
+import { extractCurrentGameId, logInfo } from '../backend/utils';
+import { selectRgbInfo } from '../redux-modules/rgbSlice';
 
 type StateType = {
   enabled: boolean;
@@ -49,47 +51,37 @@ const rgbReducer = (state: any, action: ActionType) => {
   return state;
 };
 
-const initialState = {
-  enabled: false,
-  red: 255,
-  green: 255,
-  blue: 255,
-  brightness: 50
-};
+const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
+  const rgbInfo = useSelector(selectRgbInfo(controller));
+  const [state, dispatch] = useReducer(rgbReducer, rgbInfo);
 
-const useRgb = (
-  //   initialState: StateType,
-  controller: ControllerType,
-  serverAPI: ServerAPI
-) => {
-  const [state, dispatch] = useReducer(rgbReducer, initialState);
+  logInfo(`FE rgb info${JSON.stringify(rgbInfo)}`);
+  const { enabled, red, green, blue, brightness } = rgbInfo as StateType;
 
-  const { enabled, red, green, blue, brightness } = state as StateType;
+  // useEffect(() => {
+  //   const current_game_id = extractCurrentGameId();
 
-  useEffect(() => {
-    const current_game_id = extractCurrentGameId();
+  //   if (enabled) {
+  //     serverAPI.callPluginMethod('rgb_on', { current_game_id, controller });
+  //   } else {
+  //     serverAPI.callPluginMethod('rgb_off', { current_game_id, controller });
+  //   }
+  // }, [enabled]);
 
-    if (enabled) {
-      serverAPI.callPluginMethod('rgb_on', { current_game_id, controller });
-    } else {
-      serverAPI.callPluginMethod('rgb_off', { current_game_id, controller });
-    }
-  }, [enabled]);
+  // useEffect(() => {
+  //   const current_game_id = extractCurrentGameId();
 
-  useEffect(() => {
-    const current_game_id = extractCurrentGameId();
-
-    if (enabled) {
-      serverAPI.callPluginMethod('rgb_color', {
-        controller,
-        red,
-        green,
-        blue,
-        brightness,
-        current_game_id
-      });
-    }
-  }, [enabled, red, green, blue, brightness]);
+  //   if (enabled) {
+  //     serverAPI.callPluginMethod('rgb_color', {
+  //       controller,
+  //       red,
+  //       green,
+  //       blue,
+  //       brightness,
+  //       current_game_id
+  //     });
+  //   }
+  // }, [enabled, red, green, blue, brightness]);
 
   const updateColor = (color: Colors, value: number) => {
     return dispatch({

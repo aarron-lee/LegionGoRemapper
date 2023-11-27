@@ -53,6 +53,9 @@ class Plugin:
         decky_plugin.logger.info(list(rgb))
         legion_configurator.send_command(rgb)
 
+    async def get_settings(self):
+        return settings.get_settings()
+
     # def set_rgb_profile_values(profileName: str, controller: str, values):
 
     async def rgb_on(self, current_game_id, controller: str):
