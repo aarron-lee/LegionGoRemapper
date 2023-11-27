@@ -39,12 +39,14 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
       red: redL,
       green: greenL,
       blue: blueL,
-      brightness: brightnessL
+      brightness: brightnessL,
+      speed: speedL
     },
     setIsLeftRgbOn,
     setLeftColor,
-    setLeftLedBrightness
-    // _setLeftRgbColor
+    setLeftLedBrightness,
+    _setLeftRgbColor,
+    setLeftSpeed
   ] = useRgb('LEFT');
 
   const [
@@ -53,12 +55,14 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
       red: redR,
       green: greenR,
       blue: blueR,
-      brightness: brightnessR
+      brightness: brightnessR,
+      speed: speedR
     },
     setIsRightRgbOn,
     setRightColor,
-    setRightLedBrightness
-    // _setRightRgbColor
+    setRightLedBrightness,
+    _setRightRgbColor,
+    setRightSpeed
   ] = useRgb('RIGHT');
 
   const TPadToggleChange = (value: boolean) => {
@@ -107,6 +111,17 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               validValues="range"
               onChange={(value) => setRightLedBrightness(value)}
             ></SliderField>
+            {rightMode !== RgbModes.SOLID && (
+              <SliderField
+                label="Speed"
+                value={speedR}
+                showValue={true}
+                min={1}
+                max={100}
+                validValues="range"
+                onChange={(value) => setRightSpeed(value)}
+              ></SliderField>
+            )}
             {rightMode !== RgbModes.DYNAMIC && (
               <>
                 <SliderField
@@ -183,6 +198,17 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               validValues="range"
               onChange={(value) => setLeftLedBrightness(value)}
             ></SliderField>
+            {leftMode !== RgbModes.SOLID && (
+              <SliderField
+                label="Speed"
+                value={speedL}
+                showValue={true}
+                min={1}
+                max={100}
+                validValues="range"
+                onChange={(value) => setLeftSpeed(value)}
+              ></SliderField>
+            )}
             {leftMode !== RgbModes.DYNAMIC && (
               <>
                 <SliderField
