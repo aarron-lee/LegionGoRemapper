@@ -9,6 +9,8 @@ import hid
 import decky_plugin
 import legion_configurator
 import controller_enums
+import rgb
+import controller_settings as settings
 
 
 try:
@@ -31,26 +33,15 @@ class Plugin:
     async def _main(self):
         decky_plugin.logger.info("Hello World!")
 
-    async def rgb_color(self, controller: str, red, blue, green, brightness):
-        hex_brightness = int(brightness)
-        color = bytes([red, green, blue])
-        controller_code = controller_enums.Controller[controller].value
-        rgb = legion_configurator.create_rgb_control_command(controller_code,0x01,color, hex_brightness, 0x01)
-        decky_plugin.logger.info(list(rgb))
-        legion_configurator.send_command(rgb)
-        
+    async def get_settings(self):
+        return settings.get_settings()
 
-    async def rgb_on(self, controller: str):
-        controller_code = controller_enums.Controller[controller].value
-        rgb_on_command = legion_configurator.create_rgb_on_off_command(controller_code, True)
-        decky_plugin.logger.info(rgb_on_command)
-        legion_configurator.send_command(rgb_on_command)
+    async def save_rgb_settings(self, rgbProfiles):
+        return settings.set_all_rgb_profiles(rgbProfiles)
 
-    async def rgb_off(self, controller: str):
-        controller_code = controller_enums.Controller[controller].value
-        rgb_off_command = legion_configurator.create_rgb_on_off_command(controller_code, False)
-        decky_plugin.logger.info(rgb_off_command)
-        legion_configurator.send_command(rgb_off_command)
+    async def sync_rgb_settings(self, currentGameId):
+        decky_plugin.logger.info(f"sync rgb settings {currentGameId}")
+        return rgb.sync_rgb_settings(currentGameId)
 
     async def remap_button(self, button: str, action: str):
         decky_plugin.logger.info(f"remap_button {button} {action}")

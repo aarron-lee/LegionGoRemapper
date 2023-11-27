@@ -31,7 +31,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     setIsLeftRgbOn,
     setLeftColor,
     setLeftLedBrightness
-  ] = useRgb('LEFT', serverAPI);
+  ] = useRgb('LEFT');
 
   const [
     {
@@ -44,7 +44,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     setIsRightRgbOn,
     setRightColor,
     setRightLedBrightness
-  ] = useRgb('RIGHT', serverAPI);
+  ] = useRgb('RIGHT');
 
   const TPadToggleChange = (value: boolean) => {
     setIsTouchpad(value);

@@ -15,12 +15,16 @@ import { VFC } from 'react';
 import { FaShip } from 'react-icons/fa';
 
 // import logo from '../assets/logo.png';
-import RightControllerPanel from './components/RightControllerPanel';
-import LeftControllerPanel from './components/LeftControllerPanel';
 // import RemapActionDropdown from './components/RemapActionDropdown';
 // import { createServerApiHelpers } from './backend/utils';
 import RemapButtons from './components/RemapButtons';
 import ControllerLightingPanel from './components/ControllerLightingPanel';
+import { createServerApiHelpers, saveServerApi } from './backend/utils';
+import { store } from './redux-modules/store';
+import { getInitialLoading, uiSlice } from './redux-modules/uiSlice';
+import { setInitialState } from './redux-modules/extraActions';
+import { Provider, useSelector } from 'react-redux';
+import { currentGameIdListener } from './backend/currentGameIdListener';
 // import { createServerApiHelpers } from './backend/utils';
 
 // interface AddMethodArgs {
@@ -30,42 +34,51 @@ import ControllerLightingPanel from './components/ControllerLightingPanel';
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
   // const { remapButton, logInfo } = createServerApiHelpers(serverAPI);
+  const loading = useSelector(getInitialLoading);
+  if (loading) {
+    return null;
+  }
   return (
     <>
       <RemapButtons serverAPI={serverAPI} />
-      {/* <RemapActionDropdown
-        label="Remap Buttons"
-        description="remap description"
-        onChange={remapButton}
-        logInfo={logInfo}
-      /> */}
-      <ControllerLightingPanel serverAPI={serverAPI}/>
+      <ControllerLightingPanel serverAPI={serverAPI} />
     </>
   );
 };
 
-// const DeckyPluginRouterTest: VFC = () => {
-//   return (
-//     <div style={{ marginTop: "50px", color: "white" }}>
-//       Hello World!
-//       <DialogButton onClick={() => Router.NavigateToLibraryTab()}>
-//         Go to Library
-//       </DialogButton>
-//     </div>
-//   );
-// };
+const AppContainer: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
+  return (
+    <Provider store={store}>
+      <Content serverAPI={serverAPI} />
+    </Provider>
+  );
+};
 
 export default definePlugin((serverApi: ServerAPI) => {
   // serverApi.routerHook.addRoute("/decky-plugin-test", DeckyPluginRouterTest, {
   //   exact: true,
   // });
+  saveServerApi(serverApi);
+  const { getSettings, logInfo } = createServerApiHelpers(serverApi);
+
+  getSettings().then((result) => {
+    logInfo(result);
+    if (result.success) {
+      const results = result.result || {};
+
+      store.dispatch(setInitialState(results));
+    }
+  });
+
+  const clearListener = currentGameIdListener();
 
   return {
     title: <div className={staticClasses.Title}>LegionGoRemapper</div>,
-    content: <Content serverAPI={serverApi} />,
-    icon: <FaShip />
-    // onDismount() {
-    //   serverApi.routerHook.removeRoute("/decky-plugin-test");
-    // },
+    content: <AppContainer serverAPI={serverApi} />,
+    icon: <FaShip />,
+    onDismount() {
+      // serverApi.routerHook.removeRoute("/decky-plugin-test");
+      clearListener();
+    }
   };
 });
