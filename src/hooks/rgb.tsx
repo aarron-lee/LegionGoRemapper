@@ -68,11 +68,16 @@ export const useRgb = (controller: ControllerType) => {
     return dispatch(rgbSlice.actions.setBrightness({ controller, brightness }));
   };
 
+  const setSpeed = (speed: number) => {
+    return dispatch(rgbSlice.actions.setSpeed({ controller, speed }));
+  };
+
   return [
     rgbInfo,
     setEnabled,
     updateColor,
     updateBrightness,
-    setRgbColor
+    setRgbColor,
+    setSpeed
   ] as any;
 };
