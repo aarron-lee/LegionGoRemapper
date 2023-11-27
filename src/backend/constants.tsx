@@ -40,3 +40,9 @@ export enum RemapActions {
   VIEW = 'VIEW',
   MENU = 'MENU'
 }
+
+export enum RgbModes {
+  SOLID = 'SOLID',
+  DYNAMIC = 'DYNAMIC',
+  BLINKING = 'BLINKING'
+}

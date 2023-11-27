@@ -39,11 +39,15 @@ class Plugin:
     async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
         return settings.set_setting('rgbPerGameProfilesEnabled', enabled)
 
-    async def save_rgb_settings(self, rgbProfiles):
-        return settings.set_all_rgb_profiles(rgbProfiles)
+    async def save_rgb_settings(self, rgbProfiles, currentGameId):
+        result = settings.set_all_rgb_profiles(rgbProfiles)
+        if currentGameId:
+            rgb.sync_rgb_settings(currentGameId)
+        return result
 
+    # sync state in settings.json to actual controller RGB hardware
     async def sync_rgb_settings(self, currentGameId):
-        decky_plugin.logger.info(f"sync rgb settings {currentGameId}")
+        # decky_plugin.logger.info(f"sync rgb settings {currentGameId}")
         return rgb.sync_rgb_settings(currentGameId)
 
     async def remap_button(self, button: str, action: str):

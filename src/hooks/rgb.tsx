@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import { ControllerType } from '../backend/constants';
+import { ControllerType, RgbModes } from '../backend/constants';
 import {
   rgbSlice,
   selectRgbInfo,
   selectRgbProfileDisplayName,
-  selectPerGameProfilesEnabled
+  selectPerGameProfilesEnabled,
+  selectRgbMode
 } from '../redux-modules/rgbSlice';
 
 export enum Colors {
@@ -13,6 +14,20 @@ export enum Colors {
   GREEN = 'green',
   BLUE = 'blue'
 }
+
+export const useRgbMode = (controller: ControllerType) => {
+  const mode = useSelector(selectRgbMode(controller));
+  const dispatch = useDispatch();
+
+  const setMode = useCallback(
+    (mode: RgbModes) => {
+      return dispatch(rgbSlice.actions.setRgbMode({ controller, mode }));
+    },
+    [controller]
+  );
+
+  return [mode, setMode] as any;
+};
 
 export const usePerGameRgbProfilesEnabled = () => {
   const isEnabled = useSelector(selectPerGameProfilesEnabled);
