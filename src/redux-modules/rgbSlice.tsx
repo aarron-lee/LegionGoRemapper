@@ -34,13 +34,11 @@ type RgbProfiles = {
   [gameId: string]: RgbProfile;
 };
 
-// Define a type for the slice state
 type RgbState = {
   rgbProfiles: RgbProfiles;
   perGameProfilesEnabled: boolean;
 };
 
-// Define the initial state using that type
 const initialState: RgbState = {
   rgbProfiles: {},
   perGameProfilesEnabled: false
@@ -131,8 +129,12 @@ export const rgbSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
       const rgbProfiles = action.payload.rgb as RgbProfiles;
+      const perGameProfilesEnabled = Boolean(
+        action.payload.rgbPerGameProfilesEnabled
+      );
 
       state.rgbProfiles = rgbProfiles;
+      state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
       /*
@@ -220,6 +222,9 @@ export const saveRgbSettingsMiddleware =
       serverApi?.callPluginMethod('sync_rgb_settings', { currentGameId });
     }
     if (type === rgbSlice.actions.setPerGameProfilesEnabled.type) {
+      serverApi?.callPluginMethod('save_rgb_per_game_profiles_enabled', {
+        enabled: Boolean(action.payload)
+      });
       if (action.payload) {
         serverApi?.callPluginMethod('sync_rgb_settings', {
           currentGameId: extractCurrentGameId()
