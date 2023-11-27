@@ -33,7 +33,6 @@ const RgbModeDropdown: FC<PropType> = ({ controller }) => {
         })}
         selectedOption={
           dropdownOptions.find((o) => {
-            logInfo(o.data === mode);
             return o.data === mode;
           })?.data
         }

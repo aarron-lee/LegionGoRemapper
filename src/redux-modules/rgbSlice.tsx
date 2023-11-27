@@ -227,25 +227,16 @@ export const saveRgbSettingsMiddleware =
     if (mutatingActionTypes.includes(type)) {
       // get latest state from store
       const {
-        rgb: { rgbProfiles }
+        rgb: { rgbProfiles, perGameProfilesEnabled }
       } = store.getState();
+      const currentGameId = perGameProfilesEnabled
+        ? extractCurrentGameId()
+        : 'default';
 
-      serverApi
-        ?.callPluginMethod('save_rgb_settings', { rgbProfiles })
-        .then((res) => {
-          const {
-            rgb: { perGameProfilesEnabled }
-          } = store.getState();
-
-          const currentGameId = perGameProfilesEnabled
-            ? extractCurrentGameId()
-            : 'default';
-
-          if (res.success) {
-            // since RGB settings changed, update state of RBG lights
-            serverApi.callPluginMethod('sync_rgb_settings', { currentGameId });
-          }
-        });
+      serverApi?.callPluginMethod('save_rgb_settings', {
+        rgbProfiles,
+        currentGameId
+      });
     }
     if (type === setInitialState.type || type === setCurrentGameId.type) {
       // tell backend to sync LEDs to current FE state

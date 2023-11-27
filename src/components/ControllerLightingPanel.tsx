@@ -164,7 +164,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
         )}
         {showLeftOptions && isLeftRgbOn && (
           <>
-            <RgbModeDropdown controller="RIGHT" />
+            <RgbModeDropdown controller="LEFT" />
             <SliderField
               label="Left Stick Brightness"
               value={brightnessL}
