@@ -4,14 +4,8 @@ import { get, merge } from 'lodash';
 import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
-import { ControllerType } from '../backend/constants';
+import { ControllerType, RgbModes } from '../backend/constants';
 import { Router } from 'decky-frontend-lib';
-
-export enum RgbModes {
-  SOLID = 'SOLID',
-  DYNAMIC = 'DYNAMIC',
-  BLINKING = 'BLINKING'
-}
 
 const DEFAULT_RGB_LIGHT_VALUES: RgbLight = {
   enabled: false,

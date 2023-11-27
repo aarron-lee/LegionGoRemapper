@@ -12,6 +12,7 @@ import {
   usePerGameRgbProfilesEnabled,
   useRgbProfileDisplayName
 } from '../hooks/rgb';
+import RgbModeDropdown from './RgbModeDropdown';
 const DEFAULT_STATE = {
   isTouchpad: true
 };
@@ -89,6 +90,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
         )}
         {showRightOptions && isRightRgbOn && (
           <>
+            <RgbModeDropdown controller="RIGHT" />
             <SliderField
               label="Right Stick Brightness"
               value={brightnessR}
@@ -162,6 +164,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
         )}
         {showLeftOptions && isLeftRgbOn && (
           <>
+            <RgbModeDropdown controller="RIGHT" />
             <SliderField
               label="Left Stick Brightness"
               value={brightnessL}
