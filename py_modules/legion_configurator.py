@@ -52,22 +52,33 @@ def create_touchpad_command(enable):
     buffered_command = byte_command + bytes([0xCD] * (64 - len(byte_command)))
     return buffered_command
 
-def create_rgb_control_command(controller, mode, color, brightness, profile):
+def create_rgb_control_command(controller, mode, color, brightness, speed, profile=0x01, on=True):
     """
-    Create a command for RGB LED control.
+    Create a command to control the RGB LEDs, including setting the profile and turning them on or off.
 
-    :param controller: byte - The controller byte (e.g., 0x03, 0x04)
-    :param mode: byte - The LED mode (e.g., 0x01 for solid)
+    :param controller: byte - The controller byte (0x03 for left, 0x04 for right)
+    :param mode: byte - The mode of the LED (e.g., 0x01 for solid, 0x02 for blinking)
     :param color: bytes - The RGB color value (e.g., b'\xFF\x00\x00' for red)
-    :param brightness: byte - The brightness value 0x00 -> 0x64
+    :param brightness: byte - The brightness value (0x00 to 0x64)
+    :param speed: byte - The speed setting for dynamic modes (0x00 to 0x64, higher is slower)
     :param profile: byte - The profile number
+    :param on: bool - True to turn on, False to turn off the RGB LEDs
     :return: bytes - The command byte array
     """
+    on_off_byte = 0x01 if on else 0x00
     command = [
-        0x05, 0x0c,  # Report ID and Length
-        0x72,        # Command (Nibble 7 + 2)
-        0x01, controller, mode
-    ] + list(color) + [brightness, profile, 0x01]
+        0x05, 0x0c if on else 0x06,  # Report ID and Length (0x0c for setting profile, 0x06 for on/off)
+        0x72 if on else 0x70,        # Command (Nibble 7 + 2 for profile, 7 + 0 for on/off)
+        0x01, controller
+    ]
+
+    if on:
+        # Adding profile settings when turning on
+        command += [mode] + list(color) + [brightness, speed, profile, 0x01]
+    else:
+        # Adding the on/off byte when turning off
+        command += [on_off_byte, 0x01]
+
     return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
 def create_rgb_on_off_command(controller, on):
