@@ -23,7 +23,7 @@ def get_settings():
 def set_setting(name: str, value):
     return setting_file.setSetting(name, value)
 
-DEFAULT_RGB_PROFILE_VALUES = {
+DEFAULT_RGB_LIGHT_VALUES = {
   "enabled": False,
   "red": 255,
   "green": 255,
@@ -43,7 +43,7 @@ def bootstrap_rgb_settings(profileName: str, controller: str):
     default_rgb_profile = rgb_profiles.get('default').get(controller)
 
     if not rgb_profile.get(controller):
-        rgb_profile[controller] = default_rgb_profile or DEFAULT_RGB_PROFILE_VALUES
+        rgb_profile[controller] = default_rgb_profile or DEFAULT_RGB_LIGHT_VALUES
 
 def set_rgb_profile_value(profileName: str, controller: str, key: str, value):
     bootstrap_rgb_settings(profileName, controller)

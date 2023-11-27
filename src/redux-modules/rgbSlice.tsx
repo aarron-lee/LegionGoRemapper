@@ -1,10 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { merge } from 'lodash';
+import { get, merge } from 'lodash';
 import type { RootState } from './store';
-import { setInitialState } from './extraActions';
+import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi, logInfo } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
+
+const DEFAULT_RGB_LIGHT_VALUES = {
+  enabled: false,
+  red: 255,
+  green: 255,
+  blue: 255,
+  brightness: 50
+};
 
 enum Colors {
   RED = 'red',
@@ -20,8 +28,10 @@ type RgbLight = {
   brightness: number;
 };
 
+type RgbProfile = { LEFT: RgbLight; RIGHT: RgbLight };
+
 type RgbProfiles = {
-  [gameId: string]: { LEFT: RgbLight; RIGHT: RgbLight };
+  [gameId: string]: RgbProfile;
 };
 
 // Define a type for the slice state
@@ -82,6 +92,30 @@ export const rgbSlice = createSlice({
 
       state.rgbProfiles = rgbProfiles;
     });
+    builder.addCase(setCurrentGameId, (state, action) => {
+      /*
+        currentGameIdChanged, check if exists in redux store.
+        if not exists, bootstrap it on frontend
+      */
+      const currentGameId = action.payload as string;
+      if (!state.rgbProfiles) {
+        // rgbProfiles don't exist yet, bootstrap it
+        state.rgbProfiles = {};
+      }
+      if (!state.rgbProfiles[currentGameId]) {
+        const defaultProfile = get(
+          state,
+          'rgbProfiles.default',
+          {}
+        ) as RgbProfile;
+        const newRgbProfile = {
+          LEFT: defaultProfile.LEFT || DEFAULT_RGB_LIGHT_VALUES,
+          RIGHT: defaultProfile.RIGHT || DEFAULT_RGB_LIGHT_VALUES
+        };
+
+        state.rgbProfiles[currentGameId] = newRgbProfile;
+      }
+    });
   }
 });
 
@@ -123,8 +157,9 @@ export const saveRgbSettingsMiddleware =
             serverApi.callPluginMethod('sync_rgb_settings', { currentGameId });
           }
         });
-    } else if (type === setInitialState.type) {
-      // initial state was fetched from backend, tell backend to sync LEDs to said state
+    }
+    if (type === setInitialState.type || type === setCurrentGameId.type) {
+      // tell backend to sync LEDs to current FE state
       const currentGameId = extractCurrentGameId();
 
       serverApi?.callPluginMethod('sync_rgb_settings', { currentGameId });

@@ -7,8 +7,13 @@ let intervalId: undefined | number;
 export const currentGameIdListener = () => {
   extractCurrentGameId;
   intervalId = window.setInterval(() => {
+    const {
+      ui: { currentGameId: oldGameId }
+    } = store.getState();
     const currentGameId = extractCurrentGameId();
-    store.dispatch(setCurrentGameId(currentGameId));
+    if (oldGameId !== currentGameId) {
+      store.dispatch(setCurrentGameId(currentGameId));
+    }
   }, 1000);
 
   return () => clearInterval(intervalId);
