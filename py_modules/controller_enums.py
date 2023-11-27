@@ -44,3 +44,8 @@ class RemapActions(Enum):
 
     VIEW = 0x23
     MENU = 0x24
+
+class RgbModes(Enum):
+    SOLID = 0x01
+    DYNAMIC = 0x02
+    BLINKING = 0x03

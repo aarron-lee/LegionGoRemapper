@@ -7,8 +7,15 @@ import { extractCurrentGameId, getServerApi } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
 import { Router } from 'decky-frontend-lib';
 
-const DEFAULT_RGB_LIGHT_VALUES = {
+export enum RgbModes {
+  SOLID = 'SOLID',
+  DYNAMIC = 'DYNAMIC',
+  BLINKING = 'BLINKING'
+}
+
+const DEFAULT_RGB_LIGHT_VALUES: RgbLight = {
   enabled: false,
+  mode: RgbModes.SOLID,
   red: 255,
   green: 255,
   blue: 255,
@@ -23,6 +30,7 @@ enum Colors {
 
 type RgbLight = {
   enabled: boolean;
+  mode: RgbModes;
   red: number;
   green: number;
   blue: number;
@@ -75,6 +83,18 @@ export const rgbSlice = createSlice({
       state.perGameProfilesEnabled = enabled;
       if (enabled) {
         bootstrapRgbProfile(state, extractCurrentGameId());
+      }
+    },
+    setRgbMode: (
+      state,
+      action: PayloadAction<{ controller: string; mode: RgbModes }>
+    ) => {
+      const { controller, mode } = action.payload;
+      if (state.perGameProfilesEnabled) {
+        const currentGameId = extractCurrentGameId();
+        state.rgbProfiles[currentGameId][controller]['mode'] = mode;
+      } else {
+        state.rgbProfiles['default'][controller]['mode'] = mode;
       }
     },
     updateRgbProfiles: (state, action: PayloadAction<RgbProfiles>) => {
@@ -165,6 +185,19 @@ export const selectRgbInfo =
     return rgbInfo;
   };
 
+export const selectRgbMode =
+  (controller: ControllerType) => (state: RootState) => {
+    const currentGameId = extractCurrentGameId();
+    let rgbMode;
+    if (state.rgb.perGameProfilesEnabled) {
+      rgbMode = state.rgb.rgbProfiles[currentGameId][controller].mode;
+    } else {
+      rgbMode = state.rgb.rgbProfiles['default'][controller].mode;
+    }
+
+    return rgbMode;
+  };
+
 export const selectPerGameProfilesEnabled = (state: RootState) => {
   return state.rgb.perGameProfilesEnabled;
 };
@@ -185,7 +218,8 @@ const mutatingActionTypes = [
   rgbSlice.actions.updateRgbProfiles.type,
   rgbSlice.actions.setColor.type,
   rgbSlice.actions.setEnabled.type,
-  rgbSlice.actions.setPerGameProfilesEnabled,
+  rgbSlice.actions.setPerGameProfilesEnabled.type,
+  rgbSlice.actions.setRgbMode.type,
   rgbSlice.actions.setBrightness.type
 ];
 
