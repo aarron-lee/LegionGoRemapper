@@ -10,6 +10,7 @@ import { Router } from 'decky-frontend-lib';
 const DEFAULT_RGB_LIGHT_VALUES: RgbLight = {
   enabled: false,
   mode: RgbModes.SOLID,
+  speed: 50,
   red: 255,
   green: 255,
   blue: 255,
@@ -25,6 +26,7 @@ enum Colors {
 type RgbLight = {
   enabled: boolean;
   mode: RgbModes;
+  speed: number;
   red: number;
   green: number;
   blue: number;
@@ -81,15 +83,27 @@ export const rgbSlice = createSlice({
     },
     setRgbMode: (
       state,
-      action: PayloadAction<{ controller: string; mode: RgbModes }>
+      action: PayloadAction<{ controller: ControllerType; mode: RgbModes }>
     ) => {
       const { controller, mode } = action.payload;
-      if (state.perGameProfilesEnabled) {
-        const currentGameId = extractCurrentGameId();
-        state.rgbProfiles[currentGameId][controller]['mode'] = mode;
-      } else {
-        state.rgbProfiles['default'][controller]['mode'] = mode;
-      }
+      setStateValue({
+        sliceState: state,
+        controller,
+        key: 'mode',
+        value: mode
+      });
+    },
+    setSpeed: (
+      state,
+      action: PayloadAction<{ controller: ControllerType; speed: number }>
+    ) => {
+      const { controller, speed } = action.payload;
+      setStateValue({
+        sliceState: state,
+        controller,
+        key: 'speed',
+        value: speed
+      });
     },
     updateRgbProfiles: (state, action: PayloadAction<RgbProfiles>) => {
       merge(state.rgbProfiles, action.payload);
@@ -103,12 +117,12 @@ export const rgbSlice = createSlice({
       }>
     ) => {
       const { controller, color, value } = action.payload;
-      const currentGameId = extractCurrentGameId();
-      if (state.perGameProfilesEnabled) {
-        state.rgbProfiles[currentGameId][controller][color] = value;
-      } else {
-        state.rgbProfiles['default'][controller][color] = value;
-      }
+      setStateValue({
+        sliceState: state,
+        controller,
+        key: color,
+        value
+      });
     },
     setRgbColor: (
       state,
@@ -139,12 +153,13 @@ export const rgbSlice = createSlice({
       }>
     ) => {
       const { controller, enabled } = action.payload;
-      const currentGameId = extractCurrentGameId();
-      if (state.perGameProfilesEnabled) {
-        state.rgbProfiles[currentGameId][controller]['enabled'] = enabled;
-      } else {
-        state.rgbProfiles['default'][controller]['enabled'] = enabled;
-      }
+
+      setStateValue({
+        sliceState: state,
+        controller,
+        key: 'enabled',
+        value: enabled
+      });
     },
     setBrightness: (
       state,
@@ -154,12 +169,13 @@ export const rgbSlice = createSlice({
       }>
     ) => {
       const { controller, brightness } = action.payload;
-      const currentGameId = extractCurrentGameId();
-      if (state.perGameProfilesEnabled) {
-        state.rgbProfiles[currentGameId][controller]['brightness'] = brightness;
-      } else {
-        state.rgbProfiles['default'][controller]['brightness'] = brightness;
-      }
+
+      setStateValue({
+        sliceState: state,
+        controller,
+        key: 'brightness',
+        value: brightness
+      });
     }
   },
   extraReducers: (builder) => {
@@ -236,6 +252,7 @@ const mutatingActionTypes = [
   rgbSlice.actions.setPerGameProfilesEnabled.type,
   rgbSlice.actions.setRgbMode.type,
   rgbSlice.actions.setRgbColor.type,
+  rgbSlice.actions.setSpeed.type,
   rgbSlice.actions.setBrightness.type
 ];
 
@@ -288,3 +305,26 @@ export const saveRgbSettingsMiddleware =
 
     return result;
   };
+
+// -------------
+// Slice Util functions
+// -------------
+
+function setStateValue({
+  sliceState,
+  controller,
+  key,
+  value
+}: {
+  sliceState: RgbState;
+  controller: ControllerType;
+  key: string;
+  value: any;
+}) {
+  if (sliceState.perGameProfilesEnabled) {
+    const currentGameId = extractCurrentGameId();
+    sliceState.rgbProfiles[currentGameId][controller][key] = value;
+  } else {
+    sliceState.rgbProfiles['default'][controller][key] = value;
+  }
+}
