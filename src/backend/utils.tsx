@@ -1,11 +1,12 @@
-import { ServerAPI } from 'decky-frontend-lib';
+import { ServerAPI, Router } from 'decky-frontend-lib';
 import { ControllerType, RemapActions, RemappableButtons } from './constants';
 
 export enum ServerAPIMethods {
   RGB_ON = 'rgb_on',
   RGB_OFF = 'rgb_off',
   REMAP_BUTTON = 'remap_button',
-  LOG_INFO = 'log_info'
+  LOG_INFO = 'log_info',
+  GET_SETTINGS = 'get_settings'
 }
 
 const createRgbOn =
@@ -37,11 +38,37 @@ const createLogInfo = (serverAPI: ServerAPI) => async (info: any) => {
   });
 };
 
+const createGetSettings = (serverAPI: ServerAPI) => async () => {
+  return await serverAPI.callPluginMethod(ServerAPIMethods.GET_SETTINGS, {});
+};
+
+let serverApi: undefined | ServerAPI;
+
+export const saveServerApi = (s: ServerAPI) => {
+  serverApi = s;
+};
+
+export const getServerApi = () => {
+  return serverApi;
+};
+
+export const extractCurrentGameId = () =>
+  `${Router.MainRunningApp?.appid || 'default'}`;
+
 export const createServerApiHelpers = (serverAPI: ServerAPI) => {
   return {
     rgbOn: createRgbOn(serverAPI),
     rgbOff: createRgbOff(serverAPI),
     remapButton: createRemapButtons(serverAPI),
-    logInfo: createLogInfo(serverAPI)
+    logInfo: createLogInfo(serverAPI),
+    getSettings: createGetSettings(serverAPI)
   };
+};
+
+export const logInfo = (info: any) => {
+  const s = getServerApi();
+  s &&
+    s.callPluginMethod(ServerAPIMethods.LOG_INFO, {
+      info: JSON.stringify(info)
+    });
 };
