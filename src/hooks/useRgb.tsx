@@ -1,9 +1,11 @@
 import { ServerAPI } from 'decky-frontend-lib';
 import { useReducer, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ControllerType } from '../backend/constants';
 import { extractCurrentGameId, logInfo } from '../backend/utils';
-import { selectRgbInfo } from '../redux-modules/rgbSlice';
+import { rgbSlice, selectRgbInfo } from '../redux-modules/rgbSlice';
+
+const noop = () => {};
 
 type StateType = {
   enabled: boolean;
@@ -53,7 +55,8 @@ const rgbReducer = (state: any, action: ActionType) => {
 
 const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
   const rgbInfo = useSelector(selectRgbInfo(controller));
-  const [state, dispatch] = useReducer(rgbReducer, rgbInfo);
+  const dispatch = useDispatch();
+  // const [state, dispatch] = useReducer(rgbReducer, rgbInfo);
 
   logInfo(`FE rgb info${JSON.stringify(rgbInfo)}`);
   const { enabled, red, green, blue, brightness } = rgbInfo as StateType;
@@ -84,13 +87,7 @@ const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
   // }, [enabled, red, green, blue, brightness]);
 
   const updateColor = (color: Colors, value: number) => {
-    return dispatch({
-      type: Actions.SET_COLOR,
-      payload: {
-        color,
-        value
-      }
-    });
+    return dispatch(rgbSlice.actions.setColor({ controller, color, value }));
   };
 
   //   const toggleEnabled = () => {
@@ -100,10 +97,7 @@ const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
   //   };
 
   const setEnabled = (enabled: boolean) => {
-    return dispatch({
-      type: Actions.SET_ENABLED,
-      payload: enabled
-    });
+    return dispatch(rgbSlice.actions.setEnabled({ controller, enabled }));
   };
 
   const updateBrightness = (brightness: number) => {
@@ -113,7 +107,13 @@ const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
     });
   };
 
-  return [state, setEnabled, updateColor, updateBrightness];
+  return [
+    rgbInfo,
+    setEnabled,
+    updateColor,
+    noop
+    // updateBrightness
+  ];
 };
 
 export default useRgb;

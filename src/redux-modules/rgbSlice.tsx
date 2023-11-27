@@ -6,6 +6,24 @@ import { setInitialState } from './extraActions';
 import { extractCurrentGameId } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
 
+enum Colors {
+  RED = 'red',
+  GREEN = 'green',
+  BLUE = 'blue'
+}
+
+enum Actions {
+  SET_COLOR,
+  SET_BRIGHTNESS,
+  TOGGLE_ENABLED,
+  SET_ENABLED
+}
+
+type ActionType = {
+  type: Actions;
+  payload?: any;
+};
+
 type RgbLight = {
   enabled: boolean;
   red: number;
@@ -15,7 +33,7 @@ type RgbLight = {
 };
 
 type RgbProfiles = {
-  [profileName: string]: { LEFT: RgbLight; RIGHT: RgbLight };
+  [gameId: string]: { LEFT: RgbLight; RIGHT: RgbLight };
 };
 
 // Define a type for the slice state
@@ -34,6 +52,29 @@ export const rgbSlice = createSlice({
   reducers: {
     updateRgbProfiles: (state, action: PayloadAction<RgbProfiles>) => {
       merge(state.rgbProfiles, action.payload);
+    },
+    setColor: (
+      state,
+      action: PayloadAction<{
+        controller: ControllerType;
+        color: Colors;
+        value: number;
+      }>
+    ) => {
+      const { controller, color, value } = action.payload;
+      const currentGameId = extractCurrentGameId();
+      state.rgbProfiles[currentGameId][controller][color] = value;
+    },
+    setEnabled: (
+      state,
+      action: PayloadAction<{
+        controller: ControllerType;
+        enabled: boolean;
+      }>
+    ) => {
+      const { controller, enabled } = action.payload;
+      const currentGameId = extractCurrentGameId();
+      state.rgbProfiles[currentGameId][controller]['enabled'] = enabled;
     }
   },
   extraReducers: (builder) => {
