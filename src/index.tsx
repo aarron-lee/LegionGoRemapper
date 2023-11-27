@@ -2,10 +2,8 @@ import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib';
 import { memo, VFC } from 'react';
 import { FaShip } from 'react-icons/fa';
 
-// import logo from '../assets/logo.png';
-// import RemapActionDropdown from './components/RemapActionDropdown';
 // import { createServerApiHelpers } from './backend/utils';
-import RemapButtons from './components/RemapButtons';
+// import RemapButtons from './components/RemapButtons';
 import ControllerLightingPanel from './components/ControllerLightingPanel';
 import { createServerApiHelpers, saveServerApi } from './backend/utils';
 import { store } from './redux-modules/store';

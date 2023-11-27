@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { get, merge } from 'lodash';
 import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
-import { extractCurrentGameId, getServerApi, logInfo } from '../backend/utils';
+import { extractCurrentGameId, getServerApi } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
 import { Router } from 'decky-frontend-lib';
 
