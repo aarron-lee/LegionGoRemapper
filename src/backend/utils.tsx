@@ -1,4 +1,4 @@
-import { ServerAPI } from 'decky-frontend-lib';
+import { ServerAPI, Router } from 'decky-frontend-lib';
 import { ControllerType, RemapActions, RemappableButtons } from './constants';
 
 export enum ServerAPIMethods {
@@ -36,6 +36,19 @@ const createLogInfo = (serverAPI: ServerAPI) => async (info: any) => {
     info: JSON.stringify(info)
   });
 };
+
+let serverApi: undefined | ServerAPI;
+
+export const saveServerApi = (s: ServerAPI) => {
+  serverApi = s;
+};
+
+export const getServerApi = () => {
+  return serverApi;
+};
+
+export const extractCurrentGameId = () =>
+  `${Router.MainRunningApp?.appid || 'default'}`;
 
 export const createServerApiHelpers = (serverAPI: ServerAPI) => {
   return {
