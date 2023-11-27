@@ -5,6 +5,7 @@ import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi, logInfo } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
+import { Router } from 'decky-frontend-lib';
 
 const DEFAULT_RGB_LIGHT_VALUES = {
   enabled: false,
@@ -166,6 +167,14 @@ export const selectRgbInfo =
 
 export const selectPerGameProfilesEnabled = (state: RootState) => {
   return state.rgb.perGameProfilesEnabled;
+};
+
+export const selectRgbProfileDisplayName = (state: RootState) => {
+  if (state.rgb.perGameProfilesEnabled) {
+    return Router.MainRunningApp?.display_name || 'Default';
+  } else {
+    return 'Default';
+  }
 };
 
 // -------------
