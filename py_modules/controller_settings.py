@@ -13,8 +13,45 @@ def get_settings():
 def set_setting(name: str, value):
     return setting_file.setSetting(name, value)
 
+DEFAULT_RGB_PROFILE_VALUES = {
+  "enabled": False,
+  "red": 255,
+  "green": 255,
+  "blue": 255,
+  "brightness": 50
+}
 
-def set_game_profile_setting(self, profileName: str, key: str, value):
+def bootstrap_rgb_settings(profileName: str, controller: str):
+    settings = get_settings()
+
+    if not settings.get('rgb'):
+        settings['rgb'] = {}
+    rgb_profiles = settings['rgb']
+    if not rgb_profiles.get(profileName):
+        rgb_profiles[profileName] = {}
+    rgb_profile = rgb_profiles[profileName]
+    default_rgb_profile = rgb_profiles.get('default').get(controller)
+
+    if not rgb_profile.get(controller):
+        rgb_profile[controller] = default_rgb_profile or DEFAULT_RGB_PROFILE_VALUES
+
+def set_rgb_profile_value(profileName: str, controller: str, key: str, value):
+    bootstrap_rgb_settings(profileName, controller)
+
+    setting_file.settings['rgb'][profileName][controller][key] = value
+    setting_file.commit()
+
+def set_rgb_profile_values(profileName: str, controller: str, values):
+    bootstrap_rgb_settings(profileName, controller)
+
+    profile = setting_file.settings['rgb'][profileName][controller]
+
+    setting_file.settings['rgb'][profileName][controller] = profile | values
+
+    setting_file.commit()
+
+
+def set_game_profile_setting(profileName: str, key: str, value):
     setting_file.read()
     if not setting_file.settings.get('gameProfiles'):
         setting_file.settings['gameProfiles'] = {}

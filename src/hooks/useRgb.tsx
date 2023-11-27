@@ -1,6 +1,7 @@
 import { ServerAPI } from 'decky-frontend-lib';
 import { useReducer, useEffect } from 'react';
 import { ControllerType } from '../backend/constants';
+import { extractCurrentGameId } from '../backend/utils';
 
 type StateType = {
   enabled: boolean;
@@ -66,21 +67,26 @@ const useRgb = (
   const { enabled, red, green, blue, brightness } = state as StateType;
 
   useEffect(() => {
+    const current_game_id = extractCurrentGameId();
+
     if (enabled) {
-      serverAPI.callPluginMethod('rgb_on', { controller });
+      serverAPI.callPluginMethod('rgb_on', { current_game_id, controller });
     } else {
-      serverAPI.callPluginMethod('rgb_off', { controller });
+      serverAPI.callPluginMethod('rgb_off', { current_game_id, controller });
     }
   }, [enabled]);
 
   useEffect(() => {
+    const current_game_id = extractCurrentGameId();
+
     if (enabled) {
       serverAPI.callPluginMethod('rgb_color', {
         controller,
         red,
         green,
         blue,
-        brightness
+        brightness,
+        current_game_id
       });
     }
   }, [enabled, red, green, blue, brightness]);
