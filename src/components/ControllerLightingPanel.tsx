@@ -44,6 +44,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     setIsLeftRgbOn,
     setLeftColor,
     setLeftLedBrightness
+    // _setLeftRgbColor
   ] = useRgb('LEFT');
 
   const [
@@ -57,6 +58,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     setIsRightRgbOn,
     setRightColor,
     setRightLedBrightness
+    // _setLeftRgbColor
   ] = useRgb('RIGHT');
 
   const TPadToggleChange = (value: boolean) => {

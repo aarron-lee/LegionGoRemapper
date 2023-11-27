@@ -53,6 +53,13 @@ export const useRgb = (controller: ControllerType) => {
     return dispatch(rgbSlice.actions.setColor({ controller, color, value }));
   };
 
+  // usage: setRgbColor(255, 255, 255)
+  const setRgbColor = (red: number, green: number, blue: number) => {
+    return dispatch(
+      rgbSlice.actions.setRgbColor({ controller, red, green, blue })
+    );
+  };
+
   const setEnabled = (enabled: boolean) => {
     return dispatch(rgbSlice.actions.setEnabled({ controller, enabled }));
   };
@@ -61,5 +68,11 @@ export const useRgb = (controller: ControllerType) => {
     return dispatch(rgbSlice.actions.setBrightness({ controller, brightness }));
   };
 
-  return [rgbInfo, setEnabled, updateColor, updateBrightness] as any;
+  return [
+    rgbInfo,
+    setEnabled,
+    updateColor,
+    updateBrightness,
+    setRgbColor
+  ] as any;
 };

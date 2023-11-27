@@ -110,6 +110,27 @@ export const rgbSlice = createSlice({
         state.rgbProfiles['default'][controller][color] = value;
       }
     },
+    setRgbColor: (
+      state,
+      action: PayloadAction<{
+        controller: ControllerType;
+        red: number;
+        green: number;
+        blue: number;
+      }>
+    ) => {
+      const { controller, red, green, blue } = action.payload;
+      const currentGameId = extractCurrentGameId();
+      if (state.perGameProfilesEnabled) {
+        state.rgbProfiles[currentGameId][controller].red = red;
+        state.rgbProfiles[currentGameId][controller].green = green;
+        state.rgbProfiles[currentGameId][controller].blue = blue;
+      } else {
+        state.rgbProfiles['default'][controller].red = red;
+        state.rgbProfiles['default'][controller].green = green;
+        state.rgbProfiles['default'][controller].blue = blue;
+      }
+    },
     setEnabled: (
       state,
       action: PayloadAction<{
@@ -214,6 +235,7 @@ const mutatingActionTypes = [
   rgbSlice.actions.setEnabled.type,
   rgbSlice.actions.setPerGameProfilesEnabled.type,
   rgbSlice.actions.setRgbMode.type,
+  rgbSlice.actions.setRgbColor.type,
   rgbSlice.actions.setBrightness.type
 ];
 
