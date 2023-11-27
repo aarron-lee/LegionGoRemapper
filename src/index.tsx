@@ -24,6 +24,7 @@ import { store } from './redux-modules/store';
 import { getInitialLoading, uiSlice } from './redux-modules/uiSlice';
 import { setInitialState } from './redux-modules/extraActions';
 import { Provider, useSelector } from 'react-redux';
+import { currentGameIdListener } from './backend/currentGameIdListener';
 // import { createServerApiHelpers } from './backend/utils';
 
 // interface AddMethodArgs {
@@ -65,18 +66,19 @@ export default definePlugin((serverApi: ServerAPI) => {
     if (result.success) {
       const results = result.result || {};
 
-      logInfo(`initial load FE ${JSON.stringify(results)}`);
-
       store.dispatch(setInitialState(results));
     }
   });
 
+  const clearListener = currentGameIdListener();
+
   return {
     title: <div className={staticClasses.Title}>LegionGoRemapper</div>,
     content: <AppContainer serverAPI={serverApi} />,
-    icon: <FaShip />
-    // onDismount() {
-    //   serverApi.routerHook.removeRoute("/decky-plugin-test");
-    // },
+    icon: <FaShip />,
+    onDismount() {
+      // serverApi.routerHook.removeRoute("/decky-plugin-test");
+      clearListener();
+    }
   };
 });

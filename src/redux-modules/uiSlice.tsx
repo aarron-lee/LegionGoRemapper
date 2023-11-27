@@ -1,12 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { setInitialState } from './extraActions';
+import { setCurrentGameId, setInitialState } from './extraActions';
 import { RootState } from './store';
 // import type { RootState } from './store';
 
+type UiStateType = {
+  initialLoading: boolean;
+  currentGameId: undefined | string;
+};
+
 // Define the initial state using that type
-const initialState = {
-  initialLoading: true
+const initialState: UiStateType = {
+  initialLoading: true,
+  currentGameId: undefined
 };
 
 export const uiSlice = createSlice({
@@ -21,6 +27,9 @@ export const uiSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
       if (action) state.initialLoading = false;
+    });
+    builder.addCase(setCurrentGameId, (state, action) => {
+      if (action?.payload) state.currentGameId = action.payload;
     });
   }
 });
