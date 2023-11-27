@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { DropdownItem } from 'decky-frontend-lib';
 import { ControllerType, RgbModes } from '../backend/constants';
 import { useRgbMode } from '../hooks/rgb';
-import { logInfo } from '../backend/utils';
 
 type PropType = {
   controller: ControllerType;

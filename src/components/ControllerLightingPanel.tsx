@@ -10,9 +10,11 @@ import { useState } from 'react';
 import {
   useRgb,
   usePerGameRgbProfilesEnabled,
-  useRgbProfileDisplayName
+  useRgbProfileDisplayName,
+  useRgbMode
 } from '../hooks/rgb';
 import RgbModeDropdown from './RgbModeDropdown';
+import { RgbModes } from '../backend/constants';
 const DEFAULT_STATE = {
   isTouchpad: true
 };
@@ -20,6 +22,9 @@ const DEFAULT_STATE = {
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   serverAPI
 }) => {
+  const [leftMode] = useRgbMode('LEFT');
+  const [rightMode] = useRgbMode('RIGHT');
+
   const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
     usePerGameRgbProfilesEnabled();
   const displayName = useRgbProfileDisplayName();
@@ -100,50 +105,52 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               validValues="range"
               onChange={(value) => setRightLedBrightness(value)}
             ></SliderField>
-            <>
-              <SliderField
-                label="Red"
-                value={redR}
-                showValue={true}
-                min={0}
-                max={255}
-                validValues="range"
-                onChange={(value) => {
-                  setRightColor('red', value);
-                }}
-              />
-              <SliderField
-                label="Green"
-                value={greenR}
-                showValue={true}
-                min={0}
-                max={255}
-                validValues="range"
-                onChange={(value) => {
-                  setRightColor('green', value);
-                }}
-              />
-              <SliderField
-                label="Blue"
-                value={blueR}
-                showValue={true}
-                min={0}
-                max={255}
-                validValues="range"
-                onChange={(value) => {
-                  setRightColor('blue', value);
-                }}
-              />
-              <div
-                style={{
-                  width: '100%',
-                  height: '30px',
-                  backgroundColor: `rgb(${redR}, ${greenR}, ${blueR})`,
-                  border: '1px solid black',
-                  borderRadius: '10px'
-                }}
-              />
-            </>
+            {rightMode !== RgbModes.DYNAMIC && (
+              <>
+                <SliderField
+                  label="Red"
+                  value={redR}
+                  showValue={true}
+                  min={0}
+                  max={255}
+                  validValues="range"
+                  onChange={(value) => {
+                    setRightColor('red', value);
+                  }}
+                />
+                <SliderField
+                  label="Green"
+                  value={greenR}
+                  showValue={true}
+                  min={0}
+                  max={255}
+                  validValues="range"
+                  onChange={(value) => {
+                    setRightColor('green', value);
+                  }}
+                />
+                <SliderField
+                  label="Blue"
+                  value={blueR}
+                  showValue={true}
+                  min={0}
+                  max={255}
+                  validValues="range"
+                  onChange={(value) => {
+                    setRightColor('blue', value);
+                  }}
+                />
+                <div
+                  style={{
+                    width: '100%',
+                    height: '30px',
+                    backgroundColor: `rgb(${redR}, ${greenR}, ${blueR})`,
+                    border: '1px solid black',
+                    borderRadius: '10px'
+                  }}
+                />
+              </>
+            )}
           </>
         )}
 
@@ -174,50 +181,52 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               validValues="range"
               onChange={(value) => setLeftLedBrightness(value)}
             ></SliderField>
-            <>
-              <SliderField
-                label="Red"
-                value={redL}
-                showValue={true}
-                min={0}
-                max={255}
-                validValues="range"
-                onChange={(value) => {
-                  setLeftColor('red', value);
-                }}
-              />
-              <SliderField
-                label="Green"
-                value={greenL}
-                showValue={true}
-                min={0}
-                max={255}
-                validValues="range"
-                onChange={(value) => {
-                  setLeftColor('green', value);
-                }}
-              />
-              <SliderField
-                label="Blue"
-                value={blueL}
-                showValue={true}
-                min={0}
-                max={255}
-                validValues="range"
-                onChange={(value) => {
-                  setLeftColor('blue', value);
-                }}
-              />
-              <div
-                style={{
-                  width: '100%',
-                  height: '30px',
-                  backgroundColor: `rgb(${redL}, ${greenL}, ${blueL})`,
-                  border: '1px solid black',
-                  borderRadius: '10px'
-                }}
-              />
-            </>
+            {leftMode !== RgbModes.DYNAMIC && (
+              <>
+                <SliderField
+                  label="Red"
+                  value={redL}
+                  showValue={true}
+                  min={0}
+                  max={255}
+                  validValues="range"
+                  onChange={(value) => {
+                    setLeftColor('red', value);
+                  }}
+                />
+                <SliderField
+                  label="Green"
+                  value={greenL}
+                  showValue={true}
+                  min={0}
+                  max={255}
+                  validValues="range"
+                  onChange={(value) => {
+                    setLeftColor('green', value);
+                  }}
+                />
+                <SliderField
+                  label="Blue"
+                  value={blueL}
+                  showValue={true}
+                  min={0}
+                  max={255}
+                  validValues="range"
+                  onChange={(value) => {
+                    setLeftColor('blue', value);
+                  }}
+                />
+                <div
+                  style={{
+                    width: '100%',
+                    height: '30px',
+                    backgroundColor: `rgb(${redL}, ${greenL}, ${blueL})`,
+                    border: '1px solid black',
+                    borderRadius: '10px'
+                  }}
+                />
+              </>
+            )}
           </>
         )}
 
