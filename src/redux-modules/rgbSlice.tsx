@@ -3,8 +3,9 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { get, merge } from 'lodash';
 import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
-import { extractCurrentGameId, getServerApi, logInfo } from '../backend/utils';
+import { extractCurrentGameId, getServerApi } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
+import { Router } from 'decky-frontend-lib';
 
 const DEFAULT_RGB_LIGHT_VALUES = {
   enabled: false,
@@ -34,20 +35,48 @@ type RgbProfiles = {
   [gameId: string]: RgbProfile;
 };
 
-// Define a type for the slice state
 type RgbState = {
   rgbProfiles: RgbProfiles;
+  perGameProfilesEnabled: boolean;
 };
 
-// Define the initial state using that type
 const initialState: RgbState = {
-  rgbProfiles: {}
+  rgbProfiles: {},
+  perGameProfilesEnabled: false
+};
+
+const bootstrapRgbProfile = (state: RgbState, newGameId: string) => {
+  if (!state.rgbProfiles) {
+    // rgbProfiles don't exist yet, create it
+    state.rgbProfiles = {};
+  }
+  if (
+    // only initialize profile if perGameProfiles are enabled
+    (!state.rgbProfiles[newGameId] && state.perGameProfilesEnabled) ||
+    // always initialize default
+    newGameId === 'default'
+  ) {
+    const defaultProfile = get(state, 'rgbProfiles.default', {}) as RgbProfile;
+    const newRgbProfile = {
+      LEFT: defaultProfile.LEFT || DEFAULT_RGB_LIGHT_VALUES,
+      RIGHT: defaultProfile.RIGHT || DEFAULT_RGB_LIGHT_VALUES
+    };
+
+    state.rgbProfiles[newGameId] = newRgbProfile;
+  }
 };
 
 export const rgbSlice = createSlice({
   name: 'rgb',
   initialState,
   reducers: {
+    setPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
+      const enabled = action.payload;
+      state.perGameProfilesEnabled = enabled;
+      if (enabled) {
+        bootstrapRgbProfile(state, extractCurrentGameId());
+      }
+    },
     updateRgbProfiles: (state, action: PayloadAction<RgbProfiles>) => {
       merge(state.rgbProfiles, action.payload);
     },
@@ -61,7 +90,11 @@ export const rgbSlice = createSlice({
     ) => {
       const { controller, color, value } = action.payload;
       const currentGameId = extractCurrentGameId();
-      state.rgbProfiles[currentGameId][controller][color] = value;
+      if (state.perGameProfilesEnabled) {
+        state.rgbProfiles[currentGameId][controller][color] = value;
+      } else {
+        state.rgbProfiles['default'][controller][color] = value;
+      }
     },
     setEnabled: (
       state,
@@ -72,7 +105,11 @@ export const rgbSlice = createSlice({
     ) => {
       const { controller, enabled } = action.payload;
       const currentGameId = extractCurrentGameId();
-      state.rgbProfiles[currentGameId][controller]['enabled'] = enabled;
+      if (state.perGameProfilesEnabled) {
+        state.rgbProfiles[currentGameId][controller]['enabled'] = enabled;
+      } else {
+        state.rgbProfiles['default'][controller]['enabled'] = enabled;
+      }
     },
     setBrightness: (
       state,
@@ -83,55 +120,72 @@ export const rgbSlice = createSlice({
     ) => {
       const { controller, brightness } = action.payload;
       const currentGameId = extractCurrentGameId();
-      state.rgbProfiles[currentGameId][controller]['brightness'] = brightness;
+      if (state.perGameProfilesEnabled) {
+        state.rgbProfiles[currentGameId][controller]['brightness'] = brightness;
+      } else {
+        state.rgbProfiles['default'][controller]['brightness'] = brightness;
+      }
     }
   },
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
       const rgbProfiles = action.payload.rgb as RgbProfiles;
+      const perGameProfilesEnabled = Boolean(
+        action.payload.rgbPerGameProfilesEnabled
+      );
 
       state.rgbProfiles = rgbProfiles;
+      state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
       /*
         currentGameIdChanged, check if exists in redux store.
         if not exists, bootstrap it on frontend
       */
-      const currentGameId = action.payload as string;
-      if (!state.rgbProfiles) {
-        // rgbProfiles don't exist yet, bootstrap it
-        state.rgbProfiles = {};
-      }
-      if (!state.rgbProfiles[currentGameId]) {
-        const defaultProfile = get(
-          state,
-          'rgbProfiles.default',
-          {}
-        ) as RgbProfile;
-        const newRgbProfile = {
-          LEFT: defaultProfile.LEFT || DEFAULT_RGB_LIGHT_VALUES,
-          RIGHT: defaultProfile.RIGHT || DEFAULT_RGB_LIGHT_VALUES
-        };
-
-        state.rgbProfiles[currentGameId] = newRgbProfile;
-      }
+      const newGameId = action.payload as string;
+      bootstrapRgbProfile(state, newGameId);
     });
   }
 });
 
+// -------------
+// selectors
+// -------------
+
 export const selectRgbInfo =
   (controller: ControllerType) => (state: RootState) => {
     const currentGameId = extractCurrentGameId();
-
-    const rgbInfo = state.rgb.rgbProfiles[currentGameId][controller];
+    let rgbInfo;
+    if (state.rgb.perGameProfilesEnabled) {
+      rgbInfo = state.rgb.rgbProfiles[currentGameId][controller];
+    } else {
+      rgbInfo = state.rgb.rgbProfiles['default'][controller];
+    }
 
     return rgbInfo;
   };
+
+export const selectPerGameProfilesEnabled = (state: RootState) => {
+  return state.rgb.perGameProfilesEnabled;
+};
+
+export const selectRgbProfileDisplayName = (state: RootState) => {
+  if (state.rgb.perGameProfilesEnabled) {
+    return Router.MainRunningApp?.display_name || 'Default';
+  } else {
+    return 'Default';
+  }
+};
+
+// -------------
+// middleware
+// -------------
 
 const mutatingActionTypes = [
   rgbSlice.actions.updateRgbProfiles.type,
   rgbSlice.actions.setColor.type,
   rgbSlice.actions.setEnabled.type,
+  rgbSlice.actions.setPerGameProfilesEnabled,
   rgbSlice.actions.setBrightness.type
 ];
 
@@ -151,7 +205,14 @@ export const saveRgbSettingsMiddleware =
       serverApi
         ?.callPluginMethod('save_rgb_settings', { rgbProfiles })
         .then((res) => {
-          const currentGameId = extractCurrentGameId();
+          const {
+            rgb: { perGameProfilesEnabled }
+          } = store.getState();
+
+          const currentGameId = perGameProfilesEnabled
+            ? extractCurrentGameId()
+            : 'default';
+
           if (res.success) {
             // since RGB settings changed, update state of RBG lights
             serverApi.callPluginMethod('sync_rgb_settings', { currentGameId });
@@ -160,9 +221,28 @@ export const saveRgbSettingsMiddleware =
     }
     if (type === setInitialState.type || type === setCurrentGameId.type) {
       // tell backend to sync LEDs to current FE state
-      const currentGameId = extractCurrentGameId();
+      const {
+        rgb: { perGameProfilesEnabled }
+      } = store.getState();
+      const currentGameId = perGameProfilesEnabled
+        ? extractCurrentGameId()
+        : 'default';
 
       serverApi?.callPluginMethod('sync_rgb_settings', { currentGameId });
+    }
+    if (type === rgbSlice.actions.setPerGameProfilesEnabled.type) {
+      serverApi?.callPluginMethod('save_rgb_per_game_profiles_enabled', {
+        enabled: Boolean(action.payload)
+      });
+      if (action.payload) {
+        serverApi?.callPluginMethod('sync_rgb_settings', {
+          currentGameId: extractCurrentGameId()
+        });
+      } else {
+        serverApi?.callPluginMethod('sync_rgb_settings', {
+          currentGameId: 'default'
+        });
+      }
     }
 
     return result;

@@ -7,7 +7,11 @@ import {
 } from 'decky-frontend-lib';
 import { VFC } from 'react';
 import { useState } from 'react';
-import useRgb from '../hooks/useRgb';
+import {
+  useRgb,
+  usePerGameRgbProfilesEnabled,
+  useRgbProfileDisplayName
+} from '../hooks/rgb';
 const DEFAULT_STATE = {
   isTouchpad: true
 };
@@ -15,6 +19,9 @@ const DEFAULT_STATE = {
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   serverAPI
 }) => {
+  const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
+    usePerGameRgbProfilesEnabled();
+  const displayName = useRgbProfileDisplayName();
   const [isTouchpad, setIsTouchpad] = useState(DEFAULT_STATE.isTouchpad);
 
   const [showRightOptions, setShowRightOptions] = useState(false);
@@ -52,14 +59,24 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     serverAPI!.callPluginMethod('set_touchpad', { enable: value });
   };
 
+  let title =
+    displayName === 'Default'
+      ? 'Controller Lighting - Default'
+      : `Controller Lighting - ${displayName.substring(0, 10)}...`;
+
   return (
-    <PanelSection title="Controller Lighting">
+    <PanelSection title={title}>
       <div>
+        <ToggleField
+          label="Enable Per Game Profiles"
+          checked={perGameProfilesEnabled}
+          onChange={setPerGameProfilesEnabled}
+        />
         <ToggleField
           label="Right Controller LED"
           checked={isRightRgbOn}
           onChange={setIsRightRgbOn}
-        ></ToggleField>
+        />
         {isRightRgbOn && (
           <>
             <Button

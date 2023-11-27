@@ -1,14 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
 import { ControllerType } from '../backend/constants';
-import { rgbSlice, selectRgbInfo } from '../redux-modules/rgbSlice';
-
-type RgbStateType = {
-  enabled: boolean;
-  red: number;
-  green: number;
-  blue: number;
-  brightness: number;
-};
+import {
+  rgbSlice,
+  selectRgbInfo,
+  selectRgbProfileDisplayName,
+  selectPerGameProfilesEnabled
+} from '../redux-modules/rgbSlice';
 
 export enum Colors {
   RED = 'red',
@@ -16,7 +14,21 @@ export enum Colors {
   BLUE = 'blue'
 }
 
-const useRgb = (controller: ControllerType) => {
+export const usePerGameRgbProfilesEnabled = () => {
+  const isEnabled = useSelector(selectPerGameProfilesEnabled);
+  const dispatch = useDispatch();
+
+  const setEnabled = useCallback((enabled: boolean) => {
+    return dispatch(rgbSlice.actions.setPerGameProfilesEnabled(enabled));
+  }, []);
+
+  return [isEnabled, setEnabled] as any;
+};
+
+export const useRgbProfileDisplayName = () =>
+  useSelector(selectRgbProfileDisplayName);
+
+export const useRgb = (controller: ControllerType) => {
   const rgbInfo = useSelector(selectRgbInfo(controller));
   const dispatch = useDispatch();
 
@@ -36,5 +48,3 @@ const useRgb = (controller: ControllerType) => {
 
   return [rgbInfo, setEnabled, updateColor, updateBrightness] as any;
 };
-
-export default useRgb;

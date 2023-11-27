@@ -36,6 +36,9 @@ class Plugin:
     async def get_settings(self):
         return settings.get_settings()
 
+    async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
+        return settings.set_setting('rgbPerGameProfilesEnabled', enabled)
+
     async def save_rgb_settings(self, rgbProfiles):
         return settings.set_all_rgb_profiles(rgbProfiles)
 
