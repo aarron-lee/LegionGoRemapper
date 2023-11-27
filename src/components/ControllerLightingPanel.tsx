@@ -8,6 +8,7 @@ import {
 import { VFC } from 'react';
 import { useState } from 'react';
 import useRgb from '../hooks/useRgb';
+import { usePerGameRgbProfilesEnabled } from '../hooks/usePerGameRgbProfilesEnabled';
 const DEFAULT_STATE = {
   isTouchpad: true
 };
@@ -15,6 +16,8 @@ const DEFAULT_STATE = {
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   serverAPI
 }) => {
+  const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
+    usePerGameRgbProfilesEnabled();
   const [isTouchpad, setIsTouchpad] = useState(DEFAULT_STATE.isTouchpad);
 
   const [showRightOptions, setShowRightOptions] = useState(false);
@@ -56,10 +59,15 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     <PanelSection title="Controller Lighting">
       <div>
         <ToggleField
+          label="Enable Per Game Profiles"
+          checked={perGameProfilesEnabled}
+          onChange={setPerGameProfilesEnabled}
+        />
+        <ToggleField
           label="Right Controller LED"
           checked={isRightRgbOn}
           onChange={setIsRightRgbOn}
-        ></ToggleField>
+        />
         {isRightRgbOn && (
           <>
             <Button
