@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { rgbSlice } from './rgbSlice';
+import { rgbSlice, saveRgbSettingsMiddleware } from './rgbSlice';
 import { uiSlice } from './uiSlice';
 
 export const store = configureStore({
   reducer: {
     ui: uiSlice.reducer,
     rgb: rgbSlice.reducer
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([saveRgbSettingsMiddleware])
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

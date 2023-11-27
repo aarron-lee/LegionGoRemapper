@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { merge } from 'lodash';
 import type { RootState } from './store';
 import { setInitialState } from './extraActions';
-import { extractCurrentGameId } from '../backend/utils';
+import { extractCurrentGameId, getServerApi, logInfo } from '../backend/utils';
 import { ControllerType } from '../backend/constants';
 
 enum Colors {
@@ -11,18 +11,6 @@ enum Colors {
   GREEN = 'green',
   BLUE = 'blue'
 }
-
-enum Actions {
-  SET_COLOR,
-  SET_BRIGHTNESS,
-  TOGGLE_ENABLED,
-  SET_ENABLED
-}
-
-type ActionType = {
-  type: Actions;
-  payload?: any;
-};
 
 type RgbLight = {
   enabled: boolean;
@@ -75,6 +63,17 @@ export const rgbSlice = createSlice({
       const { controller, enabled } = action.payload;
       const currentGameId = extractCurrentGameId();
       state.rgbProfiles[currentGameId][controller]['enabled'] = enabled;
+    },
+    setBrightness: (
+      state,
+      action: PayloadAction<{
+        controller: ControllerType;
+        brightness: number;
+      }>
+    ) => {
+      const { controller, brightness } = action.payload;
+      const currentGameId = extractCurrentGameId();
+      state.rgbProfiles[currentGameId][controller]['brightness'] = brightness;
     }
   },
   extraReducers: (builder) => {
@@ -95,7 +94,28 @@ export const selectRgbInfo =
     return rgbInfo;
   };
 
-// export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+const mutatingActionTypes = [
+  rgbSlice.actions.updateRgbProfiles.type,
+  rgbSlice.actions.setColor.type,
+  rgbSlice.actions.setEnabled.type,
+  rgbSlice.actions.setBrightness.type
+];
 
-// Other code such as selectors can use the imported `RootState` type
-// export const selectCount = (state: RootState) => state.counter.value;
+export const saveRgbSettingsMiddleware =
+  (store: any) => (next: any) => (action: any) => {
+    const { type } = action;
+    const serverApi = getServerApi();
+
+    const result = next(action);
+
+    if (mutatingActionTypes.includes(type)) {
+      // get latest state from store
+      const {
+        rgb: { rgbProfiles }
+      } = store.getState();
+
+      serverApi?.callPluginMethod('save_rgb_settings', { rgbProfiles });
+    }
+
+    return result;
+  };

@@ -56,6 +56,10 @@ class Plugin:
     async def get_settings(self):
         return settings.get_settings()
 
+    async def save_rgb_settings(self, rgbProfiles):
+        decky_plugin.logger.info(f"save all rgb settings {rgbProfiles}")
+        return settings.set_all_rgb_profiles(rgbProfiles)
+
     # def set_rgb_profile_values(profileName: str, controller: str, values):
 
     async def rgb_on(self, current_game_id, controller: str):

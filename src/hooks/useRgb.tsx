@@ -58,7 +58,6 @@ const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
   const dispatch = useDispatch();
   // const [state, dispatch] = useReducer(rgbReducer, rgbInfo);
 
-  logInfo(`FE rgb info${JSON.stringify(rgbInfo)}`);
   const { enabled, red, green, blue, brightness } = rgbInfo as StateType;
 
   // useEffect(() => {
@@ -101,19 +100,10 @@ const useRgb = (controller: ControllerType, serverAPI: ServerAPI) => {
   };
 
   const updateBrightness = (brightness: number) => {
-    return dispatch({
-      type: Actions.SET_BRIGHTNESS,
-      payload: brightness
-    });
+    return dispatch(rgbSlice.actions.setBrightness({ controller, brightness }));
   };
 
-  return [
-    rgbInfo,
-    setEnabled,
-    updateColor,
-    noop
-    // updateBrightness
-  ];
+  return [rgbInfo, setEnabled, updateColor, updateBrightness];
 };
 
 export default useRgb;

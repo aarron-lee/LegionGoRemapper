@@ -6,6 +6,16 @@ settings_path = os.path.join(settings_directory, 'settings.json')
 setting_file = SettingsManager(name="settings", settings_directory=settings_directory)
 setting_file.read()
 
+def deep_merge(origin, destination):
+    for k, v in origin.items():
+        if isinstance(v, dict):
+            n = destination.setdefault(k, {})
+            deep_merge(v, n)
+        else:
+            destination[k] = v
+
+    return destination
+
 def get_settings():
     setting_file.read()
     return setting_file.settings
@@ -46,9 +56,26 @@ def set_rgb_profile_values(profileName: str, controller: str, values):
 
     profile = setting_file.settings['rgb'][profileName][controller]
 
-    setting_file.settings['rgb'][profileName][controller] = profile | values
+    deep_merge(values, profile)
+
+    setting_file.settings['rgb'][profileName][controller] = profile
 
     setting_file.commit()
+
+def set_all_rgb_profiles(rgb_profiles):
+    for profileName, rgbProfile in rgb_profiles.items():
+        left = rgbProfile.get('LEFT')
+        set_rgb_profile_values(
+            profileName=profileName,
+            controller='LEFT',
+            values=left
+        )
+        right = rgbProfile.get('RIGHT')
+        set_rgb_profile_values(
+            profileName=profileName,
+            controller='RIGHT',
+            values=right
+        )
 
 
 def set_game_profile_setting(profileName: str, key: str, value):
