@@ -1,8 +1,8 @@
 import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib';
 import { memo, VFC } from 'react';
-import { FaShip } from 'react-icons/fa';
 
 // import { createServerApiHelpers } from './backend/utils';
+import { FaShip } from 'react-icons/fa';
 import RemapButtons from './components/RemapButtons';
 import ControllerLightingPanel from './components/ControllerLightingPanel';
 import { createServerApiHelpers, saveServerApi } from './backend/utils';
@@ -11,6 +11,7 @@ import { getInitialLoading } from './redux-modules/uiSlice';
 import { setInitialState } from './redux-modules/extraActions';
 import { Provider, useSelector } from 'react-redux';
 import { currentGameIdListener } from './backend/currentGameIdListener';
+import { Icon } from './svgs/Icon';
 
 const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
   const loading = useSelector(getInitialLoading);

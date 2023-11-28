@@ -20,10 +20,9 @@ const RemapActionDropdown: FC<PropType> = ({ label, btn }) => {
   });
 
   return (
-    <>
+    <div>
       <DropdownItem
-        menuLabel={label}
-        description={btn}
+        bottomSeparator="none"
         rgOptions={dropdownOptions.map((o) => {
           return {
             data: o.data,
@@ -40,7 +39,7 @@ const RemapActionDropdown: FC<PropType> = ({ label, btn }) => {
           setRemapAction(value.data);
         }}
       />
-    </>
+    </div>
   );
 };
 
