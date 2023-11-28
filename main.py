@@ -39,6 +39,12 @@ class Plugin:
     async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
         return settings.set_setting('rgbPerGameProfilesEnabled', enabled)
 
+    async def save_controller_settings(self, controllerProfiles, currentGameId):
+        result = settings.set_all_controller_profiles(controllerProfiles)
+        if currentGameId:
+            rgb.sync_controller_profile_settings(currentGameId)
+        return result
+
     async def save_rgb_settings(self, rgbProfiles, currentGameId):
         result = settings.set_all_rgb_profiles(rgbProfiles)
         if currentGameId:

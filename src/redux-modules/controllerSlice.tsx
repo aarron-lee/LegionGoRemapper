@@ -146,7 +146,7 @@ const mutatingActionTypes = [
   controllerSlice.actions.updateControllerProfiles.type
 ];
 
-export const saveRgbSettingsMiddleware =
+export const saveControllerSettingsMiddleware =
   (store: any) => (next: any) => (action: any) => {
     const { type } = action;
     const serverApi = getServerApi();
@@ -170,7 +170,7 @@ export const saveRgbSettingsMiddleware =
     if (type === setInitialState.type || type === setCurrentGameId.type) {
       // tell backend to sync LEDs to current FE state
       const {
-        rgb: { perGameProfilesEnabled }
+        controller: { perGameProfilesEnabled }
       } = store.getState();
       const currentGameId = perGameProfilesEnabled
         ? extractCurrentGameId()
