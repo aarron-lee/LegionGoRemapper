@@ -5,7 +5,7 @@ import {
   controllerSlice,
   saveControllerSettingsMiddleware
 } from './controllerSlice';
-import { logger } from './logger';
+// import { logger } from './logger';
 
 export const store = configureStore({
   reducer: {
@@ -16,8 +16,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([
       saveRgbSettingsMiddleware,
-      saveControllerSettingsMiddleware,
-      logger
+      saveControllerSettingsMiddleware
+      // logger
     ])
 });
 

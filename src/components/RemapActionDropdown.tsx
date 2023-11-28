@@ -14,7 +14,7 @@ const RemapActionDropdown: FC<PropType> = ({ label, btn }) => {
   const dropdownOptions = Object.values(RemapActions).map((action) => {
     return {
       data: action,
-      label: `${action}`,
+      label: `${action.split('_').join(' ')}`,
       value: action
     };
   });

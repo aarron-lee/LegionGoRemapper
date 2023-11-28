@@ -40,13 +40,13 @@ export const controllerSlice = createSlice({
   name: 'controller',
   initialState,
   reducers: {
-    // setPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
-    //   const enabled = action.payload;
-    //   state.perGameProfilesEnabled = enabled;
-    //   if (enabled) {
-    //     bootstrapControllerProfile(state, extractCurrentGameId());
-    //   }
-    // },
+    setPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
+      const enabled = action.payload;
+      state.perGameProfilesEnabled = enabled;
+      if (enabled) {
+        bootstrapControllerProfile(state, extractCurrentGameId());
+      }
+    },
     remapButton: (
       state,
       action: PayloadAction<{
@@ -73,12 +73,12 @@ export const controllerSlice = createSlice({
       const controllerProfiles = action.payload
         .controller as ControllerProfiles;
 
-      // const perGameProfilesEnabled = Boolean(
-      //   action.payload.controllerPerGameProfilesEnabled
-      // );
+      const perGameProfilesEnabled = Boolean(
+        action.payload.controllerPerGameProfilesEnabled
+      );
 
       state.controllerProfiles = controllerProfiles;
-      // state.perGameProfilesEnabled = perGameProfilesEnabled;
+      state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
       /*
@@ -95,7 +95,7 @@ export const controllerSlice = createSlice({
 // selectors
 // -------------
 
-export const selectPerGameProfilesEnabled = (state: RootState) => {
+export const selectControllerPerGameProfilesEnabled = (state: RootState) => {
   return state.controller.perGameProfilesEnabled;
 };
 
@@ -116,7 +116,7 @@ export const selectButtonRemapAction =
 // -------------
 
 const mutatingActionTypes = [
-  // controllerSlice.actions.setPerGameProfilesEnabled.type,
+  controllerSlice.actions.setPerGameProfilesEnabled.type,
   controllerSlice.actions.remapButton.type,
   controllerSlice.actions.updateControllerProfiles.type
 ];
@@ -140,11 +140,10 @@ export const saveControllerSettingsMiddleware =
         currentGameId = 'default';
       }
 
-      logInfo('save to BE -------');
-      logInfo(controllerProfiles);
+      const controller = { controllerProfiles, perGameProfilesEnabled };
 
       serverApi?.callPluginMethod('save_controller_settings', {
-        controllerProfiles,
+        controller,
         currentGameId
       });
     }
