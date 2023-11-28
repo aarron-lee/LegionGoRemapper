@@ -43,7 +43,9 @@ def rgb_off(current_game_id, controller: str):
 
 def rgb_color(current_game_id, controller: str, mode: str, red, blue, green, brightness, speed):
     hex_brightness = int(brightness)
-    hex_speed = int(speed)
+    hex_speed = int(100) - int(speed)
+    # Controller method is probably delay, meaning that it is the inverse of speed. Doing the above line as a bandaid
+    decky_plugin.logger.info(hex_speed)
     color = bytes([red, green, blue])
     controller_code = controller_enums.Controller[controller].value
     rgb_mode_code = controller_enums.RgbModes[mode].value or controller_enums.RgbModes['SOLID'].value
