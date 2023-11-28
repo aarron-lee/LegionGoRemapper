@@ -20,7 +20,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
   }
   return (
     <>
-      <ControllerLightingPanel serverAPI={serverAPI} />
+      <ControllerLightingPanel />
       <RemapButtons />
     </>
   );

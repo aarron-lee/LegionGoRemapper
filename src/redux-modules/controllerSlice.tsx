@@ -12,7 +12,8 @@ const DEFAULT_CONTROLLER_VALUES = {
   Y2: RemapActions.DISABLED,
   Y3: RemapActions.DISABLED,
   M2: RemapActions.DISABLED,
-  M3: RemapActions.DISABLED
+  M3: RemapActions.DISABLED,
+  TOUCHPAD: true
 };
 
 type ControllerProfile = {
@@ -21,6 +22,7 @@ type ControllerProfile = {
   Y3: RemapActions;
   M2: RemapActions;
   M3: RemapActions;
+  TOUCHPAD: boolean;
 };
 
 type ControllerProfiles = {
@@ -67,6 +69,14 @@ export const controllerSlice = createSlice({
       action: PayloadAction<ControllerProfiles>
     ) => {
       merge(state.controllerProfiles, action.payload);
+    },
+    setTouchpad: (state, action: PayloadAction<boolean>) => {
+      const touchpadEnabled = action.payload;
+      setStateValue({
+        sliceState: state,
+        key: 'TOUCHPAD',
+        value: touchpadEnabled
+      });
     }
   },
   extraReducers: (builder) => {
@@ -100,6 +110,17 @@ export const selectControllerPerGameProfilesEnabled = (state: RootState) => {
   return state.controller.perGameProfilesEnabled;
 };
 
+export const selectTouchpadEnabled = (state: RootState) => {
+  if (state.controller.perGameProfilesEnabled) {
+    return get(
+      state,
+      `controller.controllerProfiles.${extractCurrentGameId()}.TOUCHPAD`
+    );
+  } else {
+    return get(state, `controller.controllerProfiles.default.TOUCHPAD`);
+  }
+};
+
 export const selectButtonRemapAction =
   (button: RemappableButtons) => (state: RootState) => {
     if (state.controller.perGameProfilesEnabled) {
@@ -128,6 +149,7 @@ const mutatingActionTypes = [
   controllerSlice.actions.setPerGameProfilesEnabled.type,
   controllerSlice.actions.remapButton.type,
   controllerSlice.actions.updateControllerProfiles.type,
+  controllerSlice.actions.setTouchpad.type,
   setCurrentGameId.type
 ];
 
