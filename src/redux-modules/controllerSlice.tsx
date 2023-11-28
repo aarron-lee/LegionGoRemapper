@@ -67,27 +67,29 @@ export const controllerSlice = createSlice({
     ) => {
       merge(state.controllerProfiles, action.payload);
     }
-  }
-  // extraReducers: (builder) => {
-  //   builder.addCase(setInitialState, (state, action) => {
-  //     const controllerProfiles = (action.payload.controller ||
-  //       {}) as ControllerProfiles;
-  //     const perGameProfilesEnabled = Boolean(
-  //       action.payload.controllerPerGameProfilesEnabled
-  //     );
+  },
+  extraReducers: (builder) => {
+    builder.addCase(setInitialState, (state, action) => {
+      const settings = action.payload;
 
-  //     state.controllerProfiles = controllerProfiles;
-  //     state.perGameProfilesEnabled = perGameProfilesEnabled;
-  //   });
-  //   builder.addCase(setCurrentGameId, (state, action) => {
-  //     /*
-  //       currentGameIdChanged, check if exists in redux store.
-  //       if not exists, bootstrap it on frontend
-  //     */
-  //     const newGameId = action.payload as string;
-  //     bootstrapControllerProfile(state, newGameId);
-  //   });
-  // }
+      logInfo(`intialstate settings ${JSON.stringify(settings)}`);
+
+      // const perGameProfilesEnabled = Boolean(
+      //   action.payload.controllerPerGameProfilesEnabled
+      // );
+
+      // state.controllerProfiles = controllerProfiles;
+      // state.perGameProfilesEnabled = perGameProfilesEnabled;
+    });
+    builder.addCase(setCurrentGameId, (state, action) => {
+      /*
+        currentGameIdChanged, check if exists in redux store.
+        if not exists, bootstrap it on frontend
+      */
+      const newGameId = action.payload as string;
+      bootstrapControllerProfile(state, newGameId);
+    });
+  }
 });
 
 // -------------
@@ -124,22 +126,10 @@ export const saveControllerSettingsMiddleware =
   (store: any) => (next: any) => (action: any) => {
     const { type } = action;
 
-    if (mutatingActionTypes.includes(type)) {
-      logInfo('before-------------');
-      logInfo(type);
-      logInfo(action.payload);
-      logInfo(store.getState());
-      logInfo('-------------');
-    }
-
     const result = next(action);
 
     if (mutatingActionTypes.includes(type)) {
-      logInfo('after-------------');
-      logInfo(type);
-      logInfo(action.payload);
-      logInfo(store.getState());
-      logInfo('-------------');
+      // save changes to backend
     }
 
     return result;
@@ -163,5 +153,22 @@ function setStateValue({
     set(sliceState, `controllerProfiles.${currentGameId}.${key}`, value);
   } else {
     set(sliceState, `controllerProfiles.default.${key}`, value);
+  }
+}
+
+function bootstrapControllerProfile(state: ControllerState, newGameId: string) {
+  if (!state.controllerProfiles) {
+    state.controllerProfiles = {};
+  }
+  if (
+    // only initialize profile if perGameProfiles are enabled
+    (!state.controllerProfiles[newGameId] && state.perGameProfilesEnabled) ||
+    // always initialize default
+    newGameId === 'default'
+  ) {
+    const defaultProfile = state.controllerProfiles?.default;
+    const newControllerProfile = defaultProfile || DEFAULT_CONTROLLER_VALUES;
+
+    state.controllerProfiles[newGameId] = newControllerProfile;
   }
 }
