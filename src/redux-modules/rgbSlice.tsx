@@ -133,18 +133,21 @@ export const rgbSlice = createSlice({
         red: number;
         green: number;
         blue: number;
+        hue: number;
       }>
     ) => {
-      const { controller, red, green, blue } = action.payload;
+      const { controller, red, green, blue, hue } = action.payload;
       const currentGameId = extractCurrentGameId();
       if (state.perGameProfilesEnabled) {
         state.rgbProfiles[currentGameId][controller].red = red;
         state.rgbProfiles[currentGameId][controller].green = green;
         state.rgbProfiles[currentGameId][controller].blue = blue;
+        state.rgbProfiles[currentGameId][controller].hue = hue;
       } else {
         state.rgbProfiles['default'][controller].red = red;
         state.rgbProfiles['default'][controller].green = green;
         state.rgbProfiles['default'][controller].blue = blue;
+        state.rgbProfiles['default'][controller].hue = hue;
       }
     },
     setEnabled: (

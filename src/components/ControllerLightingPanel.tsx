@@ -17,7 +17,7 @@ import {
 import RgbModeDropdown from './RgbModeDropdown';
 import { RgbModes } from '../backend/constants';
 const DEFAULT_STATE = {
-  isTouchpad: true,
+  isTouchpad: true
 };
 
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
@@ -25,11 +25,6 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
 }) => {
   const [leftMode] = useRgbMode('LEFT');
   const [rightMode] = useRgbMode('RIGHT');
-  // const [H, set_H] = useState<number>(DEFAULT_STATE.H);
-    // const [S, setS] = useState<number>(defaultS);
-    // const [L, setL] = useState<number>(defaultL);
-    // const [A, setA] = useState<number>(defaultA);
-
 
   const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
     usePerGameRgbProfilesEnabled();
@@ -72,7 +67,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
     setRightLedBrightness,
     setRightRgbColor,
     setRightSpeed,
-    setRigthHue
+    setRightHue
   ] = useRgb('RIGHT');
 
   const TPadToggleChange = (value: boolean) => {
@@ -134,16 +129,16 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             )}
             {rightMode !== RgbModes.DYNAMIC && (
               <>
-                
                 <div className="ColorPicker_HSlider">
-                <SliderField
-                  showValue
-                  label="Hue"
-                  value={hueR} 
-                  min={0} 
-                  max={359}
-                  onChange={(value) => setRigthHue(value)}
-                />
+                  <SliderField
+                    showValue
+                    label="Hue"
+                    value={hueR}
+                    min={0}
+                    max={359}
+                    validValues="range"
+                    onChange={(value) => setRightHue(value)}
+                  />
                 </div>
                 <div
                   style={{
@@ -200,11 +195,15 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             {leftMode !== RgbModes.DYNAMIC && (
               <>
                 <div className="ColorPicker_HSlider">
-                <SliderField
-                  showValue label="Hue"
-                  value={hueL} min={0} max={359}
-                  onChange={(value) => setLeftHue(value)}
-                />
+                  <SliderField
+                    showValue
+                    label="Hue"
+                    value={hueL}
+                    min={0}
+                    max={359}
+                    validValues="range"
+                    onChange={(value) => setLeftHue(value)}
+                  />
                 </div>
                 <div
                   style={{
@@ -238,7 +237,6 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             }
           `}
         </style>
-        
 
         <ToggleField
           label="Touchpad"
