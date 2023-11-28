@@ -48,4 +48,4 @@ class RemapActions(Enum):
 class RgbModes(Enum):
     SOLID = 0x01
     DYNAMIC = 0x03
-    BLINKING = 0x02
+    PULSE = 0x02

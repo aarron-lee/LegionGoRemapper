@@ -44,5 +44,5 @@ export enum RemapActions {
 export enum RgbModes {
   SOLID = 'SOLID',
   DYNAMIC = 'DYNAMIC',
-  BLINKING = 'BLINKING'
+  PULSE = 'PULSE'
 }

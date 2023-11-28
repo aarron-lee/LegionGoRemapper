@@ -15,12 +15,12 @@ import {
   useRgbProfileDisplayName,
   useRgbMode
 } from '../hooks/rgb';
-import RgbModeDropdown from './RgbModeDropdown';
+import RgbModeSlider from './RgbModeSlider';
 import { RgbModes } from '../backend/constants';
 import { icons } from 'react-icons';
-import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 const DEFAULT_STATE = {
-  isTouchpad: true,
+  isTouchpad: true
 };
 
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
@@ -28,11 +28,6 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
 }) => {
   const [leftMode] = useRgbMode('LEFT');
   const [rightMode] = useRgbMode('RIGHT');
-  // const [H, set_H] = useState<number>(DEFAULT_STATE.H);
-    // const [S, setS] = useState<number>(defaultS);
-    // const [L, setL] = useState<number>(defaultL);
-    // const [A, setA] = useState<number>(defaultA);
-
 
   const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
     usePerGameRgbProfilesEnabled();
@@ -111,22 +106,22 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               style={{
                 width: '100%',
                 height: '20px',
-                display: 'flex',      // Set the display to flex
+                display: 'flex', // Set the display to flex
                 justifyContent: 'center', // Center align horizontally
-                alignItems: 'center'  // Center align vertically
+                alignItems: 'center' // Center align vertically
               }}
               onClick={() => setShowRightOptions(!showRightOptions)}
             >
-              {showRightOptions ? <IoMdArrowDropup/> : <IoMdArrowDropdown/>}
+              {showRightOptions ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
             </ButtonItem>
           </>
         )}
         {showRightOptions && isRightRgbOn && (
           <>
-            <RgbModeDropdown controller="RIGHT" />
+            <RgbModeSlider controller="RIGHT" />
             <SliderField
               label="R-Stick Brightness"
-              valueSuffix='%'
+              valueSuffix="%"
               value={brightnessR}
               showValue={true}
               min={1}
@@ -138,14 +133,13 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             {rightMode !== RgbModes.SOLID && (
               <SliderField
                 label="Speed"
-                valueSuffix='%'
+                valueSuffix="%"
                 value={speedR}
                 showValue={true}
                 min={1}
                 max={100}
                 validValues="range"
                 onChange={(value) => setRightSpeed(value)}
-
               ></SliderField>
             )}
             {rightMode !== RgbModes.DYNAMIC && (
@@ -158,7 +152,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                     min={0}
                     max={359}
                     validValues="range"
-                    bottomSeparator='thick'
+                    bottomSeparator="thick"
                     onChange={(value) => setRightHue(value)}
                   />
                 </div>
@@ -193,32 +187,31 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center'
-            }}
+              }}
               onClick={() => setShowLeftOptions(!showLeftOptions)}
             >
-              {showLeftOptions ?  <IoMdArrowDropup/> : <IoMdArrowDropdown/>}
+              {showLeftOptions ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
             </ButtonItem>
           </>
         )}
         {showLeftOptions && isLeftRgbOn && (
           <>
-            <RgbModeDropdown controller="LEFT" />
+            <RgbModeSlider controller="LEFT" />
             <SliderField
               label="L-Stick Brightness"
-              valueSuffix='%'
+              valueSuffix="%"
               value={brightnessL}
               showValue={true}
               min={1}
               max={100}
               validValues="range"
               bottomSeparator={'none'}
-
               onChange={(value) => setLeftLedBrightness(value)}
             ></SliderField>
             {leftMode !== RgbModes.SOLID && (
               <SliderField
                 label="Speed"
-                valueSuffix='%'
+                valueSuffix="%"
                 value={speedL}
                 showValue={true}
                 min={1}
@@ -237,7 +230,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                     min={0}
                     max={359}
                     validValues="range"
-                    bottomSeparator='thick'
+                    bottomSeparator="thick"
                     onChange={(value) => setLeftHue(value)}
                   />
                 </div>
