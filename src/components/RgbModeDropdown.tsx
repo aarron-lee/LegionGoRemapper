@@ -33,7 +33,7 @@ const RgbModeDropdown: FC<PropType> = ({ controller }) => {
   const MODES: NotchLabel[] = [
     { notchIndex: 0, label: 'Solid', value: 0 },
     { notchIndex: 1, label: 'Dynamic', value: 1 },
-    { notchIndex: 2, label: 'Blinking', value: 2 }
+    { notchIndex: 2, label: 'Pulse', value: 2 }
   ];
 
 
@@ -77,6 +77,7 @@ const RgbModeDropdown: FC<PropType> = ({ controller }) => {
         notchLabels={MODES}
         notchTicksVisible={true}
         showValue={false}
+        bottomSeparator={'none'}
         onChange={handleSliderChange}
       />
     </>
