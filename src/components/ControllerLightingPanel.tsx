@@ -137,8 +137,11 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 
                 <div className="ColorPicker_HSlider">
                 <SliderField
-                  showValue editableValue label="Hue"
-                  value={hueR} min={0} max={359}
+                  showValue
+                  label="Hue"
+                  value={hueR} 
+                  min={0} 
+                  max={359}
                   onChange={(value) => setRigthHue(value)}
                 />
                 </div>
@@ -198,7 +201,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               <>
                 <div className="ColorPicker_HSlider">
                 <SliderField
-                  showValue editableValue label="Hue"
+                  showValue label="Hue"
                   value={hueL} min={0} max={359}
                   onChange={(value) => setLeftHue(value)}
                 />

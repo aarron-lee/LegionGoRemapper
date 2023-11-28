@@ -276,7 +276,8 @@ const mutatingActionTypes = [
   rgbSlice.actions.setRgbMode.type,
   rgbSlice.actions.setRgbColor.type,
   rgbSlice.actions.setSpeed.type,
-  rgbSlice.actions.setBrightness.type
+  rgbSlice.actions.setBrightness.type,
+  rgbSlice.actions.setHue.type
 ];
 
 export const saveRgbSettingsMiddleware =
