@@ -3,9 +3,20 @@ import {
   controllerSlice,
   selectButtonRemapAction,
   selectControllerPerGameProfilesEnabled,
-  selectControllerProfileDisplayName
+  selectControllerProfileDisplayName,
+  selectTouchpadEnabled
 } from '../redux-modules/controllerSlice';
 import { RemapActions, RemappableButtons } from '../backend/constants';
+
+export const useTouchpadEnabled = () => {
+  const touchpadEnabled = useSelector(selectTouchpadEnabled);
+  const dispatch = useDispatch();
+
+  const setTouchpad = (enabled: boolean) => {
+    return dispatch(controllerSlice.actions.setTouchpad(enabled));
+  };
+  return { touchpadEnabled, setTouchpad };
+};
 
 export const useControllerPerGameEnabled = () => {
   const controllerPerGameEnabled = useSelector(
