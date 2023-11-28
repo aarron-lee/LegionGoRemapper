@@ -3,7 +3,6 @@ import {
   SliderField,
   PanelSection,
   ServerAPI,
-  Button,
   gamepadSliderClasses,
   ButtonItem
 } from 'decky-frontend-lib';
@@ -17,8 +16,8 @@ import {
 } from '../hooks/rgb';
 import RgbModeSlider from './RgbModeSlider';
 import { RgbModes } from '../backend/constants';
-import { icons } from 'react-icons';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
+
 const DEFAULT_STATE = {
   isTouchpad: true
 };
@@ -37,41 +36,21 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   const [showRightOptions, setShowRightOptions] = useState(false);
   const [showLeftOptions, setShowLeftOptions] = useState(false);
 
-  const [
-    {
-      enabled: isLeftRgbOn,
-      red: redL,
-      green: greenL,
-      blue: blueL,
-      brightness: brightnessL,
-      speed: speedL,
-      hue: hueL
-    },
-    setIsLeftRgbOn,
-    setLeftColor,
-    setLeftLedBrightness,
-    setLeftRgbColor,
-    setLeftSpeed,
-    setLeftHue
-  ] = useRgb('LEFT');
+  const leftRgb = useRgb('LEFT');
+  const {
+    enabled: isLeftRgbOn,
+    brightness: brightnessL,
+    speed: speedL,
+    hue: hueL
+  } = leftRgb.rgbInfo;
 
-  const [
-    {
-      enabled: isRightRgbOn,
-      red: redR,
-      green: greenR,
-      blue: blueR,
-      brightness: brightnessR,
-      speed: speedR,
-      hue: hueR
-    },
-    setIsRightRgbOn,
-    setRightColor,
-    setRightLedBrightness,
-    setRightRgbColor,
-    setRightSpeed,
-    setRightHue
-  ] = useRgb('RIGHT');
+  const rightRgb = useRgb('RIGHT');
+  const {
+    enabled: isRightRgbOn,
+    brightness: brightnessR,
+    speed: speedR,
+    hue: hueR
+  } = rightRgb.rgbInfo;
 
   const TPadToggleChange = (value: boolean) => {
     setIsTouchpad(value);
@@ -95,7 +74,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
         <ToggleField
           label="Right Controller LED"
           checked={isRightRgbOn}
-          onChange={setIsRightRgbOn}
+          onChange={rightRgb.setEnabled}
           bottomSeparator={isRightRgbOn ? 'none' : 'thick'}
         />
         {isRightRgbOn && (
@@ -128,7 +107,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               max={100}
               validValues="range"
               bottomSeparator={'none'}
-              onChange={(value) => setRightLedBrightness(value)}
+              onChange={(value) => rightRgb.updateBrightness(value)}
             ></SliderField>
             {rightMode !== RgbModes.SOLID && (
               <SliderField
@@ -139,7 +118,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 min={1}
                 max={100}
                 validValues="range"
-                onChange={(value) => setRightSpeed(value)}
+                onChange={(value) => rightRgb.setSpeed(value)}
               ></SliderField>
             )}
             {rightMode !== RgbModes.DYNAMIC && (
@@ -153,18 +132,9 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                     max={359}
                     validValues="range"
                     bottomSeparator="thick"
-                    onChange={(value) => setRightHue(value)}
+                    onChange={(value) => rightRgb.setHue(value)}
                   />
                 </div>
-                {/* <div
-                  style={{
-                    width: '100%',
-                    height: '30px',
-                    backgroundColor: `rgb(${redR}, ${greenR}, ${blueR})`,
-                    border: '1px solid black',
-                    borderRadius: '10px'
-                  }}
-                /> */}
               </>
             )}
           </>
@@ -174,7 +144,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
           label="Left Controller LED"
           checked={isLeftRgbOn}
           bottomSeparator={isLeftRgbOn ? 'none' : 'thick'}
-          onChange={setIsLeftRgbOn}
+          onChange={leftRgb.setEnabled}
         />
         {isLeftRgbOn && (
           <>
@@ -206,7 +176,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
               max={100}
               validValues="range"
               bottomSeparator={'none'}
-              onChange={(value) => setLeftLedBrightness(value)}
+              onChange={(value) => leftRgb.updateBrightness(value)}
             ></SliderField>
             {leftMode !== RgbModes.SOLID && (
               <SliderField
@@ -217,7 +187,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                 min={1}
                 max={100}
                 validValues="range"
-                onChange={(value) => setLeftSpeed(value)}
+                onChange={(value) => leftRgb.setSpeed(value)}
               ></SliderField>
             )}
             {leftMode !== RgbModes.DYNAMIC && (
@@ -231,7 +201,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
                     max={359}
                     validValues="range"
                     bottomSeparator="thick"
-                    onChange={(value) => setLeftHue(value)}
+                    onChange={(value) => leftRgb.setHue(value)}
                   />
                 </div>
                 {/* <div

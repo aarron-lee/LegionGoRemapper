@@ -132,7 +132,7 @@ export const useRgb = (controller: ControllerType) => {
     // return dispatch(rgbSlice.actions.setHue({ controller, hue }));
   };
 
-  return [
+  return {
     rgbInfo,
     setEnabled,
     updateColor,
@@ -140,5 +140,5 @@ export const useRgb = (controller: ControllerType) => {
     setRgbColor,
     setSpeed,
     setHue
-  ] as any;
+  };
 };
