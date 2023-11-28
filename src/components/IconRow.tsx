@@ -1,5 +1,5 @@
-import { PanelSectionRow, Field, Focusable } from 'decky-frontend-lib';
-import { FC, ReactNode } from 'react';
+import { PanelSectionRow, Focusable } from 'decky-frontend-lib';
+import { FC } from 'react';
 import { M1 } from '../svgs/M1';
 import { M2 } from '../svgs/M2';
 import { M3 } from '../svgs/M3';

@@ -1,12 +1,12 @@
 import { FC } from 'react';
-import { RemappableButtons } from '../backend/constants';
+import { RemappableButtons } from '../../backend/constants';
 import RemapActionDropdown from './RemapActionDropdown';
 import { PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
 import {
   useControllerPerGameEnabled,
   useControllerProfileDisplayName
-} from '../hooks/controller';
-import { IconMap, IconRow } from './IconRow';
+} from '../../hooks/controller';
+import { IconMap, IconRow } from '../IconRow';
 
 const RemapButtons: FC = () => {
   const btns = Object.values(RemappableButtons);

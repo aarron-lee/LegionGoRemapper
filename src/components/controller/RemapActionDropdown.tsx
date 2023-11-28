@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { DropdownItem } from 'decky-frontend-lib';
-import { RemapActions, RemappableButtons } from '../backend/constants';
-import { useRemapAction } from '../hooks/controller';
+import { RemapActions, RemappableButtons } from '../../backend/constants';
+import { useRemapAction } from '../../hooks/controller';
 
 type PropType = {
   label: string;
