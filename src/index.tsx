@@ -52,7 +52,11 @@ export default definePlugin((serverApi: ServerAPI) => {
   return {
     title: <div className={staticClasses.Title}>LegionGoRemapper</div>,
     content: <AppContainer serverAPI={serverApi} />,
-    icon: <FaShip />,
+    icon: (
+      <span>
+        <Icon />
+      </span>
+    ),
     onDismount() {
       clearListener();
     }

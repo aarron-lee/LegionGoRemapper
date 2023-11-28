@@ -6,7 +6,7 @@ import {
   useControllerPerGameEnabled,
   useControllerProfileDisplayName
 } from '../../hooks/controller';
-import { IconMap, IconRow } from '../IconRow';
+import { IconRow } from '../IconRow';
 
 const RemapButtons: FC = () => {
   const btns = Object.values(RemappableButtons);
@@ -33,7 +33,7 @@ const RemapButtons: FC = () => {
       {btns.map((btn, idx) => {
         return (
           <IconRow btn={btn}>
-            <RemapActionDropdown label={`${btn}`} btn={btn} key={idx} />
+            <RemapActionDropdown btn={btn} key={idx} />
           </IconRow>
         );
       })}
