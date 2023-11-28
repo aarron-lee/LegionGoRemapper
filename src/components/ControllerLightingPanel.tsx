@@ -3,7 +3,8 @@ import {
   SliderField,
   PanelSection,
   ServerAPI,
-  Button
+  Button,
+  gamepadSliderClasses
 } from 'decky-frontend-lib';
 import { VFC } from 'react';
 import { useState } from 'react';
@@ -16,7 +17,7 @@ import {
 import RgbModeDropdown from './RgbModeDropdown';
 import { RgbModes } from '../backend/constants';
 const DEFAULT_STATE = {
-  isTouchpad: true
+  isTouchpad: true,
 };
 
 const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
@@ -24,6 +25,11 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
 }) => {
   const [leftMode] = useRgbMode('LEFT');
   const [rightMode] = useRgbMode('RIGHT');
+  // const [H, set_H] = useState<number>(DEFAULT_STATE.H);
+    // const [S, setS] = useState<number>(defaultS);
+    // const [L, setL] = useState<number>(defaultL);
+    // const [A, setA] = useState<number>(defaultA);
+
 
   const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
     usePerGameRgbProfilesEnabled();
@@ -40,13 +46,15 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
       green: greenL,
       blue: blueL,
       brightness: brightnessL,
-      speed: speedL
+      speed: speedL,
+      hue: hueL
     },
     setIsLeftRgbOn,
     setLeftColor,
     setLeftLedBrightness,
-    _setLeftRgbColor,
-    setLeftSpeed
+    setLeftRgbColor,
+    setLeftSpeed,
+    setLeftHue
   ] = useRgb('LEFT');
 
   const [
@@ -56,13 +64,15 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
       green: greenR,
       blue: blueR,
       brightness: brightnessR,
-      speed: speedR
+      speed: speedR,
+      hue: hueR
     },
     setIsRightRgbOn,
     setRightColor,
     setRightLedBrightness,
-    _setRightRgbColor,
-    setRightSpeed
+    setRightRgbColor,
+    setRightSpeed,
+    setRigthHue
   ] = useRgb('RIGHT');
 
   const TPadToggleChange = (value: boolean) => {
@@ -124,39 +134,14 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             )}
             {rightMode !== RgbModes.DYNAMIC && (
               <>
+                
+                <div className="ColorPicker_HSlider">
                 <SliderField
-                  label="Red"
-                  value={redR}
-                  showValue={true}
-                  min={0}
-                  max={255}
-                  validValues="range"
-                  onChange={(value) => {
-                    setRightColor('red', value);
-                  }}
+                  showValue editableValue label="Hue"
+                  value={hueR} min={0} max={359}
+                  onChange={(value) => setRigthHue(value)}
                 />
-                <SliderField
-                  label="Green"
-                  value={greenR}
-                  showValue={true}
-                  min={0}
-                  max={255}
-                  validValues="range"
-                  onChange={(value) => {
-                    setRightColor('green', value);
-                  }}
-                />
-                <SliderField
-                  label="Blue"
-                  value={blueR}
-                  showValue={true}
-                  min={0}
-                  max={255}
-                  validValues="range"
-                  onChange={(value) => {
-                    setRightColor('blue', value);
-                  }}
-                />
+                </div>
                 <div
                   style={{
                     width: '100%',
@@ -211,39 +196,13 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             )}
             {leftMode !== RgbModes.DYNAMIC && (
               <>
+                <div className="ColorPicker_HSlider">
                 <SliderField
-                  label="Red"
-                  value={redL}
-                  showValue={true}
-                  min={0}
-                  max={255}
-                  validValues="range"
-                  onChange={(value) => {
-                    setLeftColor('red', value);
-                  }}
+                  showValue editableValue label="Hue"
+                  value={hueL} min={0} max={359}
+                  onChange={(value) => setLeftHue(value)}
                 />
-                <SliderField
-                  label="Green"
-                  value={greenL}
-                  showValue={true}
-                  min={0}
-                  max={255}
-                  validValues="range"
-                  onChange={(value) => {
-                    setLeftColor('green', value);
-                  }}
-                />
-                <SliderField
-                  label="Blue"
-                  value={blueL}
-                  showValue={true}
-                  min={0}
-                  max={255}
-                  validValues="range"
-                  onChange={(value) => {
-                    setLeftColor('blue', value);
-                  }}
-                />
+                </div>
                 <div
                   style={{
                     width: '100%',
@@ -257,6 +216,26 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
             )}
           </>
         )}
+
+        <style>
+          {`
+            .ColorPicker_HSlider .${gamepadSliderClasses.SliderTrack} {
+              background: linear-gradient(
+                to right,
+                hsl(0, 100%, 50%),
+                hsl(60, 100%, 50%),
+                hsl(120, 100%, 50%),
+                hsl(180, 100%, 50%),
+                hsl(240, 100%, 50%),
+                hsl(300, 100%, 50%),
+                hsl(360, 100%, 50%)
+              ) !important;
+              --left-track-color: #0000 !important;
+              --colored-toggles-main-color: #0000 !important;
+            }
+          `}
+        </style>
+        
 
         <ToggleField
           label="Touchpad"
