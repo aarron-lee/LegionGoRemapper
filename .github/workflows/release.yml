@@ -30,7 +30,7 @@ jobs:
           pnpm install --no-frozen-lockfile
           pnpm update decky-frontend-lib --latest
           pnpm run build
-          tar -czvf LegionGoRemapper.tar.gz --transform 's,^,LegionGoRemapper/,' dist backend bin *.py *.json *.md *.js LICENSE
+          tar -czvf LegionGoRemapper.tar.gz --transform 's,^,LegionGoRemapper/,' dist backend bin py_modules *.py *.json *.md *.js LICENSE
         continue-on-error: true
 
       - name: show files
