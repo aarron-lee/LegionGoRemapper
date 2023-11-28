@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { rgbSlice, saveRgbSettingsMiddleware } from './rgbSlice';
 import { uiSlice } from './uiSlice';
+import { controllerSlice } from './controllerSlice';
 
 export const store = configureStore({
   reducer: {
     ui: uiSlice.reducer,
-    rgb: rgbSlice.reducer
+    rgb: rgbSlice.reducer,
+    controller: controllerSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([saveRgbSettingsMiddleware])
