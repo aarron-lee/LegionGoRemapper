@@ -1,5 +1,6 @@
 import os
 from settings import SettingsManager
+from controller_enums import Controller, RemappableButtons, RemapActions
 
 settings_directory = os.environ["DECKY_PLUGIN_SETTINGS_DIR"]
 settings_path = os.path.join(settings_directory, 'settings.json')
@@ -88,3 +89,22 @@ def set_all_controller_profiles(controller_profiles):
 
     setting_file.settings['controller'] = profiles
     setting_file.commit()
+
+def sync_controller_profile_settings(current_game_id):
+    settings = get_settings()
+    controller_profile = settings.get('controller').get(current_game_id, {})
+
+    # for remappable_button_name in controller_profile.items():
+    #     controller_code = None
+    #     if remappable_button_name in ['Y3', 'M2', 'M3']:
+    #         # remap command for right
+    #         controller_code = Controller['RIGHT'].value
+    #     elif remappable_button_name in ['Y1', 'Y2']:
+    #         controller_code = Controller['LEFT'].value
+    #     if not controller_code:
+    #         return
+    #     btn_code = RemappableButtons[remappable_button_name].value
+    #     action_code = RemapActions[action].value
+    #     remap_command = legion_configurator.create_button_remap_command(controller_code, btn_code, action_code)
+
+    #     legion_configurator.send_command(remap_command)
