@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { get, merge } from 'lodash';
+import { debounce, get, merge } from 'lodash';
 import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
@@ -133,18 +133,21 @@ export const rgbSlice = createSlice({
         red: number;
         green: number;
         blue: number;
+        hue: number;
       }>
     ) => {
-      const { controller, red, green, blue } = action.payload;
+      const { controller, red, green, blue, hue } = action.payload;
       const currentGameId = extractCurrentGameId();
       if (state.perGameProfilesEnabled) {
         state.rgbProfiles[currentGameId][controller].red = red;
         state.rgbProfiles[currentGameId][controller].green = green;
         state.rgbProfiles[currentGameId][controller].blue = blue;
+        state.rgbProfiles[currentGameId][controller].hue = hue;
       } else {
         state.rgbProfiles['default'][controller].red = red;
         state.rgbProfiles['default'][controller].green = green;
         state.rgbProfiles['default'][controller].blue = blue;
+        state.rgbProfiles['default'][controller].hue = hue;
       }
     },
     setEnabled: (
@@ -280,6 +283,25 @@ const mutatingActionTypes = [
   rgbSlice.actions.setHue.type
 ];
 
+// persist RGB settings to the backend
+const saveRgbSettings = (store: any) => {
+  const serverApi = getServerApi();
+
+  const {
+    rgb: { rgbProfiles, perGameProfilesEnabled }
+  } = store.getState();
+  const currentGameId = perGameProfilesEnabled
+    ? extractCurrentGameId()
+    : 'default';
+
+  serverApi?.callPluginMethod('save_rgb_settings', {
+    rgbProfiles,
+    currentGameId
+  });
+};
+
+const debouncedSaveRgbSettings = debounce(saveRgbSettings, 100);
+
 export const saveRgbSettingsMiddleware =
   (store: any) => (next: any) => (action: any) => {
     const { type } = action;
@@ -288,18 +310,8 @@ export const saveRgbSettingsMiddleware =
     const result = next(action);
 
     if (mutatingActionTypes.includes(type)) {
-      // get latest state from store
-      const {
-        rgb: { rgbProfiles, perGameProfilesEnabled }
-      } = store.getState();
-      const currentGameId = perGameProfilesEnabled
-        ? extractCurrentGameId()
-        : 'default';
-
-      serverApi?.callPluginMethod('save_rgb_settings', {
-        rgbProfiles,
-        currentGameId
-      });
+      // save to backend
+      debouncedSaveRgbSettings(store);
     }
     if (type === setInitialState.type || type === setCurrentGameId.type) {
       // tell backend to sync LEDs to current FE state
