@@ -107,7 +107,7 @@ export const useRgb = (controller: ControllerType) => {
     //Convert hue to RGB
     const [r, g, b] = hslToRgb(hue, 100, 50);
     // Dispatch action to update RGB values
-    return dispatch(rgbSlice.actions.setRgbColor({ controller, red: r, green: g, blue: b }));
+    return dispatch(rgbSlice.actions.setHue({ controller, hue }));
   }
   
 
