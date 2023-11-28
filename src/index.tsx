@@ -1,8 +1,6 @@
 import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib';
 import { memo, VFC } from 'react';
 
-// import { createServerApiHelpers } from './backend/utils';
-import { FaShip } from 'react-icons/fa';
 import RemapButtons from './components/controller/RemapButtons';
 import ControllerLightingPanel from './components/rgb/ControllerLightingPanel';
 import { createServerApiHelpers, saveServerApi } from './backend/utils';
@@ -11,7 +9,7 @@ import { getInitialLoading } from './redux-modules/uiSlice';
 import { setInitialState } from './redux-modules/extraActions';
 import { Provider, useSelector } from 'react-redux';
 import { currentGameIdListener } from './backend/currentGameIdListener';
-import { Icon } from './svgs/Icon';
+import logo from '../assets/Icon.png';
 
 const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
   const loading = useSelector(getInitialLoading);
@@ -53,9 +51,14 @@ export default definePlugin((serverApi: ServerAPI) => {
     title: <div className={staticClasses.Title}>LegionGoRemapper</div>,
     content: <AppContainer serverAPI={serverApi} />,
     icon: (
-      <span>
-        <Icon />
-      </span>
+      <img
+        src={logo}
+        style={{
+          width: '1rem',
+          filter:
+            'invert(100%) sepia(0%) saturate(2%) hue-rotate(157deg) brightness(107%) contrast(101%)'
+        }}
+      />
     ),
     onDismount() {
       clearListener();
