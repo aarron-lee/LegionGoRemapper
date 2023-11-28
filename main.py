@@ -41,7 +41,7 @@ class Plugin:
 
     async def save_controller_settings(self, controllerProfiles, currentGameId):
         result = settings.set_all_controller_profiles(controllerProfiles)
-        if False:
+        if currentGameId:
             settings.sync_controller_profile_settings(currentGameId)
         return result
 
