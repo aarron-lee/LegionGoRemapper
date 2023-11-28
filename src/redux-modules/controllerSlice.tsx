@@ -118,7 +118,8 @@ export const selectButtonRemapAction =
 const mutatingActionTypes = [
   controllerSlice.actions.setPerGameProfilesEnabled.type,
   controllerSlice.actions.remapButton.type,
-  controllerSlice.actions.updateControllerProfiles.type
+  controllerSlice.actions.updateControllerProfiles.type,
+  setCurrentGameId.type
 ];
 
 export const saveControllerSettingsMiddleware =
