@@ -14,7 +14,8 @@ const DEFAULT_RGB_LIGHT_VALUES: RgbLight = {
   red: 255,
   green: 255,
   blue: 255,
-  brightness: 50
+  brightness: 50,
+  hue: 50
 };
 
 enum Colors {
@@ -31,6 +32,7 @@ type RgbLight = {
   green: number;
   blue: number;
   brightness: number;
+  hue: number;
 };
 
 type RgbProfile = { LEFT: RgbLight; RIGHT: RgbLight };
@@ -176,6 +178,27 @@ export const rgbSlice = createSlice({
         key: 'brightness',
         value: brightness
       });
+    },
+    setHue: (
+      state,
+      action: PayloadAction<{
+        controller: ControllerType;
+        hue: number;
+      }>
+    ) => {
+      const { controller, hue } = action.payload;
+      const currentGameId = extractCurrentGameId();
+      if (state.perGameProfilesEnabled) {
+        state.rgbProfiles[currentGameId][controller].hue = hue;
+      } else {
+        state.rgbProfiles['default'][controller].hue = hue;
+      }
+      setStateValue({
+        sliceState: state,
+        controller,
+        key: 'hue',
+        value: hue
+      });
     }
   },
   extraReducers: (builder) => {
@@ -253,7 +276,8 @@ const mutatingActionTypes = [
   rgbSlice.actions.setRgbMode.type,
   rgbSlice.actions.setRgbColor.type,
   rgbSlice.actions.setSpeed.type,
-  rgbSlice.actions.setBrightness.type
+  rgbSlice.actions.setBrightness.type,
+  rgbSlice.actions.setHue.type
 ];
 
 export const saveRgbSettingsMiddleware =
