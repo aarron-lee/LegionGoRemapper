@@ -3,8 +3,8 @@ import { memo, VFC } from 'react';
 
 // import { createServerApiHelpers } from './backend/utils';
 import { FaShip } from 'react-icons/fa';
-import RemapButtons from './components/RemapButtons';
-import ControllerLightingPanel from './components/ControllerLightingPanel';
+import RemapButtons from './components/controller/RemapButtons';
+import ControllerLightingPanel from './components/rgb/ControllerLightingPanel';
 import { createServerApiHelpers, saveServerApi } from './backend/utils';
 import { store } from './redux-modules/store';
 import { getInitialLoading } from './redux-modules/uiSlice';
@@ -52,7 +52,11 @@ export default definePlugin((serverApi: ServerAPI) => {
   return {
     title: <div className={staticClasses.Title}>LegionGoRemapper</div>,
     content: <AppContainer serverAPI={serverApi} />,
-    icon: <FaShip />,
+    icon: (
+      <span>
+        <Icon />
+      </span>
+    ),
     onDismount() {
       clearListener();
     }

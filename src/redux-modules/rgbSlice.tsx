@@ -300,7 +300,7 @@ const saveRgbSettings = (store: any) => {
   });
 };
 
-const debouncedSaveRgbSettings = debounce(saveRgbSettings, 500);
+const debouncedSaveRgbSettings = debounce(saveRgbSettings, 300);
 
 export const saveRgbSettingsMiddleware =
   (store: any) => (next: any) => (action: any) => {

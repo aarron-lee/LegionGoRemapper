@@ -1,15 +1,13 @@
 import { FC } from 'react';
 import { DropdownItem } from 'decky-frontend-lib';
-import { RemapActions, RemappableButtons } from '../backend/constants';
-import { useRemapAction } from '../hooks/controller';
+import { RemapActions, RemappableButtons } from '../../backend/constants';
+import { useRemapAction } from '../../hooks/controller';
 
 type PropType = {
-  label: string;
   btn: RemappableButtons;
-  description?: string;
 };
 
-const RemapActionDropdown: FC<PropType> = ({ label, btn }) => {
+const RemapActionDropdown: FC<PropType> = ({ btn }) => {
   const { remapAction, setRemapAction } = useRemapAction(btn);
   const dropdownOptions = Object.values(RemapActions).map((action) => {
     return {

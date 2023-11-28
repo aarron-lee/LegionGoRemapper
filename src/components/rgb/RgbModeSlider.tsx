@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { SliderField, NotchLabel } from 'decky-frontend-lib';
-import { ControllerType } from '../backend/constants';
-import { useRgbMode } from '../hooks/rgb';
+import { ControllerType } from '../../backend/constants';
+import { useRgbMode } from '../../hooks/rgb';
 
 enum Mode {
   SOLID = 0,
