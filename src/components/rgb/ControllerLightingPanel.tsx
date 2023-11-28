@@ -13,9 +13,9 @@ import {
   usePerGameRgbProfilesEnabled,
   useRgbProfileDisplayName,
   useRgbMode
-} from '../hooks/rgb';
+} from '../../hooks/rgb';
 import RgbModeSlider from './RgbModeSlider';
-import { RgbModes } from '../backend/constants';
+import { RgbModes } from '../../backend/constants';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 
 const DEFAULT_STATE = {

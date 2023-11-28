@@ -4,7 +4,7 @@ import { memo, VFC } from 'react';
 // import { createServerApiHelpers } from './backend/utils';
 import { FaShip } from 'react-icons/fa';
 import RemapButtons from './components/RemapButtons';
-import ControllerLightingPanel from './components/ControllerLightingPanel';
+import ControllerLightingPanel from './components/rgb/ControllerLightingPanel';
 import { createServerApiHelpers, saveServerApi } from './backend/utils';
 import { store } from './redux-modules/store';
 import { getInitialLoading } from './redux-modules/uiSlice';
