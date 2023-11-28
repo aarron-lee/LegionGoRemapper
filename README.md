@@ -103,6 +103,10 @@ Standard procedure for licenses is to have your chosen license at the top of the
 
 We cannot and will not distribute your plugin on the Plugin Store if it's license requires it's inclusion but you have not included a license to be re-distributed with your plugin in the root of your git repository.
 
+# Attribution
+
+> PromptFont by Yukari "Shinmera" Hafner, available at https://shinmera.com/promptfont
+
 # Udev rule:
 
 ```
