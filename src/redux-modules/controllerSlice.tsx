@@ -5,6 +5,7 @@ import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi, logInfo } from '../backend/utils';
 import { RemapActions, RemappableButtons } from '../backend/constants';
+import { Router } from 'decky-frontend-lib';
 
 const DEFAULT_CONTROLLER_VALUES = {
   Y1: RemapActions.DISABLED,
@@ -110,6 +111,14 @@ export const selectButtonRemapAction =
       return get(state, `controller.controllerProfiles.default.${button}`);
     }
   };
+
+export const selectControllerProfileDisplayName = (state: RootState) => {
+  if (state.controller.perGameProfilesEnabled) {
+    return Router.MainRunningApp?.display_name || 'Default';
+  } else {
+    return 'Default';
+  }
+};
 
 // -------------
 // middleware

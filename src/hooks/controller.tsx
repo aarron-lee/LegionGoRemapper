@@ -2,7 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   controllerSlice,
   selectButtonRemapAction,
-  selectControllerPerGameProfilesEnabled
+  selectControllerPerGameProfilesEnabled,
+  selectControllerProfileDisplayName
 } from '../redux-modules/controllerSlice';
 import { RemapActions, RemappableButtons } from '../backend/constants';
 
@@ -30,4 +31,8 @@ export const useRemapAction = (btn: RemappableButtons) => {
   };
 
   return { remapAction, setRemapAction };
+};
+
+export const useControllerProfileDisplayName = () => {
+  return useSelector(selectControllerProfileDisplayName);
 };
