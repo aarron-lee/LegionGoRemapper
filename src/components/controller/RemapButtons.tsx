@@ -32,7 +32,11 @@ const RemapButtons: FC = () => {
           onChange={setControllerPerGameEnabled}
         />
       </PanelSectionRow>
-
+      <ToggleField
+        label="Touchpad"
+        checked={touchpadEnabled}
+        onChange={(value) => setTouchpad(value)}
+      ></ToggleField>
       {btns.map((btn, idx) => {
         return (
           <IconRow btn={btn}>
@@ -40,12 +44,6 @@ const RemapButtons: FC = () => {
           </IconRow>
         );
       })}
-
-      <ToggleField
-        label="Touchpad"
-        checked={touchpadEnabled}
-        onChange={(value) => setTouchpad(value)}
-      ></ToggleField>
     </PanelSection>
   );
 };
