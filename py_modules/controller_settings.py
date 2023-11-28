@@ -78,15 +78,13 @@ def set_all_rgb_profiles(rgb_profiles):
         )
 
 
-def set_game_profile_setting(profileName: str, key: str, value):
-    setting_file.read()
-    if not setting_file.settings.get('gameProfiles'):
-        setting_file.settings['gameProfiles'] = {}
-    game_profiles  = setting_file.settings['gameProfiles']
-    if not game_profiles.get(profileName):
-        game_profiles[profileName] = {}
+def set_all_controller_profiles(controller_profiles):
+    settings = get_settings()
 
-    setting_file.settings['gameProfiles'][profileName][key] = value
-    
-    # save to settings file
+    if not settings.get('controller'):
+        settings['controller'] = {}
+    profiles = settings['controller']
+    deep_merge(controller_profiles, profiles)
+
+    setting_file.settings['controller'] = profiles
     setting_file.commit()

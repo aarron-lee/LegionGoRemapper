@@ -41,8 +41,8 @@ class Plugin:
 
     async def save_controller_settings(self, controllerProfiles, currentGameId):
         result = settings.set_all_controller_profiles(controllerProfiles)
-        if currentGameId:
-            rgb.sync_controller_profile_settings(currentGameId)
+        if False:
+            settings.sync_controller_profile_settings(currentGameId)
         return result
 
     async def save_rgb_settings(self, rgbProfiles, currentGameId):

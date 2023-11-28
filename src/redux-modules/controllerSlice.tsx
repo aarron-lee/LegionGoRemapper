@@ -70,15 +70,14 @@ export const controllerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
-      const settings = action.payload;
-
-      logInfo(`intialstate settings ${JSON.stringify(settings)}`);
+      const controllerProfiles = action.payload
+        .controller as ControllerProfiles;
 
       // const perGameProfilesEnabled = Boolean(
       //   action.payload.controllerPerGameProfilesEnabled
       // );
 
-      // state.controllerProfiles = controllerProfiles;
+      state.controllerProfiles = controllerProfiles;
       // state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -125,11 +124,29 @@ const mutatingActionTypes = [
 export const saveControllerSettingsMiddleware =
   (store: any) => (next: any) => (action: any) => {
     const { type } = action;
+    const serverApi = getServerApi();
 
     const result = next(action);
 
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
+      const {
+        controller: { controllerProfiles, perGameProfilesEnabled }
+      } = store.getState();
+      let currentGameId;
+      if (perGameProfilesEnabled) {
+        currentGameId = extractCurrentGameId();
+      } else {
+        currentGameId = 'default';
+      }
+
+      logInfo('save to BE -------');
+      logInfo(controllerProfiles);
+
+      serverApi?.callPluginMethod('save_controller_settings', {
+        controllerProfiles,
+        currentGameId
+      });
     }
 
     return result;
