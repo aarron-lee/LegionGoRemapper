@@ -8,15 +8,11 @@ import {
 } from 'decky-frontend-lib';
 import { VFC } from 'react';
 import { useState } from 'react';
-import {
-  useRgb,
-  usePerGameRgbProfilesEnabled,
-  useRgbProfileDisplayName,
-  useRgbMode
-} from '../../hooks/rgb';
+import { useRgb, useRgbProfileDisplayName, useRgbMode } from '../../hooks/rgb';
 import RgbModeSlider from './RgbModeSlider';
 import { RgbModes } from '../../backend/constants';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
+import { RgbPerGameProfilesToggle } from './RgbPerGameProfilesToggle';
 
 const DEFAULT_STATE = {
   isTouchpad: true
@@ -28,8 +24,6 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   const [leftMode] = useRgbMode('LEFT');
   const [rightMode] = useRgbMode('RIGHT');
 
-  const [perGameProfilesEnabled, setPerGameProfilesEnabled] =
-    usePerGameRgbProfilesEnabled();
   const displayName = useRgbProfileDisplayName();
   const [isTouchpad, setIsTouchpad] = useState(DEFAULT_STATE.isTouchpad);
 
@@ -66,11 +60,7 @@ const ControllerLightingPanel: VFC<{ serverAPI: ServerAPI }> = ({
   return (
     <PanelSection title={title}>
       <div>
-        <ToggleField
-          label="Enable Per Game Profiles"
-          checked={perGameProfilesEnabled}
-          onChange={setPerGameProfilesEnabled}
-        />
+        <RgbPerGameProfilesToggle />
         <ToggleField
           label="Right Controller LED"
           checked={isRightRgbOn}
