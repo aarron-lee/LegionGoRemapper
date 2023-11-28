@@ -3,7 +3,7 @@ import { memo, VFC } from 'react';
 import { FaShip } from 'react-icons/fa';
 
 // import { createServerApiHelpers } from './backend/utils';
-// import RemapButtons from './components/RemapButtons';
+import RemapButtons from './components/RemapButtons';
 import ControllerLightingPanel from './components/ControllerLightingPanel';
 import { createServerApiHelpers, saveServerApi } from './backend/utils';
 import { store } from './redux-modules/store';
@@ -20,7 +20,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
   return (
     <>
       <ControllerLightingPanel serverAPI={serverAPI} />
-      {/* <RemapButtons serverAPI={serverAPI} /> */}
+      <RemapButtons />
     </>
   );
 });

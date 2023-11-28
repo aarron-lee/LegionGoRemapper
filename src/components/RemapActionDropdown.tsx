@@ -1,17 +1,16 @@
-import { useState, FC } from 'react';
+import { FC } from 'react';
 import { DropdownItem } from 'decky-frontend-lib';
 import { RemapActions, RemappableButtons } from '../backend/constants';
+import { useRemapAction } from '../hooks/controller';
 
 type PropType = {
   label: string;
   btn: RemappableButtons;
   description?: string;
-  onChange?: any;
-  logInfo?: any;
 };
 
-const RemapActionDropdown: FC<PropType> = ({ label, btn, onChange }) => {
-  const [selected, setSelected] = useState<RemapActions>(RemapActions.DISABLED);
+const RemapActionDropdown: FC<PropType> = ({ label, btn }) => {
+  const { remapAction, setRemapAction } = useRemapAction(btn);
   const dropdownOptions = Object.values(RemapActions).map((action) => {
     return {
       data: action,
@@ -32,12 +31,13 @@ const RemapActionDropdown: FC<PropType> = ({ label, btn, onChange }) => {
             value: o.value
           };
         })}
-        selectedOption={dropdownOptions.find((o) => {
-          return o.data === selected;
-        })}
+        selectedOption={
+          dropdownOptions.find((o) => {
+            return o.data === remapAction;
+          })?.data || RemapActions.DISABLED
+        }
         onChange={(value: any) => {
-          onChange && onChange(btn, value.data);
-          setSelected(value.data);
+          setRemapAction(value.data);
         }}
       />
     </>
