@@ -24,15 +24,6 @@ Included Functionality in this plugin:
 
 **Requirements**
 
-You must have python-hid installed on your device.
-
-To install it on ChimeraOS, run:
-
-```
-sudo frzr-unlock
-sudo pikaur python-hid
-```
-
 add Udev rules to your device.
 
 Create a file at `/etc/udev/rules.d/99-usb-tweak.rules`, and add the following to the file:
