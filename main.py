@@ -1,6 +1,5 @@
 import os
 import logging
-import hid
 
 # The decky plugin module is located at decky-loader/plugin
 # For easy intellisense checkout the decky-loader code one directory up
@@ -10,6 +9,7 @@ import decky_plugin
 import legion_configurator
 import controller_enums
 import rgb
+import controllers
 import controller_settings as settings
 
 
@@ -25,10 +25,6 @@ except Exception as e:
     logging.error(f"exception|{e}")
 
 class Plugin:
-    # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
-    async def add(self, left, right):
-        return left + right
-
     # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
     async def _main(self):
         decky_plugin.logger.info("Hello World!")
@@ -45,12 +41,14 @@ class Plugin:
         
         settings.set_setting('controllerPerGameProfilesEnabled', controllerPerGameProfilesEnabled)
         result = settings.set_all_controller_profiles(controllerProfiles)
+
+        # sync settings.json to actual controller hardware
         if currentGameId:
-            settings.sync_controller_profile_settings(currentGameId)
+            controllers.sync_controller_profile_settings(currentGameId)
             # sync touchpad
-            settings.sync_touchpad(currentGameId)
+            controllers.sync_touchpad(currentGameId)
             # sync gyros
-            settings.sync_gyros(currentGameId)
+            controllers.sync_gyros(currentGameId)
         return result
 
     async def save_rgb_settings(self, rgbProfiles, currentGameId):
@@ -61,14 +59,12 @@ class Plugin:
 
     # sync state in settings.json to actual controller RGB hardware
     async def sync_rgb_settings(self, currentGameId):
-        # decky_plugin.logger.info(f"sync rgb settings {currentGameId}")
         return rgb.sync_rgb_settings(currentGameId)
 
     async def remap_button(self, button: str, action: str):
         decky_plugin.logger.info(f"remap_button {button} {action}")
         controller_code = None
         if button in ['Y3', 'M2', 'M3']:
-            # remap command for right
             controller_code = controller_enums.Controller['RIGHT'].value
         elif button in ['Y1', 'Y2']:
             controller_code = controller_enums.Controller['LEFT'].value
