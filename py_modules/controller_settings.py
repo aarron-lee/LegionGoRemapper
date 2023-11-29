@@ -2,7 +2,7 @@ import os
 import decky_plugin
 import legion_configurator
 from settings import SettingsManager
-from controller_enums import Controller, RemappableButtons, RemapActions
+from controller_enums import Controller, RemappableButtons, RemapActions, GyroRemapActions, Gyro
 
 settings_directory = os.environ["DECKY_PLUGIN_SETTINGS_DIR"]
 settings_path = os.path.join(settings_directory, 'settings.json')
@@ -80,7 +80,6 @@ def set_all_rgb_profiles(rgb_profiles):
             values=right
         )
 
-
 def set_all_controller_profiles(controller_profiles):
     settings = get_settings()
 
@@ -124,3 +123,20 @@ def sync_touchpad(current_game_id):
         legion_configurator.send_command(t_toggle)
     except Exception as e:
         decky_plugin.logger.error(f"sync_touchpad: {e}")
+
+def sync_gyros(current_game_id):
+    settings = get_settings()
+    controller_profile = settings.get('controller').get(current_game_id, {})
+
+    for gyro in [g.name for g in Gyro]:
+        try:
+            gyro_remap_action = controller_profile.get(gyro)
+            gyro_remap_action_code = GyroRemapActions[gyro_remap_action].value
+            gyro_code = Gyro[gyro].value
+
+            if gyro_remap_action_code >= 0 and gyro_code > 0:
+                # valid codes, set gyro
+                gyro_command = legion_configurator.create_gyro_remap_command(gyro_code, gyro_remap_action_code)
+                legion_configurator.send_command(gyro_command)
+        except Exception as e:
+            decky_plugin.logger.error(f"sync_gyros {e}")
