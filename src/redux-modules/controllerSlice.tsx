@@ -181,6 +181,7 @@ const mutatingActionTypes = [
   controllerSlice.actions.remapButton.type,
   controllerSlice.actions.updateControllerProfiles.type,
   controllerSlice.actions.setTouchpad.type,
+  controllerSlice.actions.setGyro.type,
   setCurrentGameId.type
 ];
 
