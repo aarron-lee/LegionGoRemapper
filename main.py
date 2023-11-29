@@ -47,8 +47,10 @@ class Plugin:
         result = settings.set_all_controller_profiles(controllerProfiles)
         if currentGameId:
             settings.sync_controller_profile_settings(currentGameId)
-            # also sync touchpad
+            # sync touchpad
             settings.sync_touchpad(currentGameId)
+            # sync gyros
+            settings.sync_gyros(currentGameId)
         return result
 
     async def save_rgb_settings(self, rgbProfiles, currentGameId):

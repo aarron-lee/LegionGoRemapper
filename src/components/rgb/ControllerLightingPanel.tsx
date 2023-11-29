@@ -1,6 +1,5 @@
 import { PanelSection } from 'decky-frontend-lib';
 import { VFC } from 'react';
-// import { useState } from 'react';
 import { useRgbProfileDisplayName } from '../../hooks/rgb';
 import { RgbPerGameProfilesToggle } from './RgbPerGameProfilesToggle';
 import { RgbSettings } from './RgbSettings';

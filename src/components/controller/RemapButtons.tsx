@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { RemappableButtons } from '../../backend/constants';
+import { Gyro, RemappableButtons } from '../../backend/constants';
 import RemapActionDropdown from './RemapActionDropdown';
 import { PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
 import {
@@ -8,9 +8,11 @@ import {
   useTouchpadEnabled
 } from '../../hooks/controller';
 import { IconRow } from '../IconRow';
+import GyroRemapActionDropdown from './gyroRemapActionDropdown';
 
 const RemapButtons: FC = () => {
   const btns = Object.values(RemappableButtons);
+  const gyros = Object.values(Gyro);
   const displayName = useControllerProfileDisplayName();
   const { controllerPerGameEnabled, setControllerPerGameEnabled } =
     useControllerPerGameEnabled();
@@ -32,20 +34,21 @@ const RemapButtons: FC = () => {
           onChange={setControllerPerGameEnabled}
         />
       </PanelSectionRow>
-
-      {btns.map((btn, idx) => {
-        return (
-          <IconRow btn={btn}>
-            <RemapActionDropdown btn={btn} key={idx} />
-          </IconRow>
-        );
-      })}
-
       <ToggleField
         label="Touchpad"
         checked={touchpadEnabled}
         onChange={(value) => setTouchpad(value)}
       ></ToggleField>
+      {btns.map((btn, idx) => {
+        return (
+          <IconRow btn={btn} key={idx}>
+            <RemapActionDropdown btn={btn} />
+          </IconRow>
+        );
+      })}
+      {gyros.map((gyro, idx) => {
+        return <GyroRemapActionDropdown gyro={gyro} key={idx} />;
+      })}
     </PanelSection>
   );
 };

@@ -49,3 +49,12 @@ class RgbModes(Enum):
     SOLID = 0x01
     DYNAMIC = 0x03
     PULSE = 0x02
+
+class Gyro(Enum):
+    LEFT_GYRO = 0x01
+    RIGHT_GYRO = 0x02
+
+class GyroRemapActions(Enum):
+    DISABLED = 0x00
+    LEFT_JOYSTICK = 0x01
+    RIGHT_JOYSTICK = 0x02

@@ -121,6 +121,6 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="17ef", GROUP="plugdev", MODE="0660"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="17ef", MODE="0666"
 ```
 
-save to `/etc/udev/rules.d/99-usb-tweak.rules``
+save to `/etc/udev/rules.d/99-usb-tweak.rules`
 
 then `sudo udevadm control --reload`
