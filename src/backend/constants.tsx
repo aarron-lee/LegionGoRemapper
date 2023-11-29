@@ -46,3 +46,14 @@ export enum RgbModes {
   DYNAMIC = 'DYNAMIC',
   PULSE = 'PULSE'
 }
+
+export enum Gyro {
+  LEFT_GYRO = 'LEFT_GYRO',
+  RIGHT_GYRO = 'RIGHT_GYRO'
+}
+
+export enum GyroRemapActions {
+  DISABLED = 'DISABLED',
+  LEFT_JOYSTICK = 'LEFT_JOYSTICK',
+  RIGHT_JOYSTICK = 'RIGHT_JOYSTICK'
+}
