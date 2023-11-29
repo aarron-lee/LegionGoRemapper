@@ -4,16 +4,23 @@ import { get, set, merge } from 'lodash';
 import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
-import { RemapActions, RemappableButtons } from '../backend/constants';
+import {
+  Gyro,
+  GyroRemapActions,
+  RemapActions,
+  RemappableButtons
+} from '../backend/constants';
 import { Router } from 'decky-frontend-lib';
 
-const DEFAULT_CONTROLLER_VALUES = {
+const DEFAULT_CONTROLLER_VALUES: ControllerProfile = {
   Y1: RemapActions.DISABLED,
   Y2: RemapActions.DISABLED,
   Y3: RemapActions.DISABLED,
   M2: RemapActions.DISABLED,
   M3: RemapActions.DISABLED,
-  TOUCHPAD: true
+  TOUCHPAD: true,
+  LEFT_GYRO: GyroRemapActions.DISABLED,
+  RIGHT_GYRO: GyroRemapActions.DISABLED
 };
 
 type ControllerProfile = {
@@ -23,6 +30,8 @@ type ControllerProfile = {
   M2: RemapActions;
   M3: RemapActions;
   TOUCHPAD: boolean;
+  LEFT_GYRO: GyroRemapActions;
+  RIGHT_GYRO: GyroRemapActions;
 };
 
 type ControllerProfiles = {
@@ -76,6 +85,17 @@ export const controllerSlice = createSlice({
         sliceState: state,
         key: 'TOUCHPAD',
         value: touchpadEnabled
+      });
+    },
+    setGyro: (
+      state,
+      action: PayloadAction<{ gyro: Gyro; remapAction: GyroRemapActions }>
+    ) => {
+      const { gyro, remapAction } = action.payload;
+      setStateValue({
+        sliceState: state,
+        key: gyro,
+        value: remapAction
       });
     }
   },
@@ -132,6 +152,17 @@ export const selectButtonRemapAction =
       return get(state, `controller.controllerProfiles.default.${button}`);
     }
   };
+
+export const selectGyroRemapAction = (gyro: Gyro) => (state: RootState) => {
+  if (state.controller.perGameProfilesEnabled) {
+    return get(
+      state,
+      `controller.controllerProfiles.${extractCurrentGameId()}.${gyro}`
+    );
+  } else {
+    return get(state, `controller.controllerProfiles.default.${gyro}`);
+  }
+};
 
 export const selectControllerProfileDisplayName = (state: RootState) => {
   if (state.controller.perGameProfilesEnabled) {

@@ -4,9 +4,15 @@ import {
   selectButtonRemapAction,
   selectControllerPerGameProfilesEnabled,
   selectControllerProfileDisplayName,
+  selectGyroRemapAction,
   selectTouchpadEnabled
 } from '../redux-modules/controllerSlice';
-import { RemapActions, RemappableButtons } from '../backend/constants';
+import {
+  Gyro,
+  GyroRemapActions,
+  RemapActions,
+  RemappableButtons
+} from '../backend/constants';
 
 export const useTouchpadEnabled = () => {
   const touchpadEnabled = useSelector(selectTouchpadEnabled);
@@ -42,6 +48,18 @@ export const useRemapAction = (btn: RemappableButtons) => {
   };
 
   return { remapAction, setRemapAction };
+};
+
+export const useGyroRemapAction = (gyro: Gyro) => {
+  const gyroRemapAction = useSelector(selectGyroRemapAction(gyro));
+  const dispatch = useDispatch();
+
+  const setGyroRemapAction = (remapAction: GyroRemapActions) => {
+    return dispatch(
+      controllerSlice.actions.setGyro({ gyro, remapAction: remapAction })
+    );
+  };
+  return { gyroRemapAction, setGyroRemapAction };
 };
 
 export const useControllerProfileDisplayName = () => {
