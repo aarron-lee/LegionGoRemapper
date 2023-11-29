@@ -21,7 +21,7 @@ const GyroRemapActionDropdown: FC<PropType> = ({ gyro }) => {
   return (
     <div>
       <DropdownItem
-        label={gyro}
+        label={gyro.split('_').join(' ')}
         bottomSeparator="none"
         rgOptions={dropdownOptions.map((o) => {
           return {
