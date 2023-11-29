@@ -44,9 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: LegionGoRemapper
-          path: |
-            LegionGoRemapper.tar.gz
-            LegionGoRemapper/
+          path: LegionGoRemapper.tar.gz
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
