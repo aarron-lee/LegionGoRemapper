@@ -9,7 +9,7 @@ const ControllerLightingPanel: VFC = () => {
 
   let title =
     displayName === 'Default'
-      ? 'Controller Lighting - Default'
+      ? 'Controller Lighting'
       : `Controller Lighting - ${displayName.substring(0, 10)}...`;
 
   return (

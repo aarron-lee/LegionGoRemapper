@@ -1,7 +1,7 @@
 {
   "name": "LegionGoRemapper",
   "author": "Aarron Lee",
-  "flags": ["root", "debug"],
+  "flags": ["root"],
   "publish": {
     "tags": ["root"],
     "description": "plugin for Legion Go Buttons, RGB, etc",
