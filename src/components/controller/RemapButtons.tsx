@@ -8,7 +8,7 @@ import {
   useTouchpadEnabled
 } from '../../hooks/controller';
 import { IconRow } from '../IconRow';
-import GyroRemapActionDropdown from './gyroRemapActionDropdown';
+import GyroRemapSlider from './GyroRemapSlider';
 
 const RemapButtons: FC = () => {
   const btns = Object.values(RemappableButtons);
@@ -47,7 +47,7 @@ const RemapButtons: FC = () => {
         );
       })}
       {gyros.map((gyro, idx) => {
-        return <GyroRemapActionDropdown gyro={gyro} key={idx} />;
+        return <GyroRemapSlider gyro={gyro} key={idx} />;
       })}
     </PanelSection>
   );

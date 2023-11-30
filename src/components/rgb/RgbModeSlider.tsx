@@ -26,7 +26,7 @@ const RgbModeSlider: FC<PropType> = ({ controller }) => {
     { notchIndex: 2, label: 'Pulse', value: 2 }
   ];
 
-  // reverse mapping from enum is str when it actually is num
+  // known bug: typescript has incorrect type for reverse mapping from enums
   const sliderValue = Mode[mode] as any;
 
   return (
