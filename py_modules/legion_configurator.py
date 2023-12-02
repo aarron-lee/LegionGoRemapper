@@ -1,4 +1,4 @@
-import hid
+import hidapi as hid
 import time
 # Global variables
 vendor_id = 0x17EF

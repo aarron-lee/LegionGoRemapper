@@ -19,16 +19,13 @@ jobs:
     steps:
       - name: set git global safe directory
         run: |
-          pacman -Syu git npm python --noconfirm
+          pacman -Syu git npm --noconfirm
           git config --global --add safe.directory $(realpath .)
 
       - uses: actions/checkout@v3
 
       - name: build plugin
         run: |
-          python -m venv venv
-          venv/bin/pip install -r requirements.txt
-          mv venv/lib64/*/site-packages/hid py_modules/
           npm i -g pnpm@8.5.1
           pnpm install --no-frozen-lockfile
           pnpm update decky-frontend-lib --latest
