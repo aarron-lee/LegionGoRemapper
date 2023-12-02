@@ -280,7 +280,8 @@ const mutatingActionTypes = [
   rgbSlice.actions.setRgbColor.type,
   rgbSlice.actions.setSpeed.type,
   rgbSlice.actions.setBrightness.type,
-  rgbSlice.actions.setHue.type
+  rgbSlice.actions.setHue.type,
+  setCurrentGameId.type
 ];
 
 // persist RGB settings to the backend
