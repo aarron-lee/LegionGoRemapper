@@ -44,7 +44,8 @@ export enum RemapActions {
 export enum RgbModes {
   SOLID = 'SOLID',
   DYNAMIC = 'DYNAMIC',
-  PULSE = 'PULSE'
+  PULSE = 'PULSE',
+  SPIRAL = 'SPIRAL'
 }
 
 export enum Gyro {

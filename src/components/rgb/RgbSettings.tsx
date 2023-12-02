@@ -15,6 +15,11 @@ const labelMap = {
   LEFT: 'Left'
 };
 
+const HIDE_COLOR_PICKER_MODES = [
+  RgbModes.DYNAMIC,
+  RgbModes.SPIRAL
+]
+
 export const RgbSettings: FC<{ controller: ControllerType }> = ({
   controller
 }) => {
@@ -75,7 +80,7 @@ export const RgbSettings: FC<{ controller: ControllerType }> = ({
               onChange={(value) => rgb.setSpeed(value)}
             ></SliderField>
           )}
-          {mode !== RgbModes.DYNAMIC && (
+          {!HIDE_COLOR_PICKER_MODES.includes(mode) && (
             <>
               <div className="ColorPicker_HSlider">
                 <SliderField

@@ -2,11 +2,13 @@ import { FC } from 'react';
 import { SliderField, NotchLabel } from 'decky-frontend-lib';
 import { ControllerType } from '../../backend/constants';
 import { useRgbMode } from '../../hooks/rgb';
+import { capitalize } from 'lodash';
 
 enum Mode {
   SOLID = 0,
   DYNAMIC = 1,
-  PULSE = 2
+  PULSE = 2,
+  SPIRAL = 3
 }
 
 type PropType = {
@@ -20,11 +22,9 @@ const RgbModeSlider: FC<PropType> = ({ controller }) => {
     return setMode(Mode[value]);
   };
 
-  const MODES: NotchLabel[] = [
-    { notchIndex: 0, label: 'Solid', value: 0 },
-    { notchIndex: 1, label: 'Dynamic', value: 1 },
-    { notchIndex: 2, label: 'Pulse', value: 2 }
-  ];
+  const MODES: NotchLabel[] = Object.keys(Mode).filter(key => isNaN(Number(key))).map((mode, idx) => {
+    return { notchIndex: idx, label: capitalize(mode), value: idx }
+  })
 
   // known bug: typescript has incorrect type for reverse mapping from enums
   const sliderValue = Mode[mode] as any;
@@ -34,9 +34,9 @@ const RgbModeSlider: FC<PropType> = ({ controller }) => {
       <SliderField
         value={sliderValue}
         min={0}
-        max={2}
+        max={MODES.length-1}
         step={1}
-        notchCount={3}
+        notchCount={MODES.length}
         notchLabels={MODES}
         notchTicksVisible={true}
         showValue={false}
