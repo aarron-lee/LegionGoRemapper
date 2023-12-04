@@ -1,21 +1,25 @@
 import hidapi as hid
 import time
+import decky_plugin
 # Global variables
 vendor_id = 0x17EF
 product_id_match = lambda x: x & 0xFFF0 == 0x6180
 usage_page = 0xFFA0
 global_config = None  # Global configuration for the device
 
-# Enumerate and set the global configuration
-for dev in hid.enumerate(vendor_id):
-    if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
-        global_config = dev
-        break
+try:
+    # Enumerate and set the global configuration
+    for dev in hid.enumerate(vendor_id):
+        if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
+            global_config = dev
+            break
+except Exception as e:
+    decky_plugin.logger.error("legion_configurator error: couldn't find device config {e}")
 
 if not global_config:
-    print("Legion go configuration device not found.")
+    decky_plugin.logger.error("Legion go configuration device not found.")
 else:
-    print(global_config)
+    decky_plugin.logger.info(global_config)
 
 
 def send_command(command):
