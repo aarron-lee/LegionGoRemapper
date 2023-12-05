@@ -42,19 +42,24 @@ class Plugin:
         settings.set_setting('controllerPerGameProfilesEnabled', controllerPerGameProfilesEnabled)
         result = settings.set_all_controller_profiles(controllerProfiles)
 
-        # sync settings.json to actual controller hardware
-        if currentGameId:
-            controllers.sync_controller_profile_settings(currentGameId)
-            # sync touchpad
-            controllers.sync_touchpad(currentGameId)
-            # sync gyros
-            controllers.sync_gyros(currentGameId)
+        # double-sync just in case the first one doesn't register
+        for _ in range(2):
+            # sync settings.json to actual controller hardware
+            if currentGameId:
+                controllers.sync_controller_profile_settings(currentGameId)
+                # sync touchpad
+                controllers.sync_touchpad(currentGameId)
+                # sync gyros
+                controllers.sync_gyros(currentGameId)
         return result
 
     async def save_rgb_settings(self, rgbProfiles, currentGameId):
         result = settings.set_all_rgb_profiles(rgbProfiles)
-        if currentGameId:
-            rgb.sync_rgb_settings(currentGameId)
+
+        # double-sync just in case the first one doesn't register
+        for _ in range(2):
+            if currentGameId:
+                rgb.sync_rgb_settings(currentGameId)
         return result
 
     # sync state in settings.json to actual controller RGB hardware
