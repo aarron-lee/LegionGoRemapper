@@ -41,11 +41,13 @@ type ControllerProfiles = {
 type ControllerState = {
   controllerProfiles: ControllerProfiles;
   perGameProfilesEnabled: boolean;
+  controllerRemappingEnabled: boolean;
 };
 
 const initialState: ControllerState = {
   controllerProfiles: {},
-  perGameProfilesEnabled: false
+  perGameProfilesEnabled: false,
+  controllerRemappingEnabled: true
 };
 
 export const controllerSlice = createSlice({
@@ -58,6 +60,10 @@ export const controllerSlice = createSlice({
       if (enabled) {
         bootstrapControllerProfile(state, extractCurrentGameId());
       }
+    },
+    setControllerRemappingEnabled: (state, action: PayloadAction<boolean>) => {
+      const enabled = action.payload;
+      state.controllerRemappingEnabled = enabled;
     },
     remapButton: (
       state,
@@ -107,7 +113,11 @@ export const controllerSlice = createSlice({
       const perGameProfilesEnabled = Boolean(
         action.payload.controllerPerGameProfilesEnabled
       );
+      const controllerRemappingEnabled = Boolean(
+        action.payload.controllerRemappingEnabled
+      );
 
+      state.controllerRemappingEnabled = controllerRemappingEnabled;
       state.controllerProfiles = controllerProfiles;
       state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
@@ -128,6 +138,10 @@ export const controllerSlice = createSlice({
 
 export const selectControllerPerGameProfilesEnabled = (state: RootState) => {
   return state.controller.perGameProfilesEnabled;
+};
+
+export const selectControllerRemappingEnabled = (state: RootState) => {
+  return state.controller.controllerRemappingEnabled;
 };
 
 export const selectTouchpadEnabled = (state: RootState) => {
@@ -182,6 +196,7 @@ const mutatingActionTypes = [
   controllerSlice.actions.updateControllerProfiles.type,
   controllerSlice.actions.setTouchpad.type,
   controllerSlice.actions.setGyro.type,
+  controllerSlice.actions.setControllerRemappingEnabled.type,
   setCurrentGameId.type
 ];
 
@@ -195,7 +210,7 @@ export const saveControllerSettingsMiddleware =
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
       const {
-        controller: { controllerProfiles, perGameProfilesEnabled }
+        controller: { controllerProfiles, perGameProfilesEnabled, controllerRemappingEnabled }
       } = store.getState();
       let currentGameId;
       if (perGameProfilesEnabled) {
@@ -204,7 +219,7 @@ export const saveControllerSettingsMiddleware =
         currentGameId = 'default';
       }
 
-      const controller = { controllerProfiles, perGameProfilesEnabled };
+      const controller = { controllerProfiles, perGameProfilesEnabled, controllerRemappingEnabled };
 
       serverApi?.callPluginMethod('save_controller_settings', {
         controller,

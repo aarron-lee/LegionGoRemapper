@@ -4,6 +4,7 @@ import {
   selectButtonRemapAction,
   selectControllerPerGameProfilesEnabled,
   selectControllerProfileDisplayName,
+  selectControllerRemappingEnabled,
   selectGyroRemapAction,
   selectTouchpadEnabled
 } from '../redux-modules/controllerSlice';
@@ -22,6 +23,19 @@ export const useTouchpadEnabled = () => {
     return dispatch(controllerSlice.actions.setTouchpad(enabled));
   };
   return { touchpadEnabled, setTouchpad };
+};
+
+export const useControllerRemappingEnabled = () => {
+  const controllerRemappingEnabled = useSelector(
+    selectControllerRemappingEnabled
+  );
+  const dispatch = useDispatch();
+
+  const setControllerRemappingEnabled = (enabled: boolean) => {
+    return dispatch(controllerSlice.actions.setControllerRemappingEnabled(enabled));
+  };
+
+  return { controllerRemappingEnabled, setControllerRemappingEnabled };
 };
 
 export const useControllerPerGameEnabled = () => {

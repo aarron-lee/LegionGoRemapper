@@ -5,6 +5,7 @@ import { PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
 import {
   useControllerPerGameEnabled,
   useControllerProfileDisplayName,
+  useControllerRemappingEnabled,
   useTouchpadEnabled
 } from '../../hooks/controller';
 import { IconRow } from '../IconRow';
@@ -16,6 +17,7 @@ const RemapButtons: FC = () => {
   const displayName = useControllerProfileDisplayName();
   const { controllerPerGameEnabled, setControllerPerGameEnabled } =
     useControllerPerGameEnabled();
+  const { controllerRemappingEnabled, setControllerRemappingEnabled } = useControllerRemappingEnabled()
 
   const { touchpadEnabled, setTouchpad } = useTouchpadEnabled();
 
@@ -26,30 +28,43 @@ const RemapButtons: FC = () => {
     : 'Remap Buttons';
 
   return (
-    <PanelSection title={title}>
-      <PanelSectionRow>
-        <ToggleField
-          label={'Enable Per Game Remaps'}
-          checked={controllerPerGameEnabled}
-          onChange={setControllerPerGameEnabled}
-        />
-      </PanelSectionRow>
-      <ToggleField
-        label="Touchpad"
-        checked={touchpadEnabled}
-        onChange={(value) => setTouchpad(value)}
-      ></ToggleField>
-      {btns.map((btn, idx) => {
-        return (
-          <IconRow btn={btn} key={idx}>
-            <RemapActionDropdown btn={btn} />
-          </IconRow>
-        );
-      })}
-      {gyros.map((gyro, idx) => {
-        return <GyroRemapSlider gyro={gyro} key={idx} />;
-      })}
-    </PanelSection>
+      <>
+        <PanelSection title={title}>
+          <PanelSectionRow>
+            <ToggleField
+              label={'Enable controller remaps'}
+              checked={controllerRemappingEnabled}
+              onChange={setControllerRemappingEnabled}
+            />
+          </PanelSectionRow>
+        { controllerRemappingEnabled && 
+            <>
+              <PanelSectionRow>
+                <ToggleField
+                  label={'Enable Per Game Remaps'}
+                  checked={controllerPerGameEnabled}
+                  onChange={setControllerPerGameEnabled}
+                />
+              </PanelSectionRow>
+              <ToggleField
+                label="Touchpad"
+                checked={touchpadEnabled}
+                onChange={(value) => setTouchpad(value)}
+              ></ToggleField>
+              {btns.map((btn, idx) => {
+                return (
+                  <IconRow btn={btn} key={idx}>
+                    <RemapActionDropdown btn={btn} />
+                  </IconRow>
+                );
+              })}
+              {gyros.map((gyro, idx) => {
+                return <GyroRemapSlider gyro={gyro} key={idx} />;
+              })}
+            </>
+          }
+        </PanelSection>
+      </>
   );
 };
 

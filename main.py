@@ -38,19 +38,22 @@ class Plugin:
     async def save_controller_settings(self, controller, currentGameId):
         controllerProfiles = controller.get('controllerProfiles')
         controllerPerGameProfilesEnabled = controller.get('perGameProfilesEnabled') or False
+        controllerRemappingEnabled  = controller.get('controllerRemappingEnabled') or False
         
         settings.set_setting('controllerPerGameProfilesEnabled', controllerPerGameProfilesEnabled)
+        settings.set_setting('controllerRemappingEnabled', controllerRemappingEnabled)
         result = settings.set_all_controller_profiles(controllerProfiles)
 
-        # double-sync just in case the first one doesn't register
-        for _ in range(2):
-            # sync settings.json to actual controller hardware
-            if currentGameId:
-                controllers.sync_controller_profile_settings(currentGameId)
-                # sync touchpad
-                controllers.sync_touchpad(currentGameId)
-                # sync gyros
-                controllers.sync_gyros(currentGameId)
+        if controllerRemappingEnabled:
+            # double-sync just in case the first one doesn't register
+            for _ in range(2):
+                # sync settings.json to actual controller hardware
+                if currentGameId:
+                    controllers.sync_controller_profile_settings(currentGameId)
+                    # sync touchpad
+                    controllers.sync_touchpad(currentGameId)
+                    # sync gyros
+                    controllers.sync_gyros(currentGameId)
         return result
 
     async def save_rgb_settings(self, rgbProfiles, currentGameId):
