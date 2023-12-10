@@ -1,7 +1,15 @@
 #!/usr/bin/bash
 # does the following:
 # - RGB control via LegionGoRemapper Decky Plugin
+if [ "$EUID" -eq 0 ]
+  then echo "Please do not run as root"
+  exit
+fi
+
+
 echo "removing previous install if it exists"
+
+cd $HOME
 
 sudo rm -rf $HOME/homebrew/plugins/LegionGoRemapper
 
