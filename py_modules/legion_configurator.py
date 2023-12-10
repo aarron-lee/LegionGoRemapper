@@ -1,4 +1,4 @@
-import hidapi as hid
+import legion_hid
 import time
 import decky_plugin
 # Global variables
@@ -12,7 +12,7 @@ def get_config():
 
     try:
         # Enumerate and set the global configuration
-        for dev in hid.enumerate(vendor_id):
+        for dev in legion_hid.enumerate(vendor_id):
             if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
                 global_config = dev
                 break
@@ -29,7 +29,7 @@ def send_command(command):
     get_config()
     assert len(command) == 64 and global_config
     try:
-        with hid.Device(path=global_config['path']) as device:
+        with legion_hid.Device(path=global_config['path']) as device:
             device.write(command)
             print("Command sent successfully.")
     except IOError as e:
