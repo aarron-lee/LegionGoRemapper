@@ -2,9 +2,9 @@
 
 Decky Plugin that replicates some of the Legion Space remapping functionality.
 
-![remap buttons image](./images/remap-buttons.png)
-
 ![color-picker image](./images/color-picker.png)
+
+![remap buttons image](./images/remap-buttons.png)
 
 ## Functionality
 
