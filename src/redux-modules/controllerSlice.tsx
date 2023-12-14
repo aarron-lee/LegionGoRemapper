@@ -210,16 +210,25 @@ export const saveControllerSettingsMiddleware =
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
       const {
-        controller: { controllerProfiles, perGameProfilesEnabled, controllerRemappingEnabled }
+        controller: {
+          controllerProfiles,
+          perGameProfilesEnabled,
+          controllerRemappingEnabled
+        },
+        ui: { currentGameId: currentId }
       } = store.getState();
       let currentGameId;
-      if (perGameProfilesEnabled) {
-        currentGameId = extractCurrentGameId();
+      if (perGameProfilesEnabled && currentId) {
+        currentGameId = currentId;
       } else {
         currentGameId = 'default';
       }
 
-      const controller = { controllerProfiles, perGameProfilesEnabled, controllerRemappingEnabled };
+      const controller = {
+        controllerProfiles,
+        perGameProfilesEnabled,
+        controllerRemappingEnabled
+      };
 
       serverApi?.callPluginMethod('save_controller_settings', {
         controller,
