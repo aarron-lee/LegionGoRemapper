@@ -30,7 +30,7 @@ Run the following in terminal, then reboot
 curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh
 ```
 
-**Requirements**
+### Manual Install
 
 add Udev rules to your device.
 
