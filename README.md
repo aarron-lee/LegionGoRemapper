@@ -22,6 +22,10 @@ Included Functionality in this plugin:
 
 ## Install Instructions
 
+### Prerequisites
+
+Decky Loader must already be installed.
+
 ### Quick install
 
 Run the following in terminal, then reboot
