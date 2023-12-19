@@ -91,7 +91,7 @@ sudo systemctl reboot
 
 Special thanks to [antheas](https://github.com/antheas) for [reverse engineering and documenting the HID protocols](https://github.com/antheas/hwinfo/tree/master/devices/legion_go/peripherals) for the Legion Go Controllers.
 
-Also special thanks to [cornando98](https://github.com/corando98) for writing + testing the backend functions for talking to the HID devices, as well as contributing to the RGB light management code on the frontend.
+Also special thanks to [corando98](https://github.com/corando98) for writing + testing the backend functions for talking to the HID devices, as well as contributing to the RGB light management code on the frontend.
 
 Icon and controller button SVG files generated from PromptFont using FontForge.
 
