@@ -5,7 +5,6 @@ import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
 import { RootState } from './store';
 
-
 // Temperature 10°C: Fan Speed 5%
 // Temperature 20°C: Fan Speed 5%
 // Temperature 30°C: Fan Speed 5%
@@ -31,7 +30,7 @@ const DEFAULT_FAN_VALUES: FanProfile = {
 };
 
 type FanProfile = {
-  [key: string]: number
+  [key: string]: number;
 };
 
 type FanProfiles = {
@@ -81,26 +80,24 @@ export const fanSlice = createSlice({
         value: fanSpeed
       });
     },
-    updateFanProfiles: (
-      state,
-      action: PayloadAction<FanProfiles>
-    ) => {
+    updateFanProfiles: (state, action: PayloadAction<FanProfiles>) => {
       merge(state.fanProfiles, action.payload);
     }
   },
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
-      const fanProfiles = action.payload
-        .fan as FanProfiles;
+      const fanProfiles = action.payload.fan as FanProfiles;
 
       const customFanCurvesEnabled = Boolean(
         action.payload.customFanCurvesEnabled
       );
       const fanPerGameProfilesEnabled = Boolean(
         action.payload.fanPerGameProfilesEnabled
-      )
+      );
 
-      state.supportsCustomFanCurves = Boolean(action.payload.supportsCustomFanCurves)
+      state.supportsCustomFanCurves = Boolean(
+        action.payload.supportsCustomFanCurves
+      );
 
       state.customFanCurvesEnabled = customFanCurvesEnabled;
       state.fanProfiles = fanProfiles;
@@ -122,27 +119,29 @@ export const fanSlice = createSlice({
 // -------------
 
 export const selectSupportsCustomFanCurves = (state: RootState) => {
-  return Boolean(state.fan.supportsCustomFanCurves)
-}
+  return Boolean(state.fan.supportsCustomFanCurves);
+};
 
 export const selectCustomFanCurvesEnabled = (state: RootState) => {
-  return Boolean(state.fan.customFanCurvesEnabled)
-}
+  return Boolean(state.fan.customFanCurvesEnabled);
+};
 
 export const selectFanPerGameProfilesEnabled = (state: RootState) => {
-  return Boolean(state.fan.fanPerGameProfilesEnabled)
-}
+  return Boolean(state.fan.fanPerGameProfilesEnabled);
+};
 
 export const selectActiveFanCurve = (state: RootState) => {
   const perGameProfilesEnabled = selectFanPerGameProfilesEnabled(state);
 
   if (perGameProfilesEnabled) {
-    const { ui: { currentGameId = "default" } } = state;
-    return state.fan.fanProfiles[currentGameId]
+    const {
+      ui: { currentGameId = 'default' }
+    } = state;
+    return state.fan.fanProfiles[currentGameId];
   } else {
     return state.fan.fanProfiles.default;
   }
-}
+};
 
 // -------------
 // middleware
@@ -166,11 +165,7 @@ export const saveFanSettingsMiddleware =
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
       const {
-        fan: {
-          fanProfiles,
-          fanPerGameProfilesEnabled,
-          customFanCurvesEnabled
-        },
+        fan: { fanProfiles, fanPerGameProfilesEnabled, customFanCurvesEnabled },
         ui: { currentGameId: currentId }
       } = store.getState();
       let currentGameId;

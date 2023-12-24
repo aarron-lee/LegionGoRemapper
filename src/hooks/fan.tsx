@@ -1,30 +1,36 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fanSlice, selectCustomFanCurvesEnabled, selectFanPerGameProfilesEnabled, selectSupportsCustomFanCurves } from '../redux-modules/fanSlice';
+import {
+  fanSlice,
+  selectCustomFanCurvesEnabled,
+  selectFanPerGameProfilesEnabled,
+  selectSupportsCustomFanCurves
+} from '../redux-modules/fanSlice';
 
-
-export const useSupportsCustomFanCurves = () =>{
-    const result = useSelector(selectSupportsCustomFanCurves)
-    return result
-}
+export const useSupportsCustomFanCurves = () => {
+  const result = useSelector(selectSupportsCustomFanCurves);
+  return result;
+};
 
 export const useCustomFanCurvesEnabled = () => {
-    const enabled = useSelector(selectCustomFanCurvesEnabled);
-    const dispatch = useDispatch()
+  const enabled = useSelector(selectCustomFanCurvesEnabled);
+  const dispatch = useDispatch();
 
-    const setter = (enabled: boolean) => {
-        return dispatch(fanSlice.actions.setCustomFanCurvesEnabled(enabled))
-    }
+  const setter = (enabled: boolean) => {
+    return dispatch(fanSlice.actions.setCustomFanCurvesEnabled(enabled));
+  };
 
-    return { customFanCurvesEnabled: enabled, setCustomFanCurvesEnabled: setter }
-}
+  return { customFanCurvesEnabled: enabled, setCustomFanCurvesEnabled: setter };
+};
 
 export const useFanPerGameProfilesEnabled = () => {
-    const fanPerGameProfilesEnabled = useSelector(selectFanPerGameProfilesEnabled);
-    const dispatch = useDispatch()
+  const fanPerGameProfilesEnabled = useSelector(
+    selectFanPerGameProfilesEnabled
+  );
+  const dispatch = useDispatch();
 
-    const setter = (enabled: boolean) => {
-        return dispatch(fanSlice.actions.setFanPerGameProfilesEnabled(enabled))
-    }
+  const setter = (enabled: boolean) => {
+    return dispatch(fanSlice.actions.setFanPerGameProfilesEnabled(enabled));
+  };
 
-    return { fanPerGameProfilesEnabled, setFanPerGameProfilesEnabled: setter }
-}
+  return { fanPerGameProfilesEnabled, setFanPerGameProfilesEnabled: setter };
+};
