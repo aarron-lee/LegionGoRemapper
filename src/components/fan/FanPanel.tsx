@@ -1,25 +1,17 @@
-import { useEffect } from 'react';
 import { PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
 import { useCustomFanCurvesEnabled, useFanPerGameProfilesEnabled, useSupportsCustomFanCurves } from "../../hooks/fan"
 import { capitalize } from 'lodash';
-import { extractDisplayName } from '../../backend/utils';
 import { useSelector } from 'react-redux';
-import { selectCurrentGameId } from '../../redux-modules/uiSlice';
+import { selectCurrentGameDisplayName } from '../../redux-modules/uiSlice';
 
 const useTitle = (fanPerGameProfilesEnabled: boolean) => {
-    const currentGameId = useSelector(selectCurrentGameId)
-
-    let displayName = 'default';
-
-    useEffect(() => {
-        displayName = fanPerGameProfilesEnabled ? extractDisplayName() : 'default'
-    }, [fanPerGameProfilesEnabled, currentGameId])
+    const currentDisplayName = useSelector(selectCurrentGameDisplayName);
 
     if(!fanPerGameProfilesEnabled) {
         return 'Fan Control'
     }
 
-    const title = `Fan Control - ${capitalize(displayName)}`;
+    const title = `Fan Control - ${capitalize(currentDisplayName)}`;
 
     return title
 }
