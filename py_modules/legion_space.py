@@ -46,3 +46,20 @@ def set_fan_curve(fan_table):
     # Constructing the full command
     command = f"echo '\\_SB.GZFD.WMAB 0 0x06 {{{fan_id_sensor_id}, {temp_array_length}, {fan_speed_values}, {temp_array_length}, {temp_values}}}' |  tee /proc/acpi/call;  cat /proc/acpi/call"
     return execute_acpi_command(command)
+
+# FFSS Full speed mode set on /off
+# echo '\_SB.GZFD.WMAE 0 0x12 0x0104020000' | sudo tee /proc/acpi/call; sudo cat /proc/acpi/call
+# echo '\_SB.GZFD.WMAE 0 0x12 0x0004020000' | sudo tee /proc/acpi/call; sudo cat /proc/acpi/call
+def set_full_fan_speed(enable):
+    """
+    Enable or disable full fan speed mode.
+
+    Args:
+        enable (bool): True to enable, False to disable.
+
+    Returns:
+        str: The result of the operation.
+    """
+    status = '0x01' if enable else '0x00'
+    command = f"echo '\\_SB.GZFD.WMAE 0 0x12 {status}04020000' | tee /proc/acpi/call; cat /proc/acpi/call"
+    return execute_acpi_command(command)
