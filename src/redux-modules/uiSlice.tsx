@@ -36,4 +36,4 @@ export const uiSlice = createSlice({
 
 export const getInitialLoading = (state: RootState) => state.ui.initialLoading;
 
-export const selectCurrentGameId = (state: RootState) => state.ui.currentGameId;
+export const selectCurrentGameId = (state: RootState) => state.ui?.currentGameId || 'default';
