@@ -150,7 +150,6 @@ export const selectActiveFanCurve = (state: RootState) => {
 
 const mutatingActionTypes = [
   fanSlice.actions.setCustomFanCurvesEnabled.type,
-  fanSlice.actions.setCustomFanCurvesEnabled.type,
   fanSlice.actions.setFanPerGameProfilesEnabled.type,
   fanSlice.actions.updateFanCurve.type,
   fanSlice.actions.updateFanProfiles.type,
