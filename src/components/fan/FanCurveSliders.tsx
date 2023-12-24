@@ -1,8 +1,13 @@
 import { useDispatch, useSelector } from "react-redux"
 import { fanSlice, selectActiveFanCurve } from "../../redux-modules/fanSlice"
-import { SliderField } from "decky-frontend-lib";
+import { PanelSection, PanelSectionRow, SliderField } from "decky-frontend-lib";
+import { VFC } from "react";
 
-const FanCurveSliders = () => {
+type Props = {
+    showSliders: boolean;
+}
+
+const FanCurveSliders: VFC<Props> = ({ showSliders }) => {
     const activeFanCurve = useSelector(selectActiveFanCurve);
     const dispatch = useDispatch()
 
@@ -10,30 +15,35 @@ const FanCurveSliders = () => {
         return dispatch(fanSlice.actions.updateFanCurve({ temp, fanSpeed }))
     }
 
-
     const sliders = Object.entries(activeFanCurve).map(([temp,fanSpeed], idx) => {
-        return (    
-          <SliderField
-            label={`${temp} {\u2103}`}
-            value={fanSpeed}
-            showValue
-            valueSuffix="%"
-            step={5}
-            min={0}
-            max={100}
-            validValues="range"
-            bottomSeparator="none"
-            key={idx}
-            onChange={(newSpeed) => {
-                return updateFanCurveValue(temp, newSpeed)
-            }}
-          />
+        return (
+            <PanelSectionRow>
+                <SliderField
+                    label={`${temp} \u2103`}
+                    value={fanSpeed}
+                    showValue
+                    valueSuffix="%"
+                    step={5}
+                    min={0}
+                    max={100}
+                    validValues="range"
+                    bottomSeparator="none"
+                    key={idx}
+                    onChange={(newSpeed) => {
+                        return updateFanCurveValue(temp, newSpeed)
+                    }}
+                />
+            </PanelSectionRow>
         )
     })
 
     return (
         <>
-        {sliders}
+        {showSliders && 
+            <PanelSection title={"Temp (\u2103) | Fan Speed (%)"}>
+                {sliders}
+            </PanelSection>
+        }
         </>
     )
 }

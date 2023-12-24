@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { get, set, merge } from 'lodash';
+import { set, merge } from 'lodash';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
 import { RootState } from './store';
