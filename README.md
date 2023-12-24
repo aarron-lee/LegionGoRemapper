@@ -4,6 +4,8 @@ Decky Plugin that replicates some of the Legion Space remapping functionality.
 
 ![color-picker image](./images/color-picker.png)
 
+![fan-control image](./images/fan-control.png)
+
 ![remap buttons image](./images/remap-buttons.png)
 
 ## Functionality
@@ -91,11 +93,38 @@ sudo systemctl restart plugin_loader.service
 sudo systemctl reboot
 ```
 
+## Experimental Features
+
+### Custom Fan Curves
+
+### WARNING: If you don't properly cool your device, it can go into thermal shutdown! Make sure you set proper fan curves to keep your device cool!
+
+This method must be manually enabled. Once enabled, will use Lenovo's bios WMI functions to set fan curves.
+
+Note that this requires the `acpi_call` module, if your Linux distro doesn't have it pre-installed, it'll have to be manually installed.
+
+### Setup Instructions:
+
+1. run `sudo modprobe acpi_call` in terminal, if this errors out, you need to install `acpi_call`
+2. install latest LegionGoRemapper: `curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh`
+3. edit the `$HOME/homebrew/settings/LegionGoRemapper/settings.json` file. add `"forceEnableCustomFanCurves": true` to the json
+
+The end result in the `settings.json` file should look something like this:
+
+```
+{
+  "forceEnableCustomFanCurves": true,
+  ...otherStuffAlreadyHere
+}
+```
+
+4. reboot
+
 ## Attribution
 
-Special thanks to [antheas](https://github.com/antheas) for [reverse engineering and documenting the HID protocols](https://github.com/antheas/hwinfo/tree/master/devices/legion_go/peripherals) for the Legion Go Controllers.
+Special thanks to [antheas](https://github.com/antheas) for [reverse engineering and documenting the HID protocols](https://github.com/antheas/hwinfo/tree/master/devices/legion_go) for the Legion Go Controllers, etc.
 
-Also special thanks to [corando98](https://github.com/corando98) for writing + testing the backend functions for talking to the HID devices, as well as contributing to the RGB light management code on the frontend.
+Also special thanks to [corando98](https://github.com/corando98) for writing + testing the backend functions for talking to the HID devices, investigating fan curves, as well as contributing to the RGB light management code on the frontend.
 
 Icon and controller button SVG files generated from PromptFont using FontForge.
 
