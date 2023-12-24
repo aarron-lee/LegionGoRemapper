@@ -18,6 +18,7 @@ import { RootState } from './store';
 // Temperature 100°C: Fan Speed 100%
 
 const DEFAULT_FAN_VALUES: FanProfile = {
+  0: 0,
   10: 5,
   20: 5,
   30: 5,
