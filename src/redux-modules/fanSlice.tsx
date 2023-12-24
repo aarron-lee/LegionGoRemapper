@@ -122,7 +122,11 @@ export const fanSlice = createSlice({
 // -------------
 
 export const selectSupportsCustomFanCurves = (state: RootState) => {
-  return Boolean(state.fan?.supportsCustomFanCurves)
+  return Boolean(state.fan.supportsCustomFanCurves)
+}
+
+export const selectCustonFanCurvesEnabled = (state: RootState) => {
+  return Boolean(state.fan.customFanCurvesEnabled)
 }
 
 // -------------
@@ -131,12 +135,10 @@ export const selectSupportsCustomFanCurves = (state: RootState) => {
 
 const mutatingActionTypes = [
   fanSlice.actions.setCustomFanCurvesEnabled.type,
-  // controllerSlice.actions.setCustomFanCurvesEnabled.type,
-  // controllerSlice.actions.remapButton.type,
-  // controllerSlice.actions.updateControllerProfiles.type,
-  // controllerSlice.actions.setTouchpad.type,
-  // controllerSlice.actions.setGyro.type,
-  // controllerSlice.actions.setControllerRemappingEnabled.type,
+  fanSlice.actions.setCustomFanCurvesEnabled.type,
+  fanSlice.actions.setFanPerGameProfilesEnabled.type,
+  fanSlice.actions.updateFanCurve.type,
+  fanSlice.actions.updateFanProfiles.type,
   setCurrentGameId.type
 ];
 
