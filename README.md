@@ -103,10 +103,12 @@ This method must be manually enabled. Once enabled, will use Lenovo's bios WMI f
 
 Note that this requires the `acpi_call` module, if your Linux distro doesn't have it pre-installed, it'll have to be manually installed.
 
+Also note that custom fan curves might not be immediately noticable when you set them.
+
 ### Setup Instructions:
 
 1. run `sudo modprobe acpi_call` in terminal, if this errors out, you need to install `acpi_call`
-2. install latest LegionGoRemapper: `curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh`
+2. install latest LegionGoRemapper from github [releases](https://github.com/aarron-lee/LegionGoRemapper/releases)
 3. edit the `$HOME/homebrew/settings/LegionGoRemapper/settings.json` file. add `"forceEnableCustomFanCurves": true` to the json
 
 The end result in the `settings.json` file should look something like this:
