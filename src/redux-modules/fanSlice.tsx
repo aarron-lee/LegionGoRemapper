@@ -60,7 +60,7 @@ export const fanSlice = createSlice({
       const enabled = action.payload;
       state.customFanCurvesEnabled = enabled;
       if (enabled) {
-        bootstrapFanProfile(state, state.ui.currentGameId);
+        bootstrapFanProfile(state, extractCurrentGameId());
       }
     },
     setFanPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
