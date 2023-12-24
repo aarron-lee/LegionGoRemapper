@@ -36,7 +36,4 @@ export const uiSlice = createSlice({
 
 export const getInitialLoading = (state: RootState) => state.ui.initialLoading;
 
-// export const { increment, decrement, incrementByAmount } = counterSlice.actions;
-
-// Other code such as selectors can use the imported `RootState` type
-// export const selectCount = (state: RootState) => state.counter.value;
+export const selectCurrentGameId = (state: RootState) => state.ui.currentGameId;
