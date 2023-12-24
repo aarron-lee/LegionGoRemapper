@@ -8,9 +8,9 @@ Decky Plugin that replicates some of the Legion Space remapping functionality.
 
 ![remap buttons image](./images/remap-buttons.png)
 
-## Functionality
+# Functionality
 
-### This plugin uses the Lenovo-built remapping functionality that's used for Legion Space, which means that this plugin can only do what Legion Space is capable of
+### This plugin uses the Lenovo-built remapping + bios functionality that's used for Legion Space, which means that this plugin can only do what Legion Space is capable of
 
 This remapping plugin also only covers remapping for the X-input mode of the controller, it does NOT support FPS mode or D-input modes.
 
@@ -22,7 +22,7 @@ Included Functionality in this plugin:
 - Gyro remapping to Left or Right Control Stick
 - allow any of these settings on a per-game basis
 
-## Install Instructions
+# Install Instructions
 
 ### Prerequisites
 
@@ -68,7 +68,7 @@ sudo systemctl restart plugin_loader.service
 
 then reboot your machine.
 
-## Manual Build
+# Manual Build
 
 - Node.js v16.14+ and pnpm installed
 
@@ -93,7 +93,7 @@ sudo systemctl restart plugin_loader.service
 sudo systemctl reboot
 ```
 
-## Experimental Features
+# Experimental Features
 
 ### Custom Fan Curves
 
@@ -120,7 +120,7 @@ The end result in the `settings.json` file should look something like this:
 
 4. reboot
 
-## Attribution
+# Attribution
 
 Special thanks to [antheas](https://github.com/antheas) for [reverse engineering and documenting the HID protocols](https://github.com/antheas/hwinfo/tree/master/devices/legion_go) for the Legion Go Controllers, etc.
 
