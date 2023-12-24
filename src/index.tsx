@@ -10,6 +10,7 @@ import { setInitialState } from './redux-modules/extraActions';
 import { Provider, useSelector } from 'react-redux';
 import { currentGameIdListener } from './backend/currentGameIdListener';
 import logo from '../assets/Icon.png';
+import FanPanel from './components/fan/FanPanel';
 
 const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
   const loading = useSelector(getInitialLoading);
@@ -19,6 +20,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
   return (
     <>
       <ControllerLightingPanel />
+      <FanPanel />
       <RemapButtons />
     </>
   );

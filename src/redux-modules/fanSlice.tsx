@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { get, set, merge } from 'lodash';
-// import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
+import { RootState } from './store';
 
 
 // Temperature 10°C: Fan Speed 5%
@@ -121,7 +121,9 @@ export const fanSlice = createSlice({
 // selectors
 // -------------
 
-
+export const selectSupportsCustomFanCurves = (state: RootState) => {
+  return Boolean(state.fan?.supportsCustomFanCurves)
+}
 
 // -------------
 // middleware
