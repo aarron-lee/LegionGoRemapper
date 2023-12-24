@@ -73,7 +73,7 @@ export const fanSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
       const fanProfiles = action.payload
-        .fanProfiles as FanProfiles;
+        .fan as FanProfiles;
 
       const customFanCurvesEnabled = Boolean(
         action.payload.customFanCurvesEnabled
@@ -130,13 +130,13 @@ export const saveFanSettingsMiddleware =
       const {
         fan: {
           fanProfiles,
-          perGameProfilesEnabled,
+          fanPerGameProfilesEnabled,
           customFanCurvesEnabled
         },
         ui: { currentGameId: currentId }
       } = store.getState();
       let currentGameId;
-      if (perGameProfilesEnabled && currentId) {
+      if (fanPerGameProfilesEnabled && currentId) {
         currentGameId = currentId;
       } else {
         currentGameId = 'default';
@@ -144,7 +144,7 @@ export const saveFanSettingsMiddleware =
 
       const fanInfo = {
         fanProfiles,
-        perGameProfilesEnabled,
+        fanPerGameProfilesEnabled,
         customFanCurvesEnabled
       };
 

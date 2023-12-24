@@ -65,6 +65,15 @@ class Plugin:
                 rgb.sync_rgb_settings(currentGameId)
         return result
 
+    async def save_fan_settings(self, fanInfo, currentGameId):
+        fanProfiles = fanInfo.get('fanProfiles', {})
+        fanPerGameProfilesEnabled = fanInfo.get('fanPerGameProfilesEnabled', False)
+        customFanCurvesEnabled = fanInfo.get('customFanCurvesEnabled', False)
+
+        settings.set_setting('fanPerGameProfilesEnabled', fanPerGameProfilesEnabled)
+        settings.set_setting('customFanCurvesEnabled', customFanCurvesEnabled)
+        result = settings.set_all_fan_profiles(fanProfiles)
+
     # sync state in settings.json to actual controller RGB hardware
     async def sync_rgb_settings(self, currentGameId):
         return rgb.sync_rgb_settings(currentGameId)

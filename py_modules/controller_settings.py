@@ -87,3 +87,13 @@ def set_all_controller_profiles(controller_profiles):
 
     setting_file.settings['controller'] = profiles
     setting_file.commit()
+
+def set_all_fan_profiles(fan_profiles):
+    settings = get_settings()
+    if not settings.get('fan'):
+        settings['fan'] = {}
+    
+    profiles = settings['fan']
+    deep_merge(fan_profiles, profiles)
+    setting_file.settings['fan'] = profiles
+    setting_file.commit()

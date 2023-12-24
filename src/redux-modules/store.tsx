@@ -5,7 +5,7 @@ import {
   controllerSlice,
   saveControllerSettingsMiddleware
 } from './controllerSlice';
-import { fanSlice } from './fanSlice';
+import { fanSlice, saveFanSettingsMiddleware } from './fanSlice';
 // import { logger } from './logger';
 
 export const store = configureStore({
@@ -18,7 +18,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([
       saveRgbSettingsMiddleware,
-      saveControllerSettingsMiddleware
+      saveControllerSettingsMiddleware,
+      saveFanSettingsMiddleware
       // logger
     ])
 });
