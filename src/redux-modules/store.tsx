@@ -5,12 +5,14 @@ import {
   controllerSlice,
   saveControllerSettingsMiddleware
 } from './controllerSlice';
+import { fanSlice } from './fanSlice';
 // import { logger } from './logger';
 
 export const store = configureStore({
   reducer: {
     ui: uiSlice.reducer,
     rgb: rgbSlice.reducer,
+    fan: fanSlice.reducer,
     controller: controllerSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
