@@ -2,17 +2,20 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { RootState } from './store';
+import { extractDisplayName } from '../backend/utils';
 // import type { RootState } from './store';
 
 type UiStateType = {
   initialLoading: boolean;
   currentGameId: undefined | string;
+  currentDisplayName: undefined | string;
 };
 
 // Define the initial state using that type
 const initialState: UiStateType = {
   initialLoading: true,
-  currentGameId: undefined
+  currentGameId: undefined,
+  currentDisplayName: undefined,
 };
 
 export const uiSlice = createSlice({
@@ -29,14 +32,16 @@ export const uiSlice = createSlice({
       if (action) state.initialLoading = false;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
-      if (action?.payload) state.currentGameId = action.payload;
+      if (action?.payload) {
+        state.currentGameId = action.payload;
+        state.currentDisplayName = extractDisplayName()
+      }
     });
   }
 });
 
 export const getInitialLoading = (state: RootState) => state.ui.initialLoading;
 
-// export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const selectCurrentGameId = (state: RootState) => state.ui?.currentGameId || 'default';
 
-// Other code such as selectors can use the imported `RootState` type
-// export const selectCount = (state: RootState) => state.counter.value;
+export const selectCurrentGameDisplayName = (state: RootState) => state.ui?.currentDisplayName || 'default';

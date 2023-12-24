@@ -7,6 +7,7 @@ import logging
 
 import decky_plugin
 import legion_configurator
+import legion_space
 import controller_enums
 import rgb
 import controllers
@@ -30,7 +31,17 @@ class Plugin:
         decky_plugin.logger.info("Hello World!")
 
     async def get_settings(self):
-        return settings.get_settings()
+        results = settings.get_settings()
+
+        try:
+            if settings.supports_custom_fan_curves():
+                results['supportsCustomFanCurves'] = True
+            else:
+                results['supportsCustomFanCurves'] = False
+        except Exception as e:
+            decky_plugin.logger.error(e)
+
+        return results
 
     async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
         return settings.set_setting('rgbPerGameProfilesEnabled', enabled)
@@ -64,6 +75,31 @@ class Plugin:
             if currentGameId:
                 rgb.sync_rgb_settings(currentGameId)
         return result
+
+    async def save_fan_settings(self, fanInfo, currentGameId):
+        fanProfiles = fanInfo.get('fanProfiles', {})
+        fanPerGameProfilesEnabled = fanInfo.get('fanPerGameProfilesEnabled', False)
+        customFanCurvesEnabled = fanInfo.get('customFanCurvesEnabled', False)
+
+        settings.set_setting('fanPerGameProfilesEnabled', fanPerGameProfilesEnabled)
+        settings.set_setting('customFanCurvesEnabled', customFanCurvesEnabled)
+        settings.set_all_fan_profiles(fanProfiles)
+
+        try:
+            active_fan_profile = fanProfiles.get('default')
+
+            if customFanCurvesEnabled and settings.supports_custom_fan_curves():
+                if fanPerGameProfilesEnabled:
+                    fan_profile = fanProfiles.get(currentGameId)
+                    if fan_profile:
+                        active_fan_profile = fan_profile
+                active_fan_curve = active_fan_profile.values()
+
+                legion_space.set_fan_curve(active_fan_curve)
+            return True
+        except Exception as e:
+            decky_plugin.logger(f'save_fan_settings error {e}')
+            return False
 
     # sync state in settings.json to actual controller RGB hardware
     async def sync_rgb_settings(self, currentGameId):

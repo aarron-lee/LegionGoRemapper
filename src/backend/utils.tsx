@@ -52,6 +52,8 @@ export const getServerApi = () => {
   return serverApi;
 };
 
+export const extractDisplayName = () => `${Router.MainRunningApp?.display_name || 'default'}`
+
 export const extractCurrentGameId = () =>
   `${Router.MainRunningApp?.appid || 'default'}`;
 
