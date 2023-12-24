@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fanSlice, selectCustonFanCurvesEnabled, selectSupportsCustomFanCurves } from '../redux-modules/fanSlice';
+import { fanSlice, selectCustomFanCurvesEnabled, selectFanPerGameProfilesEnabled, selectSupportsCustomFanCurves } from '../redux-modules/fanSlice';
 
 
 export const useSupportsCustomFanCurves = () =>{
@@ -8,12 +8,23 @@ export const useSupportsCustomFanCurves = () =>{
 }
 
 export const useCustomFanCurvesEnabled = () => {
-    const enabled = useSelector(selectCustonFanCurvesEnabled);
+    const enabled = useSelector(selectCustomFanCurvesEnabled);
     const dispatch = useDispatch()
 
     const setter = (enabled: boolean) => {
         return dispatch(fanSlice.actions.setCustomFanCurvesEnabled(enabled))
     }
 
-    return { enabled, setCustomFanCurvesEnabled: setter }
+    return { customFanCurvesEnabled: enabled, setCustomFanCurvesEnabled: setter }
+}
+
+export const useFanPerGameProfilesEnabled = () => {
+    const fanPerGameProfilesEnabled = useSelector(selectFanPerGameProfilesEnabled);
+    const dispatch = useDispatch()
+
+    const setter = (enabled: boolean) => {
+        return dispatch(fanSlice.actions.setFanPerGameProfilesEnabled(enabled))
+    }
+
+    return { fanPerGameProfilesEnabled, setFanPerGameProfilesEnabled: setter }
 }
