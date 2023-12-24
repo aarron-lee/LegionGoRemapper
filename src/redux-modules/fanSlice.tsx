@@ -4,14 +4,30 @@ import { get, set, merge } from 'lodash';
 // import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
-// import {
-//   RemapActions,
-//   RemappableButtons
-// } from '../backend/constants';
-// import { Router } from 'decky-frontend-lib';
+
+
+// Temperature 10°C: Fan Speed 5%
+// Temperature 20°C: Fan Speed 5%
+// Temperature 30°C: Fan Speed 5%
+// Temperature 40°C: Fan Speed 10%
+// Temperature 50°C: Fan Speed 15%
+// Temperature 60°C: Fan Speed 35%
+// Temperature 70°C: Fan Speed 70%
+// Temperature 80°C: Fan Speed 80%
+// Temperature 90°C: Fan Speed 95%
+// Temperature 100°C: Fan Speed 100%
 
 const DEFAULT_FAN_VALUES: FanProfile = {
-
+  10: 5,
+  20: 5,
+  30: 5,
+  40: 10,
+  50: 15,
+  60: 35,
+  70: 70,
+  80: 80,
+  90: 95,
+  100: 100
 };
 
 type FanProfile = {
