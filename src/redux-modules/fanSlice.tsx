@@ -133,6 +133,17 @@ export const selectFanPerGameProfilesEnabled = (state: RootState) => {
   return Boolean(state.fan.fanPerGameProfilesEnabled)
 }
 
+export const selectActiveFanCurve = (state: RootState) => {
+  const perGameProfilesEnabled = selectFanPerGameProfilesEnabled(state);
+
+  if (perGameProfilesEnabled) {
+    const { ui: { currentGameId = "default" } } = state;
+    return state.fan.fanProfiles[currentGameId]
+  } else {
+    return state.fan.fanProfiles.default;
+  }
+}
+
 // -------------
 // middleware
 // -------------

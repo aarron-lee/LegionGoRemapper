@@ -3,6 +3,7 @@ import { useCustomFanCurvesEnabled, useFanPerGameProfilesEnabled, useSupportsCus
 import { capitalize } from 'lodash';
 import { useSelector } from 'react-redux';
 import { selectCurrentGameDisplayName } from '../../redux-modules/uiSlice';
+import FanCurveSliders from './FanCurveSliders';
 
 const useTitle = (fanPerGameProfilesEnabled: boolean) => {
     const currentDisplayName = useSelector(selectCurrentGameDisplayName);
@@ -45,6 +46,9 @@ const FanPanel = () => {
                                 checked={fanPerGameProfilesEnabled}
                                 onChange={setFanPerGameProfilesEnabled}
                             />
+                        </PanelSectionRow>
+                        <PanelSectionRow>
+                            <FanCurveSliders/>
                         </PanelSectionRow>
                     </>
                 )
