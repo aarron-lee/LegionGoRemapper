@@ -30,7 +30,17 @@ class Plugin:
         decky_plugin.logger.info("Hello World!")
 
     async def get_settings(self):
-        return settings.get_settings()
+        results = settings.get_settings()
+
+        try:
+            if settings.supports_custom_fan_curves():
+                results['supportsCustomFanCurves'] = True
+            else:
+                results['supportsCustomFanCurves'] = False
+        except Exception as e:
+            decky_plugin.logger.error(e)
+
+        return results
 
     async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
         return settings.set_setting('rgbPerGameProfilesEnabled', enabled)

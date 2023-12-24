@@ -42,12 +42,14 @@ type FanState = {
   fanProfiles: FanProfiles;
   fanPerGameProfilesEnabled: boolean;
   customFanCurvesEnabled: boolean;
+  supportsCustomFanCurves: boolean;
 };
 
 const initialState: FanState = {
   fanProfiles: {},
   fanPerGameProfilesEnabled: false,
-  customFanCurvesEnabled: false
+  customFanCurvesEnabled: false,
+  supportsCustomFanCurves: false
 };
 
 export const fanSlice = createSlice({
@@ -97,6 +99,8 @@ export const fanSlice = createSlice({
       const fanPerGameProfilesEnabled = Boolean(
         action.payload.fanPerGameProfilesEnabled
       )
+
+      state.supportsCustomFanCurves = Boolean(action.payload.supportsCustomFanCurves)
 
       state.customFanCurvesEnabled = customFanCurvesEnabled;
       state.fanProfiles = fanProfiles;

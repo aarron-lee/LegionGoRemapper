@@ -1,4 +1,5 @@
 import os
+import subprocess
 from settings import SettingsManager
 
 settings_directory = os.environ["DECKY_PLUGIN_SETTINGS_DIR"]
@@ -97,3 +98,19 @@ def set_all_fan_profiles(fan_profiles):
     deep_merge(fan_profiles, profiles)
     setting_file.settings['fan'] = profiles
     setting_file.commit()
+
+def modprobe_acpi_call():
+    os.system("modprobe acpi_call")
+    result = subprocess.run(["modprobe", "acpi_call"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    if result.stderr:
+        return False
+    return True
+
+def supports_custom_fan_curves():
+    try:
+        if modprobe_acpi_call() and get_settings().get("forceEnableCustomFanCurves"):
+            return True
+        return False
+    except Exception as e:
+        return False
