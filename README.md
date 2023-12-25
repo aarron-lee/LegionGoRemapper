@@ -99,11 +99,11 @@ sudo systemctl reboot
 
 ### WARNING: If you don't properly cool your device, it can go into thermal shutdown! Make sure you set proper fan curves to keep your device cool!
 
+Note that this is using the fan curve implementation in the Legion Go's bios. This may require additional bios update from Lenovo to become fully functional.
+
 This method must be manually enabled. Once enabled, will use Lenovo's bios WMI functions to set fan curves. Requires Bios v28 or newer.
 
 Note that this requires the `acpi_call` module, if your Linux distro doesn't have it pre-installed, it'll have to be manually installed.
-
-Also note that custom fan curves might not be immediately noticable when you set them.
 
 Special thanks to [corando98](https://github.com/corando98) for investigating fan curves + writing the functions for to control it.
 
