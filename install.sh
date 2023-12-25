@@ -12,7 +12,7 @@ cd $HOME
 
 sudo rm -rf $HOME/homebrew/plugins/LegionGoRemapper
 
-sudo cat <<EOF > "/etc/udev/rules.d/90-legion-go-remapper.rules"
+cat << EOF | sudo tee -a "/etc/udev/rules.d/90-legion-go-remapper.rules"
 # allow r/w access by all local/physical sessions (seats)
 # https://github.com/systemd/systemd/issues/4288
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="17ef", TAG+="uaccess"
