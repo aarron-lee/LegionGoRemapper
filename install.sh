@@ -31,4 +31,5 @@ sudo tar -xzf LegionGoRemapper.tar.gz -C $HOME/homebrew/plugins
 
 # install complete, remove build dir
 rm  $HOME/LegionGoRemapper.tar.gz
+sudo systemctl restart plugin_loader.service
 echo "Installation complete"
