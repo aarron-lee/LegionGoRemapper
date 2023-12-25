@@ -219,10 +219,10 @@ export const rgbSlice = createSlice({
       const perGameProfilesEnabled = Boolean(
         action.payload.rgbPerGameProfilesEnabled
       );
-      const enableRgbControl = Boolean(action.payload.enableRgbControl)
+      const enableRgbControl = Boolean(action.payload.enableRgbControl);
 
       state.rgbProfiles = rgbProfiles;
-      state.enableRgbControl = enableRgbControl
+      state.enableRgbControl = enableRgbControl;
       state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -279,8 +279,8 @@ export const selectRgbProfileDisplayName = (state: RootState) => {
 };
 
 export const selectEnableRgbControl = (state: RootState) => {
-  return Boolean(state.rgb.enableRgbControl)
-}
+  return Boolean(state.rgb.enableRgbControl);
+};
 
 // -------------
 // middleware
@@ -315,7 +315,7 @@ const saveRgbSettings = (store: any) => {
     rgbProfiles,
     currentGameId,
     enableRgbControl
-  }
+  };
 
   serverApi?.callPluginMethod('save_rgb_settings', {
     payload

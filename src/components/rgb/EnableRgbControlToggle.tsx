@@ -3,7 +3,7 @@ import { useEnableRgbControl } from '../../hooks/rgb';
 import { ToggleField } from 'decky-frontend-lib';
 
 export const EnableRgbControlToggle: FC = () => {
-  const { rgbControlEnabled, setRgbControlEnabled } = useEnableRgbControl()
+  const { rgbControlEnabled, setRgbControlEnabled } = useEnableRgbControl();
 
   return (
     <ToggleField

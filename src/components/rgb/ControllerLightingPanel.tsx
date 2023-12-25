@@ -7,7 +7,7 @@ import { EnableRgbControlToggle } from './EnableRgbControlToggle';
 
 const ControllerLightingPanel: VFC = () => {
   const displayName = useRgbProfileDisplayName();
-  const { rgbControlEnabled } = useEnableRgbControl()
+  const { rgbControlEnabled } = useEnableRgbControl();
 
   let title =
     displayName === 'Default'
@@ -17,12 +17,14 @@ const ControllerLightingPanel: VFC = () => {
   return (
     <PanelSection title={title}>
       <div>
-        <EnableRgbControlToggle/>
-        { rgbControlEnabled && <>
-        <RgbPerGameProfilesToggle />
-        <RgbSettings controller="RIGHT" />
-        <RgbSettings controller="LEFT" />
-        </>}
+        <EnableRgbControlToggle />
+        {rgbControlEnabled && (
+          <>
+            <RgbPerGameProfilesToggle />
+            <RgbSettings controller="RIGHT" />
+            <RgbSettings controller="LEFT" />
+          </>
+        )}
       </div>
     </PanelSection>
   );
