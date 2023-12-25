@@ -6,6 +6,7 @@ import {
 } from 'decky-frontend-lib';
 import {
   useCustomFanCurvesEnabled,
+  useEnableFullFanSpeedMode,
   useFanPerGameProfilesEnabled,
   useSupportsCustomFanCurves
 } from '../../hooks/fan';
@@ -31,6 +32,8 @@ const useTitle = (fanPerGameProfilesEnabled: boolean) => {
 const FanPanel = () => {
   const supportsFanCurves = useSupportsCustomFanCurves();
   const [showSliders, setShowSliders] = useState(false);
+  const { enableFullFanSpeedMode, setEnableFullFanSpeedMode } =
+    useEnableFullFanSpeedMode();
 
   const { customFanCurvesEnabled, setCustomFanCurvesEnabled } =
     useCustomFanCurvesEnabled();
@@ -52,6 +55,15 @@ const FanPanel = () => {
             onChange={setCustomFanCurvesEnabled}
           />
         </PanelSectionRow>
+        {customFanCurvesEnabled && (
+          <PanelSectionRow>
+            <ToggleField
+              label={'Enable Full Fan Speed Mode'}
+              checked={enableFullFanSpeedMode}
+              onChange={setEnableFullFanSpeedMode}
+            />
+          </PanelSectionRow>
+        )}
         {customFanCurvesEnabled && (
           <>
             <PanelSectionRow>
