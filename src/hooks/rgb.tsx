@@ -6,7 +6,8 @@ import {
   selectRgbInfo,
   selectRgbProfileDisplayName,
   selectPerGameProfilesEnabled,
-  selectRgbMode
+  selectRgbMode,
+  selectEnableRgbControl
 } from '../redux-modules/rgbSlice';
 
 export enum Colors {
@@ -14,6 +15,16 @@ export enum Colors {
   GREEN = 'green',
   BLUE = 'blue'
 }
+
+export const useEnableRgbControl = () => {
+  const enabled = useSelector(selectEnableRgbControl);
+  const dispatch = useDispatch();
+  const setEnabled = (enabled: boolean) => {
+    return dispatch(rgbSlice.actions.setEnableRgbControl(enabled));
+  };
+
+  return { rgbControlEnabled: enabled, setRgbControlEnabled: setEnabled };
+};
 
 export const useRgbMode = (controller: ControllerType) => {
   const mode = useSelector(selectRgbMode(controller));

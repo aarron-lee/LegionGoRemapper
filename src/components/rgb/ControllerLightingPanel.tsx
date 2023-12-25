@@ -1,11 +1,13 @@
 import { PanelSection } from 'decky-frontend-lib';
 import { VFC } from 'react';
-import { useRgbProfileDisplayName } from '../../hooks/rgb';
+import { useEnableRgbControl, useRgbProfileDisplayName } from '../../hooks/rgb';
 import { RgbPerGameProfilesToggle } from './RgbPerGameProfilesToggle';
 import { RgbSettings } from './RgbSettings';
+import { EnableRgbControlToggle } from './EnableRgbControlToggle';
 
 const ControllerLightingPanel: VFC = () => {
   const displayName = useRgbProfileDisplayName();
+  const { rgbControlEnabled } = useEnableRgbControl();
 
   let title =
     displayName === 'Default'
@@ -15,9 +17,14 @@ const ControllerLightingPanel: VFC = () => {
   return (
     <PanelSection title={title}>
       <div>
-        <RgbPerGameProfilesToggle />
-        <RgbSettings controller="RIGHT" />
-        <RgbSettings controller="LEFT" />
+        <EnableRgbControlToggle />
+        {rgbControlEnabled && (
+          <>
+            <RgbPerGameProfilesToggle />
+            <RgbSettings controller="RIGHT" />
+            <RgbSettings controller="LEFT" />
+          </>
+        )}
       </div>
     </PanelSection>
   );

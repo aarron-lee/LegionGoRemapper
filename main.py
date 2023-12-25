@@ -67,13 +67,19 @@ class Plugin:
                     controllers.sync_gyros(currentGameId)
         return result
 
-    async def save_rgb_settings(self, rgbProfiles, currentGameId):
+    async def save_rgb_settings(self, payload):
+        currentGameId = payload.get('currentGameId')
+        rgbProfiles = payload.get('rgbProfiles')
+        enableRgbControl = payload.get('enableRgbControl', True)
         result = settings.set_all_rgb_profiles(rgbProfiles)
 
-        # double-sync just in case the first one doesn't register
-        for _ in range(2):
-            if currentGameId:
-                rgb.sync_rgb_settings(currentGameId)
+        settings.set_setting('enableRgbControl', enableRgbControl)
+
+        if enableRgbControl:
+            # double-sync just in case the first one doesn't register
+            for _ in range(2):
+                if currentGameId:
+                    rgb.sync_rgb_settings(currentGameId)
         return result
 
     async def save_fan_settings(self, fanInfo, currentGameId):
