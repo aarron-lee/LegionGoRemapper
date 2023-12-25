@@ -80,9 +80,13 @@ class Plugin:
         fanProfiles = fanInfo.get('fanProfiles', {})
         fanPerGameProfilesEnabled = fanInfo.get('fanPerGameProfilesEnabled', False)
         customFanCurvesEnabled = fanInfo.get('customFanCurvesEnabled', False)
+        # Set Full Fan Speed Mode
+        enableFullFanSpeedMode = fanInfo.get('enableFullFanSpeedMode', False)
 
         settings.set_setting('fanPerGameProfilesEnabled', fanPerGameProfilesEnabled)
         settings.set_setting('customFanCurvesEnabled', customFanCurvesEnabled)
+        settings.set_setting('enableFullFanSpeedMode', enableFullFanSpeedMode)
+
         settings.set_all_fan_profiles(fanProfiles)
 
         try:
@@ -96,6 +100,8 @@ class Plugin:
                 active_fan_curve = active_fan_profile.values()
 
                 legion_space.set_fan_curve(active_fan_curve)
+            if enableFullFanSpeedMode:
+                legion_space.set_full_fan_speed(enableFullFanSpeedMode)
             return True
         except Exception as e:
             decky_plugin.logger(f'save_fan_settings error {e}')
