@@ -105,6 +105,8 @@ Note that this requires the `acpi_call` module, if your Linux distro doesn't hav
 
 Also note that custom fan curves might not be immediately noticable when you set them.
 
+Special thanks to [corando98](https://github.com/corando98) for investigating fan curves + writing the functions for to control it.
+
 ### Setup Instructions:
 
 1. run `sudo modprobe acpi_call` in terminal, if this errors out, you need to install `acpi_call`
