@@ -67,6 +67,9 @@ export const fanSlice = createSlice({
     setFanPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
       const enabled = action.payload;
       state.fanPerGameProfilesEnabled = enabled;
+      if (enabled) {
+        bootstrapFanProfile(state, extractCurrentGameId());
+      }
     },
     setEnableFullFanSpeedMode: (state, action: PayloadAction<boolean>) => {
       const enabled = action.payload;
