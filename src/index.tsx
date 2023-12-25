@@ -12,7 +12,7 @@ import { currentGameIdListener } from './backend/currentGameIdListener';
 import logo from '../assets/Icon.png';
 import FanPanel from './components/fan/FanPanel';
 
-const Content: VFC<{ serverAPI: ServerAPI }> = memo(({ serverAPI }) => {
+const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
   const loading = useSelector(getInitialLoading);
   if (loading) {
     return null;

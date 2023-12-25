@@ -55,13 +55,15 @@ const FanPanel = () => {
             onChange={setCustomFanCurvesEnabled}
           />
         </PanelSectionRow>
-        <PanelSectionRow>
-          <ToggleField
-            label={'Enable Full Fan Speed Mode'}
-            checked={enableFullFanSpeedMode}
-            onChange={setEnableFullFanSpeedMode}
-          />
-        </PanelSectionRow>
+        {customFanCurvesEnabled && (
+          <PanelSectionRow>
+            <ToggleField
+              label={'Enable Full Fan Speed Mode'}
+              checked={enableFullFanSpeedMode}
+              onChange={setEnableFullFanSpeedMode}
+            />
+          </PanelSectionRow>
+        )}
         {customFanCurvesEnabled && (
           <>
             <PanelSectionRow>

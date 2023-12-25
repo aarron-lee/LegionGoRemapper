@@ -179,7 +179,12 @@ export const saveFanSettingsMiddleware =
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
       const {
-        fan: { fanProfiles, fanPerGameProfilesEnabled, customFanCurvesEnabled },
+        fan: {
+          fanProfiles,
+          fanPerGameProfilesEnabled,
+          customFanCurvesEnabled,
+          enableFullFanSpeedMode
+        },
         ui: { currentGameId: currentId }
       } = store.getState();
       let currentGameId;
@@ -192,7 +197,8 @@ export const saveFanSettingsMiddleware =
       const fanInfo = {
         fanProfiles,
         fanPerGameProfilesEnabled,
-        customFanCurvesEnabled
+        customFanCurvesEnabled,
+        enableFullFanSpeedMode
       };
 
       serverApi?.callPluginMethod('save_fan_settings', {

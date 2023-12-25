@@ -100,8 +100,9 @@ class Plugin:
                 active_fan_curve = active_fan_profile.values()
 
                 legion_space.set_fan_curve(active_fan_curve)
-            if enableFullFanSpeedMode:
+
                 legion_space.set_full_fan_speed(enableFullFanSpeedMode)
+
             return True
         except Exception as e:
             decky_plugin.logger(f'save_fan_settings error {e}')
