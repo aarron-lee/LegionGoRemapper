@@ -44,11 +44,13 @@ type RgbProfiles = {
 type RgbState = {
   rgbProfiles: RgbProfiles;
   perGameProfilesEnabled: boolean;
+  enableRgbControl: boolean;
 };
 
 const initialState: RgbState = {
   rgbProfiles: {},
-  perGameProfilesEnabled: false
+  perGameProfilesEnabled: false,
+  enableRgbControl: true
 };
 
 const bootstrapRgbProfile = (state: RgbState, newGameId: string) => {
@@ -76,6 +78,13 @@ export const rgbSlice = createSlice({
   name: 'rgb',
   initialState,
   reducers: {
+    setEnableRgbControl: (state, action: PayloadAction<boolean>) => {
+      const enabled = action.payload;
+      state.enableRgbControl = enabled;
+      if (enabled) {
+        bootstrapRgbProfile(state, extractCurrentGameId());
+      }
+    },
     setPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
       const enabled = action.payload;
       state.perGameProfilesEnabled = enabled;
@@ -210,8 +219,10 @@ export const rgbSlice = createSlice({
       const perGameProfilesEnabled = Boolean(
         action.payload.rgbPerGameProfilesEnabled
       );
+      const enableRgbControl = Boolean(action.payload.enableRgbControl)
 
       state.rgbProfiles = rgbProfiles;
+      state.enableRgbControl = enableRgbControl
       state.perGameProfilesEnabled = perGameProfilesEnabled;
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -281,6 +292,7 @@ const mutatingActionTypes = [
   rgbSlice.actions.setSpeed.type,
   rgbSlice.actions.setBrightness.type,
   rgbSlice.actions.setHue.type,
+  rgbSlice.actions.setEnableRgbControl.type,
   setCurrentGameId.type
 ];
 
@@ -289,15 +301,20 @@ const saveRgbSettings = (store: any) => {
   const serverApi = getServerApi();
 
   const {
-    rgb: { rgbProfiles, perGameProfilesEnabled }
+    rgb: { rgbProfiles, perGameProfilesEnabled, enableRgbControl }
   } = store.getState();
   const currentGameId = perGameProfilesEnabled
     ? extractCurrentGameId()
     : 'default';
 
-  serverApi?.callPluginMethod('save_rgb_settings', {
+  const payload = {
     rgbProfiles,
-    currentGameId
+    currentGameId,
+    enableRgbControl
+  }
+
+  serverApi?.callPluginMethod('save_rgb_settings', {
+    payload
   });
 };
 
