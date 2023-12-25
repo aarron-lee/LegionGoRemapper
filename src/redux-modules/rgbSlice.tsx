@@ -278,6 +278,10 @@ export const selectRgbProfileDisplayName = (state: RootState) => {
   }
 };
 
+export const selectEnableRgbControl = (state: RootState) => {
+  return Boolean(state.rgb.enableRgbControl)
+}
+
 // -------------
 // middleware
 // -------------
