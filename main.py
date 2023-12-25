@@ -108,6 +108,8 @@ class Plugin:
                 legion_space.set_fan_curve(active_fan_curve)
 
                 legion_space.set_full_fan_speed(enableFullFanSpeedMode)
+            elif not customFanCurvesEnabled and settings.supports_custom_fan_curves():
+                legion_space.set_default_fan_curve()
 
             return True
         except Exception as e:
