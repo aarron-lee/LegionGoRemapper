@@ -41,6 +41,7 @@ type FanState = {
   fanProfiles: FanProfiles;
   fanPerGameProfilesEnabled: boolean;
   customFanCurvesEnabled: boolean;
+  enableFullFanSpeedMode: boolean;
   supportsCustomFanCurves: boolean;
 };
 
@@ -48,6 +49,7 @@ const initialState: FanState = {
   fanProfiles: {},
   fanPerGameProfilesEnabled: false,
   customFanCurvesEnabled: false,
+  enableFullFanSpeedMode: false,
   supportsCustomFanCurves: false
 };
 
@@ -65,6 +67,10 @@ export const fanSlice = createSlice({
     setFanPerGameProfilesEnabled: (state, action: PayloadAction<boolean>) => {
       const enabled = action.payload;
       state.fanPerGameProfilesEnabled = enabled;
+    },
+    setEnableFullFanSpeedMode: (state, action: PayloadAction<boolean>) => {
+      const enabled = action.payload;
+      state.enableFullFanSpeedMode = enabled;
     },
     updateFanCurve: (
       state,
@@ -97,6 +103,9 @@ export const fanSlice = createSlice({
 
       state.supportsCustomFanCurves = Boolean(
         action.payload.supportsCustomFanCurves
+      );
+      state.enableFullFanSpeedMode = Boolean(
+        action.payload.enableFullFanSpeedMode
       );
 
       state.customFanCurvesEnabled = customFanCurvesEnabled;
@@ -143,6 +152,10 @@ export const selectActiveFanCurve = (state: RootState) => {
   }
 };
 
+export const selectEnableFullFanSpeedMode = (state: RootState) => {
+  return Boolean(state.fan.enableFullFanSpeedMode);
+};
+
 // -------------
 // middleware
 // -------------
@@ -152,6 +165,7 @@ const mutatingActionTypes = [
   fanSlice.actions.setFanPerGameProfilesEnabled.type,
   fanSlice.actions.updateFanCurve.type,
   fanSlice.actions.updateFanProfiles.type,
+  fanSlice.actions.setEnableFullFanSpeedMode.type,
   setCurrentGameId.type
 ];
 

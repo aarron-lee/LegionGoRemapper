@@ -2,9 +2,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   fanSlice,
   selectCustomFanCurvesEnabled,
+  selectEnableFullFanSpeedMode,
   selectFanPerGameProfilesEnabled,
   selectSupportsCustomFanCurves
 } from '../redux-modules/fanSlice';
+
+export const useEnableFullFanSpeedMode = () => {
+  const result = useSelector(selectEnableFullFanSpeedMode);
+  const dispatch = useDispatch();
+
+  const setter = (enabled: boolean) => {
+    return dispatch(fanSlice.actions.setEnableFullFanSpeedMode(enabled));
+  };
+  return {
+    enableFullFanSpeedMode: result,
+    setEnableFullFanSpeedMode: setter
+  };
+};
 
 export const useSupportsCustomFanCurves = () => {
   const result = useSelector(selectSupportsCustomFanCurves);
