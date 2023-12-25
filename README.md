@@ -99,7 +99,7 @@ sudo systemctl reboot
 
 ### WARNING: If you don't properly cool your device, it can go into thermal shutdown! Make sure you set proper fan curves to keep your device cool!
 
-This method must be manually enabled. Once enabled, will use Lenovo's bios WMI functions to set fan curves.
+This method must be manually enabled. Once enabled, will use Lenovo's bios WMI functions to set fan curves. Requires Bios v28 or newer.
 
 Note that this requires the `acpi_call` module, if your Linux distro doesn't have it pre-installed, it'll have to be manually installed.
 
