@@ -1,6 +1,7 @@
 BSD 3-Clause License
 
-Copyright (c) 2023, Hypothetical Plugin Developer
+Copyright (c) 2023, Aarron Lee
+py_modules/legion_hid.py - MIT LICENSE - Copyright (c) 2019 Austin Morton
 Original Copyright (c) 2022-2023, Steam Deck Homebrew
 
 All rights reserved.
