@@ -130,10 +130,21 @@ The end result in the `settings.json` file should look something like this:
 
 Due to a controller firmware update, Lenovo disabled the ability to set the LEDs separately.
 
+If you are on the latest firmware, The plugin will update both LEDs. If you are on old firmware, it'll only update the Right LED
+
 If you are on the older firmware, you can manually enable separate LED management by adding the following to your `$HOME/homebrew/settings/LegionGoRemapper/settings.json`:
 
 ```
 forceEnableSeparateLedManagement: true
+```
+
+The end result in the settings.json should look like this:
+
+```
+{
+  "forceEnableSeparateLedManagement": true,
+  ...otherStuffAlreadyHere
+}
 ```
 
 # Attribution
