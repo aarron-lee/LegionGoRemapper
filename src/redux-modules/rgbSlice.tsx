@@ -45,12 +45,14 @@ type RgbState = {
   rgbProfiles: RgbProfiles;
   perGameProfilesEnabled: boolean;
   enableRgbControl: boolean;
+  forceEnableSeparateLedManagement: boolean;
 };
 
 const initialState: RgbState = {
   rgbProfiles: {},
   perGameProfilesEnabled: false,
-  enableRgbControl: true
+  enableRgbControl: true,
+  forceEnableSeparateLedManagement: false
 };
 
 const bootstrapRgbProfile = (state: RgbState, newGameId: string) => {
@@ -224,6 +226,9 @@ export const rgbSlice = createSlice({
       state.rgbProfiles = rgbProfiles;
       state.enableRgbControl = enableRgbControl;
       state.perGameProfilesEnabled = perGameProfilesEnabled;
+      state.forceEnableSeparateLedManagement = Boolean(
+        action.payload.forceEnableSeparateLedManagement
+      );
     });
     builder.addCase(setCurrentGameId, (state, action) => {
       /*
@@ -280,6 +285,10 @@ export const selectRgbProfileDisplayName = (state: RootState) => {
 
 export const selectEnableRgbControl = (state: RootState) => {
   return Boolean(state.rgb.enableRgbControl);
+};
+
+export const selectSeparateRgbManagementEnabled = (state: RootState) => {
+  return Boolean(state.rgb.forceEnableSeparateLedManagement);
 };
 
 // -------------

@@ -5,7 +5,11 @@ import {
   gamepadSliderClasses
 } from 'decky-frontend-lib';
 import { FC, useState } from 'react';
-import { useRgb, useRgbMode } from '../../hooks/rgb';
+import {
+  useRgb,
+  useRgbMode,
+  useSeparateRgbManagementEnabled
+} from '../../hooks/rgb';
 import RgbModeSlider from './RgbModeSlider';
 import { RgbModes, ControllerType } from '../../backend/constants';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
@@ -15,23 +19,25 @@ const labelMap = {
   LEFT: 'Left'
 };
 
-const HIDE_COLOR_PICKER_MODES = [
-  RgbModes.DYNAMIC,
-  RgbModes.SPIRAL
-]
+const HIDE_COLOR_PICKER_MODES = [RgbModes.DYNAMIC, RgbModes.SPIRAL];
 
 export const RgbSettings: FC<{ controller: ControllerType }> = ({
   controller
 }) => {
   const rgb = useRgb(controller);
+  const separateRgbManagementEnabled = useSeparateRgbManagementEnabled();
   const { enabled, brightness, speed, hue } = rgb.rgbInfo;
   const [showOptions, setShowOptions] = useState(false);
   const [mode] = useRgbMode(controller);
 
+  const label = separateRgbManagementEnabled
+    ? `${labelMap[controller]} Controller LED`
+    : 'Controller LED';
+
   return (
     <>
       <ToggleField
-        label={`${labelMap[controller]} Controller LED`}
+        label={label}
         checked={enabled}
         onChange={rgb.setEnabled}
         bottomSeparator={enabled ? 'none' : 'thick'}
@@ -58,7 +64,7 @@ export const RgbSettings: FC<{ controller: ControllerType }> = ({
         <>
           <RgbModeSlider controller={controller} />
           <SliderField
-            label={`${controller[0]}-Stick Brightness`}
+            label={`Brightness`}
             valueSuffix="%"
             value={brightness}
             showValue={true}

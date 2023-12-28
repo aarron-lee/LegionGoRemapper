@@ -124,6 +124,18 @@ The end result in the `settings.json` file should look something like this:
 
 4. reboot
 
+# Troubleshooting / Frequently Asked Questions
+
+## Can I set RGB LEDs separately between the Left and Right LEDs?
+
+Due to a controller firmware update, Lenovo disabled the ability to set the LEDs separately.
+
+If you are on the older firmware, you can manually enable separate LED management by adding the following to your `$HOME/homebrew/settings/LegionGoRemapper/settings.json`:
+
+```
+forceEnableSeparateLedManagement: true
+```
+
 # Attribution
 
 Special thanks to [antheas](https://github.com/antheas) for [reverse engineering and documenting the HID protocols](https://github.com/antheas/hwinfo/tree/master/devices/legion_go) for the Legion Go Controllers, etc.

@@ -1,6 +1,10 @@
 import { PanelSection } from 'decky-frontend-lib';
 import { VFC } from 'react';
-import { useEnableRgbControl, useRgbProfileDisplayName } from '../../hooks/rgb';
+import {
+  useEnableRgbControl,
+  useRgbProfileDisplayName,
+  useSeparateRgbManagementEnabled
+} from '../../hooks/rgb';
 import { RgbPerGameProfilesToggle } from './RgbPerGameProfilesToggle';
 import { RgbSettings } from './RgbSettings';
 import { EnableRgbControlToggle } from './EnableRgbControlToggle';
@@ -8,6 +12,7 @@ import { EnableRgbControlToggle } from './EnableRgbControlToggle';
 const ControllerLightingPanel: VFC = () => {
   const displayName = useRgbProfileDisplayName();
   const { rgbControlEnabled } = useEnableRgbControl();
+  const separateRgbManagementEnabled = useSeparateRgbManagementEnabled();
 
   let title =
     displayName === 'Default'
@@ -22,7 +27,7 @@ const ControllerLightingPanel: VFC = () => {
           <>
             <RgbPerGameProfilesToggle />
             <RgbSettings controller="RIGHT" />
-            <RgbSettings controller="LEFT" />
+            {separateRgbManagementEnabled && <RgbSettings controller="LEFT" />}
           </>
         )}
       </div>
