@@ -3,11 +3,7 @@ import { fanSlice, selectActiveFanCurve } from '../../redux-modules/fanSlice';
 import { PanelSection, PanelSectionRow, SliderField } from 'decky-frontend-lib';
 import { VFC } from 'react';
 
-type Props = {
-  showSliders: boolean;
-};
-
-const FanCurveSliders: VFC<Props> = ({ showSliders }) => {
+const FanCurveSliders: VFC = () => {
   const activeFanCurve = useSelector(selectActiveFanCurve);
   const dispatch = useDispatch();
 
@@ -40,13 +36,9 @@ const FanCurveSliders: VFC<Props> = ({ showSliders }) => {
   );
 
   return (
-    <>
-      {showSliders && (
-        <PanelSection title={'Temp (\u2103) | Fan Speed (%)'}>
-          {sliders}
-        </PanelSection>
-      )}
-    </>
+    <PanelSection title={'Temp (\u2103) | Fan Speed (%)'}>
+      {sliders}
+    </PanelSection>
   );
 };
 
