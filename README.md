@@ -2,6 +2,19 @@
 
 Decky Plugin that replicates some of the Legion Space remapping functionality.
 
+- [Functionality](#functionality)
+- [Install Instructions](#install-instructions)
+  - [Prerequisites](#prerequisites)
+  - [Quick Install](#quick-install)
+  - [Manual Install](#manual-install)
+- [Manual Build](#manual-build)
+- [Experimental Features](#experimental-features)
+  - [Custom Fan Curves](#custom-fan-curves)
+    - [Setup Instructions](#fan-curve-setup-instructions)
+- [Troubleshooting/FAQ](#troubleshooting--frequently-asked-questions)
+  - [Can I set the RGB Lights separately?](#can-i-set-rgb-leds-separately-between-the-left-and-right-leds)
+- [Attribution](#attribution)
+
 ![color-picker image](./images/color-picker.png)
 
 ![fan-control image](./images/fan-control.png)
@@ -107,7 +120,7 @@ Note that this requires the `acpi_call` module, if your Linux distro doesn't hav
 
 Special thanks to [corando98](https://github.com/corando98) for investigating fan curves + writing the functions for to control it.
 
-### Setup Instructions:
+### Fan Curve Setup Instructions:
 
 1. run `sudo modprobe acpi_call` in terminal, if this errors out, you need to install `acpi_call`
 2. install latest LegionGoRemapper from github [releases](https://github.com/aarron-lee/LegionGoRemapper/releases)
