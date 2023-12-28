@@ -56,15 +56,6 @@ const FanPanel = () => {
           />
         </PanelSectionRow>
         {customFanCurvesEnabled && (
-          <PanelSectionRow>
-            <ToggleField
-              label={'Enable Full Fan Speed Mode'}
-              checked={enableFullFanSpeedMode}
-              onChange={setEnableFullFanSpeedMode}
-            />
-          </PanelSectionRow>
-        )}
-        {customFanCurvesEnabled && (
           <>
             <PanelSectionRow>
               <ToggleField
@@ -89,10 +80,21 @@ const FanPanel = () => {
                 {showSliders ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
               </ButtonItem>
             </PanelSectionRow>
+            {showSliders && (
+              <PanelSectionRow>
+                <ToggleField
+                  label={'Enable Full Fan Speed Mode'}
+                  checked={enableFullFanSpeedMode}
+                  onChange={setEnableFullFanSpeedMode}
+                />
+              </PanelSectionRow>
+            )}
           </>
         )}
       </PanelSection>
-      {customFanCurvesEnabled && <FanCurveSliders showSliders={showSliders} />}
+      {customFanCurvesEnabled && !enableFullFanSpeedMode && showSliders && (
+        <FanCurveSliders />
+      )}
     </>
   );
 };

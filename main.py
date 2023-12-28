@@ -86,13 +86,9 @@ class Plugin:
         fanProfiles = fanInfo.get('fanProfiles', {})
         fanPerGameProfilesEnabled = fanInfo.get('fanPerGameProfilesEnabled', False)
         customFanCurvesEnabled = fanInfo.get('customFanCurvesEnabled', False)
-        # Set Full Fan Speed Mode
-        enableFullFanSpeedMode = fanInfo.get('enableFullFanSpeedMode', False)
 
         settings.set_setting('fanPerGameProfilesEnabled', fanPerGameProfilesEnabled)
         settings.set_setting('customFanCurvesEnabled', customFanCurvesEnabled)
-        settings.set_setting('enableFullFanSpeedMode', enableFullFanSpeedMode)
-
         settings.set_all_fan_profiles(fanProfiles)
 
         try:
@@ -103,11 +99,14 @@ class Plugin:
                     fan_profile = fanProfiles.get(currentGameId)
                     if fan_profile:
                         active_fan_profile = fan_profile
+    
+                enable_full_fan_speed = active_fan_profile.get("fullFanSpeedEnabled", False)
+                del active_fan_profile['fullFanSpeedEnabled']
                 active_fan_curve = active_fan_profile.values()
 
                 legion_space.set_fan_curve(active_fan_curve)
 
-                legion_space.set_full_fan_speed(enableFullFanSpeedMode)
+                legion_space.set_full_fan_speed(enable_full_fan_speed)
             elif not customFanCurvesEnabled and settings.supports_custom_fan_curves():
                 legion_space.set_default_fan_curve()
 

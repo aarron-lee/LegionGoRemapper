@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { set, merge } from 'lodash';
+import { set, merge, cloneDeep } from 'lodash';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { extractCurrentGameId, getServerApi } from '../backend/utils';
 import { RootState } from './store';
@@ -26,12 +26,28 @@ const DEFAULT_FAN_VALUES: FanProfile = {
   70: 70,
   80: 80,
   90: 95,
-  100: 100
+  100: 100,
+  fullFanSpeedEnabled: false
 };
 
-type FanProfile = {
-  [key: string]: number;
+type FanSpeed = number;
+
+type FanCurve = {
+  10: FanSpeed;
+  20: FanSpeed;
+  30: FanSpeed;
+  40: FanSpeed;
+  50: FanSpeed;
+  60: FanSpeed;
+  70: FanSpeed;
+  80: FanSpeed;
+  90: FanSpeed;
+  100: FanSpeed;
 };
+
+interface FanProfile extends FanCurve {
+  fullFanSpeedEnabled: boolean;
+}
 
 type FanProfiles = {
   [gameId: string]: FanProfile;
@@ -41,7 +57,6 @@ type FanState = {
   fanProfiles: FanProfiles;
   fanPerGameProfilesEnabled: boolean;
   customFanCurvesEnabled: boolean;
-  enableFullFanSpeedMode: boolean;
   supportsCustomFanCurves: boolean;
 };
 
@@ -49,7 +64,6 @@ const initialState: FanState = {
   fanProfiles: {},
   fanPerGameProfilesEnabled: false,
   customFanCurvesEnabled: false,
-  enableFullFanSpeedMode: false,
   supportsCustomFanCurves: false
 };
 
@@ -73,7 +87,15 @@ export const fanSlice = createSlice({
     },
     setEnableFullFanSpeedMode: (state, action: PayloadAction<boolean>) => {
       const enabled = action.payload;
-      state.enableFullFanSpeedMode = enabled;
+
+      const perGameProfilesEnabled = state.fanPerGameProfilesEnabled;
+
+      if (perGameProfilesEnabled) {
+        const currentGameId = extractCurrentGameId();
+        state.fanProfiles[currentGameId].fullFanSpeedEnabled = enabled;
+      } else {
+        state.fanProfiles.default.fullFanSpeedEnabled = enabled;
+      }
     },
     updateFanCurve: (
       state,
@@ -107,9 +129,6 @@ export const fanSlice = createSlice({
       state.supportsCustomFanCurves = Boolean(
         action.payload.supportsCustomFanCurves
       );
-      state.enableFullFanSpeedMode = Boolean(
-        action.payload.enableFullFanSpeedMode
-      );
 
       state.customFanCurvesEnabled = customFanCurvesEnabled;
       state.fanProfiles = fanProfiles;
@@ -142,7 +161,7 @@ export const selectFanPerGameProfilesEnabled = (state: RootState) => {
   return Boolean(state.fan.fanPerGameProfilesEnabled);
 };
 
-export const selectActiveFanCurve = (state: RootState) => {
+export const selectActiveFanProfile = (state: RootState) => {
   const perGameProfilesEnabled = selectFanPerGameProfilesEnabled(state);
 
   if (perGameProfilesEnabled) {
@@ -155,8 +174,19 @@ export const selectActiveFanCurve = (state: RootState) => {
   }
 };
 
+export const selectActiveFanCurve = (state: RootState) => {
+  const profile = selectActiveFanProfile(state);
+
+  const p = cloneDeep(profile) as any;
+  delete p.fullFanSpeedEnabled;
+  const x = p as FanCurve;
+
+  return x;
+};
+
 export const selectEnableFullFanSpeedMode = (state: RootState) => {
-  return Boolean(state.fan.enableFullFanSpeedMode);
+  const profile = selectActiveFanProfile(state);
+  return Boolean(profile.fullFanSpeedEnabled);
 };
 
 // -------------
@@ -182,12 +212,7 @@ export const saveFanSettingsMiddleware =
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
       const {
-        fan: {
-          fanProfiles,
-          fanPerGameProfilesEnabled,
-          customFanCurvesEnabled,
-          enableFullFanSpeedMode
-        },
+        fan: { fanProfiles, fanPerGameProfilesEnabled, customFanCurvesEnabled },
         ui: { currentGameId: currentId }
       } = store.getState();
       let currentGameId;
@@ -200,8 +225,7 @@ export const saveFanSettingsMiddleware =
       const fanInfo = {
         fanProfiles,
         fanPerGameProfilesEnabled,
-        customFanCurvesEnabled,
-        enableFullFanSpeedMode
+        customFanCurvesEnabled
       };
 
       serverApi?.callPluginMethod('save_fan_settings', {
