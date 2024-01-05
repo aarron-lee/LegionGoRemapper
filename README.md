@@ -41,9 +41,9 @@ Included Functionality in this plugin:
 
 Decky Loader must already be installed.
 
-### Quick install
+### Quick Install / Update
 
-Run the following in terminal, then reboot
+Run the following in terminal, then reboot. Note that this works both for installing or updating the plugin
 
 ```
 curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh
