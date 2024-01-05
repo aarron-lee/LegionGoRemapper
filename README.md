@@ -5,7 +5,7 @@ Decky Plugin that replicates some of the Legion Space remapping functionality.
 - [Functionality](#functionality)
 - [Install Instructions](#install-instructions)
   - [Prerequisites](#prerequisites)
-  - [Quick Install](#quick-install)
+  - [Quick Install / Update](#quick-install--update)
   - [Manual Install](#manual-install)
 - [Manual Build](#manual-build)
 - [Experimental Features](#experimental-features)
