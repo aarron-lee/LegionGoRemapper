@@ -120,22 +120,7 @@ Note that this requires the `acpi_call` module, if your Linux distro doesn't hav
 
 Special thanks to [corando98](https://github.com/corando98) for investigating fan curves + writing the functions for to control it.
 
-### Fan Curve Setup Instructions:
-
-1. run `sudo modprobe acpi_call` in terminal, if this errors out, you need to install `acpi_call`
-2. install latest LegionGoRemapper from github [releases](https://github.com/aarron-lee/LegionGoRemapper/releases)
-3. edit the `$HOME/homebrew/settings/LegionGoRemapper/settings.json` file. add `"forceEnableCustomFanCurves": true` to the json
-
-The end result in the `settings.json` file should look something like this:
-
-```
-{
-  "forceEnableCustomFanCurves": true,
-  ...otherStuffAlreadyHere
-}
-```
-
-4. reboot
+run `sudo modprobe acpi_call` in terminal, if this errors out, you need to install `acpi_call`
 
 # Troubleshooting / Frequently Asked Questions
 

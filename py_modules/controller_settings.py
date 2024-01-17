@@ -109,7 +109,7 @@ def modprobe_acpi_call():
 
 def supports_custom_fan_curves():
     try:
-        if modprobe_acpi_call() and get_settings().get("forceEnableCustomFanCurves"):
+        if modprobe_acpi_call():
             return True
         return False
     except Exception as e:
