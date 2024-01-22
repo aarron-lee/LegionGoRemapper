@@ -21,8 +21,8 @@ def get_config():
 
     if not global_config:
         decky_plugin.logger.error("Legion go configuration device not found.")
-    else:
-        decky_plugin.logger.info(global_config)
+    # else:
+    #     decky_plugin.logger.info(global_config)
 
 def send_command(command):
     global global_config

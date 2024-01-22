@@ -11,6 +11,7 @@ import { Provider, useSelector } from 'react-redux';
 import { currentGameIdListener } from './backend/currentGameIdListener';
 import logo from '../assets/Icon.png';
 import FanPanel from './components/fan/FanPanel';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
   const loading = useSelector(getInitialLoading);
@@ -19,9 +20,15 @@ const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
   }
   return (
     <>
-      <ControllerLightingPanel />
-      <FanPanel />
-      <RemapButtons />
+      <ErrorBoundary title={'Controller Lighting Panel'}>
+        <ControllerLightingPanel />
+      </ErrorBoundary>
+      <ErrorBoundary title="Fan Panel">
+        <FanPanel />
+      </ErrorBoundary>
+      <ErrorBoundary title="Remap Buttons">
+        <RemapButtons />
+      </ErrorBoundary>
     </>
   );
 });
