@@ -9,10 +9,10 @@ def sync_rgb_settings(current_game_id):
     s = settings.get_settings()
     enable_separate_rgb_management = s.get('forceEnableSeparateLedManagement', False)
 
-    controllers = ['RIGHT']
+    controllers = ['LEFT']
 
     if enable_separate_rgb_management:
-        controllers.append('LEFT')
+        controllers.append('RIGHT')
 
     rgb_profile = s.get('rgb').get(current_game_id)
     for controller in controllers:
