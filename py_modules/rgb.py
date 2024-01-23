@@ -7,12 +7,11 @@ import controller_settings as settings
 # sync the state of the RGB lights to the values in settings.json
 def sync_rgb_settings(current_game_id):
     s = settings.get_settings()
-    enable_separate_rgb_management = s.get('forceEnableSeparateLedManagement', False)
+    # enable_separate_rgb_management = s.get('forceEnableSeparateLedManagement', False)
 
-    controllers = ['LEFT']
+    controllers = ['LEFT', 'RIGHT']
 
-    if enable_separate_rgb_management:
-        controllers.append('RIGHT')
+    should_update_controllers = False
 
     rgb_profile = s.get('rgb').get(current_game_id)
     for controller in controllers:
@@ -20,6 +19,10 @@ def sync_rgb_settings(current_game_id):
         rgb_mode = rgb_light.get('mode')
 
         if rgb_light.get('enabled'):
+            should_update_controllers = True
+
+    for controller in controllers:
+        if should_update_controllers:
             rgb_on(current_game_id, controller)
             time.sleep(0.1)
             rgb_color(
