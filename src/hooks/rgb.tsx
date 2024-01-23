@@ -18,8 +18,7 @@ export enum Colors {
 }
 
 export const useSeparateRgbManagementEnabled = () => {
-  const enabled = useSelector(selectSeparateRgbManagementEnabled);
-  return enabled;
+  return false;
 };
 
 export const useEnableRgbControl = () => {

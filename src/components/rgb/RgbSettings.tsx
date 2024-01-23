@@ -25,7 +25,7 @@ export const RgbSettings: FC<{ controller: ControllerType }> = ({
   controller
 }) => {
   const rgb = useRgb(controller);
-  const separateRgbManagementEnabled = useSeparateRgbManagementEnabled();
+  const separateRgbManagementEnabled = false;
   const { enabled, brightness, speed, hue } = rgb.rgbInfo;
   const [showOptions, setShowOptions] = useState(false);
   const [mode] = useRgbMode(controller);
