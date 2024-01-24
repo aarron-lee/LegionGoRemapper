@@ -12,7 +12,7 @@ import controller_enums
 import rgb
 import controllers
 import controller_settings as settings
-
+from time import sleep
 
 try:
     LOG_LOCATION = f"/tmp/legionGoRemapper.log"
@@ -102,11 +102,14 @@ class Plugin:
     
                 enable_full_fan_speed = active_fan_profile.get("fullFanSpeedEnabled", False)
                 del active_fan_profile['fullFanSpeedEnabled']
-                active_fan_curve = active_fan_profile.values()
+                active_fan_curve =list(active_fan_profile.values())
 
-                legion_space.set_fan_curve(active_fan_curve)
-
-                legion_space.set_full_fan_speed(enable_full_fan_speed)
+                if not enable_full_fan_speed:
+                    legion_space.set_full_fan_speed(False)
+                    sleep(0.5)
+                    legion_space.set_fan_curve(active_fan_curve)
+                else:
+                    legion_space.set_full_fan_speed(True)
             elif not customFanCurvesEnabled and settings.supports_custom_fan_curves():
                 legion_space.set_default_fan_curve()
 

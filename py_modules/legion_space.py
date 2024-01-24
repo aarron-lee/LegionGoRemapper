@@ -45,6 +45,7 @@ def set_fan_curve(fan_table):
 
     # Constructing the full command
     command = f"echo '\\_SB.GZFD.WMAB 0 0x06 {{{fan_id_sensor_id}, {temp_array_length}, {fan_speed_values}, {temp_array_length}, {temp_values}}}' |  tee /proc/acpi/call;  cat /proc/acpi/call"
+    # decky_plugin.logger.info(command)
     return execute_acpi_command(command)
 
 def set_default_fan_curve():
