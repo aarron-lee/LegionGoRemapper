@@ -11,6 +11,8 @@ import legion_space
 import controller_enums
 import rgb
 import controllers
+import file_timeout
+import plugin_update
 import controller_settings as settings
 from time import sleep
 
@@ -34,6 +36,8 @@ class Plugin:
         results = settings.get_settings()
 
         try:
+            results['pluginVersionNum'] = f'{decky_plugin.DECKY_PLUGIN_VERSION}'
+
             if settings.supports_custom_fan_curves():
                 results['supportsCustomFanCurves'] = True
             else:
@@ -142,6 +146,14 @@ class Plugin:
         decky_plugin.logger.info(t_toggle)
 
         legion_configurator.send_command(t_toggle)
+
+    async def ota_update(self):
+        # trigger ota update
+        try:
+            with file_timeout.time_limit(15):
+                plugin_update.ota_update()
+        except Exception as e:
+            logging.error(e)
 
     # Function called first during the unload process, utilize this to handle your plugin being removed
     async def _unload(self):

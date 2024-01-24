@@ -12,6 +12,7 @@ import { currentGameIdListener } from './backend/currentGameIdListener';
 import logo from '../assets/Icon.png';
 import FanPanel from './components/fan/FanPanel';
 import ErrorBoundary from './components/ErrorBoundary';
+import OtaUpdates from './components/OtaUpdates';
 
 const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
   const loading = useSelector(getInitialLoading);
@@ -28,6 +29,9 @@ const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
       </ErrorBoundary>
       <ErrorBoundary title="Remap Buttons">
         <RemapButtons />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <OtaUpdates />
       </ErrorBoundary>
     </>
   );

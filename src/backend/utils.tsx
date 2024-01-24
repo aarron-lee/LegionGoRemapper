@@ -52,7 +52,8 @@ export const getServerApi = () => {
   return serverApi;
 };
 
-export const extractDisplayName = () => `${Router.MainRunningApp?.display_name || 'default'}`
+export const extractDisplayName = () =>
+  `${Router.MainRunningApp?.display_name || 'default'}`;
 
 export const extractCurrentGameId = () =>
   `${Router.MainRunningApp?.appid || 'default'}`;
@@ -73,4 +74,22 @@ export const logInfo = (info: any) => {
     s.callPluginMethod(ServerAPIMethods.LOG_INFO, {
       info: JSON.stringify(info)
     });
+};
+
+export const getLatestVersionNum = async (serverApi: ServerAPI) => {
+  const { result } = await serverApi.fetchNoCors(
+    'https://raw.githubusercontent.com/aarron-lee/LegionGoRemapper/main/package.json',
+    { method: 'GET' }
+  );
+
+  //@ts-ignore
+  const body = result.body as string;
+  if (body && typeof body === 'string') {
+    return JSON.parse(body)['version'];
+  }
+  return '';
+};
+
+export const otaUpdate = async (serverApi: ServerAPI) => {
+  return serverApi.callPluginMethod('ota_update', {});
 };
