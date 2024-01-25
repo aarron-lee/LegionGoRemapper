@@ -1,5 +1,6 @@
 import subprocess
 import decky_plugin
+from time import sleep
 
 # all credit goes to corando98
 # source: https://github.com/corando98/LLG_Dev_scripts/blob/main/LegionSpace.py
@@ -33,6 +34,10 @@ def set_fan_curve(fan_table):
     Returns:
         str: The output from setting the new fan curve.
     """
+    # set custom TDP mode
+    set_smart_fan_mode(0xff)
+    sleep(0.2)
+
     # Assuming Fan ID and Sensor ID are both 0 (as they are ignored)
     fan_id_sensor_id = '0x00, 0x00'
 
@@ -85,3 +90,50 @@ def set_full_fan_speed(enable):
     status = '0x01' if enable else '0x00'
     command = f"echo '\\_SB.GZFD.WMAE 0 0x12 {status}04020000' | tee /proc/acpi/call; cat /proc/acpi/call"
     return execute_acpi_command(command)
+
+def set_smart_fan_mode(mode_value):
+    """
+    Set the Smart Fan Mode of the system.
+
+    The Smart Fan Mode controls the system's cooling behavior. Different modes can be set to 
+    optimize the balance between cooling performance and noise level.
+
+    Args:
+        mode_value (int): The value of the Smart Fan Mode to set.
+                          Known values:
+                          - 0: Quiet Mode - Lower fan speed for quieter operation.
+                          - 1: Balanced Mode - Moderate fan speed for everyday usage.
+                          - 2: Performance Mode - Higher fan speed for intensive tasks.
+                          - 224: Extreme Mode
+                          - 255: Custom Mode - Custom fan curve can be set?.
+
+    Returns:
+        str: The result of the operation. Returns None if an error occurs.
+    """
+    is_already_set = get_smart_fan_mode() == mode_value
+
+    if not is_already_set:
+        command = f"echo '\\_SB.GZFD.WMAA 0 0x2C {mode_value}' |  tee /proc/acpi/call;  cat /proc/acpi/call"
+        return execute_acpi_command(command)
+    return True
+
+def get_smart_fan_mode():
+    """
+    Get the current Smart Fan Mode of the system.
+
+    This function retrieves the current setting of the Smart Fan mode as specified in the WMI documentation.
+
+    Returns:
+        str: The current Smart Fan Mode. The return value corresponds to:
+             - '0': Quiet Mode
+             - '1': Balanced Mode
+             - '2': Performance Mode
+             - '224': Extreme Mode
+             - '255': Custom Mode
+             Returns None if an error occurs.
+    """
+    command = "echo '\\_SB.GZFD.WMAA 0 0x2D' | tee /proc/acpi/call; cat /proc/acpi/call"
+    output = execute_acpi_command(command)
+    first_newline_position = output.find('\n')
+    output = output[first_newline_position+1:first_newline_position+5].replace('\x00', '')
+    return int(output, 16)
