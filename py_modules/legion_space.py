@@ -38,14 +38,13 @@ def set_fan_curve(fan_table):
 
     # Assuming the temperature array length and values are ignored but required
     temp_array_length = '0x0A, 0x00, 0x00, 0x00'  # Length 10 in hex
-    temp_values = ', '.join([f'0x{temp:02x}, 0x00' for temp in range(0, 101, 10)]) + ', 0x00'
+    temp_values = ', '.join([f'0x{temp:02x}, 0x00' for temp in range(10, 101, 10)]) + ', 0x00'
 
     # Fan speed values in uint16 format with null termination
     fan_speed_values = ', '.join([f'0x{speed:02x}, 0x00' for speed in fan_table]) + ', 0x00'
 
     # Constructing the full command
     command = f"echo '\\_SB.GZFD.WMAB 0 0x06 {{{fan_id_sensor_id}, {temp_array_length}, {fan_speed_values}, {temp_array_length}, {temp_values}}}' |  tee /proc/acpi/call;  cat /proc/acpi/call"
-    # decky_plugin.logger.info(command)
     return execute_acpi_command(command)
 
 def set_default_fan_curve():
