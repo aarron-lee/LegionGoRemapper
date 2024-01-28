@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Gyro, RemappableButtons } from '../../backend/constants';
 import RemapActionDropdown from './RemapActionDropdown';
-import { PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
+import { Field, PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
 import {
   useControllerPerGameEnabled,
   useControllerProfileDisplayName,
@@ -39,6 +39,11 @@ const RemapButtons: FC = () => {
           </PanelSectionRow>
         { controllerRemappingEnabled && 
             <>
+              <PanelSectionRow>
+                <Field disabled>
+                  WARNING: Don't use this with Controller Emulators
+                </Field>
+              </PanelSectionRow>
               <PanelSectionRow>
                 <ToggleField
                   label={'Enable Per Game Remaps'}
