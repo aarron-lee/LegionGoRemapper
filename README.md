@@ -12,6 +12,7 @@ Decky Plugin that replicates some of the Legion Space remapping functionality.
   - [Custom Fan Curves](#custom-fan-curves)
     - [Setup Instructions](#fan-curve-setup-instructions)
 - [Troubleshooting/FAQ](#troubleshooting--frequently-asked-questions)
+  - [LED management seems to work temporarily](#led-management-seems-to-work-temporarily)
   - [Can I set the RGB Lights separately?](#can-i-set-rgb-leds-separately-between-the-left-and-right-leds)
 - [Attribution](#attribution)
 
@@ -124,11 +125,17 @@ run `sudo modprobe acpi_call` in terminal, if this errors out, you need to insta
 
 # Troubleshooting / Frequently Asked Questions
 
+## LED management seems to work temporarily
+
+If you are using HHD for your controller, it has it's own LED management that overwrites this plugin.
+
+Disable the LED management in HHD if you want to use LEDs via LegionGoRemapper instead.
+
 ## Can I set RGB LEDs separately between the Left and Right LEDs?
 
 Due to a controller firmware update, Lenovo disabled the ability to set the LEDs separately.
 
-If you are on the latest firmware, The plugin will update both LEDs.
+If you are on the latest firmware, the plugin will update both LEDs.
 
 # Attribution
 
