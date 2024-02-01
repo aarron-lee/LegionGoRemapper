@@ -13,6 +13,7 @@ const FanCurveSliders: VFC = () => {
 
   const sliders = Object.entries(activeFanCurve).map(
     ([temp, fanSpeed], idx) => {
+      const minSpeed = idx < 7 ? 0 : 70
       return (
         <PanelSectionRow>
           <SliderField
@@ -21,7 +22,7 @@ const FanCurveSliders: VFC = () => {
             showValue
             valueSuffix="%"
             step={5}
-            min={0}
+            min={minSpeed}
             max={100}
             validValues="range"
             bottomSeparator="none"
