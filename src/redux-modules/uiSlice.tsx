@@ -32,7 +32,6 @@ export const uiSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setInitialState, (state, action) => {
       if (action) state.initialLoading = false;
-      logInfo(action.payload);
       if (action.payload?.pluginVersionNum) {
         state.pluginVersionNum = `${action.payload.pluginVersionNum}`;
       }

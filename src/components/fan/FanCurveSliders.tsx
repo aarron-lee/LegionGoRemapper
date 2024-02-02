@@ -7,13 +7,14 @@ const FanCurveSliders: VFC = () => {
   const activeFanCurve = useSelector(selectActiveFanCurve);
   const dispatch = useDispatch();
 
-  const updateFanCurveValue = (temp: string, fanSpeed: number) => {
-    return dispatch(fanSlice.actions.updateFanCurve({ temp, fanSpeed }));
-  };
-
   const sliders = Object.entries(activeFanCurve).map(
     ([temp, fanSpeed], idx) => {
-      const minSpeed = idx < 7 ? 0 : 70
+      const updateFanCurveValue = (temp: string, fanSpeed: number) => {
+        if (idx >=6 && fanSpeed < 70) {
+          fanSpeed = 70;
+        }
+        return dispatch(fanSlice.actions.updateFanCurve({ temp, fanSpeed }));
+      };
       return (
         <PanelSectionRow>
           <SliderField
@@ -22,7 +23,7 @@ const FanCurveSliders: VFC = () => {
             showValue
             valueSuffix="%"
             step={5}
-            min={minSpeed}
+            min={0}
             max={100}
             validValues="range"
             bottomSeparator="none"
