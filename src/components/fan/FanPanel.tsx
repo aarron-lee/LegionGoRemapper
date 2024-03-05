@@ -49,6 +49,11 @@ const FanPanel = () => {
     <>
       <PanelSection title={title}>
         <PanelSectionRow>
+          ⚠️ Warning ⚠️ - recently reported bugs indicate that custom fan curves
+          sometimes stop working for unknown reasons. Use this feature with
+          caution!
+        </PanelSectionRow>
+        <PanelSectionRow>
           <ToggleField
             label={'Enable Custom Fan Curves'}
             checked={customFanCurvesEnabled}
