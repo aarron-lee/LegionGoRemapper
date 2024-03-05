@@ -29,9 +29,19 @@ const useTitle = (fanPerGameProfilesEnabled: boolean) => {
   return title;
 };
 
+const WARNING_KEY = 'legionGoRemapper.customfan.warning';
+
 const FanPanel = () => {
   const supportsFanCurves = useSupportsCustomFanCurves();
   const [showSliders, setShowSliders] = useState(false);
+  const [acknowledgeWarning, setAcknowledgeWarning] = useState(
+    window.localStorage.getItem(WARNING_KEY) === 'true'
+  );
+
+  const setWarning = (value: boolean) => {
+    window.localStorage.setItem(WARNING_KEY, `${value}`);
+    return setAcknowledgeWarning(value);
+  };
   const { enableFullFanSpeedMode, setEnableFullFanSpeedMode } =
     useEnableFullFanSpeedMode();
 
@@ -48,10 +58,19 @@ const FanPanel = () => {
   return (
     <>
       <PanelSection title={title}>
+        {!acknowledgeWarning && (
+          <PanelSectionRow>
+            ⚠️ Warning ⚠️ - recently reported bugs indicate that custom fan
+            curves sometimes stop working for unknown reasons. Use this feature
+            with caution!
+          </PanelSectionRow>
+        )}
         <PanelSectionRow>
-          ⚠️ Warning ⚠️ - recently reported bugs indicate that custom fan curves
-          sometimes stop working for unknown reasons. Use this feature with
-          caution!
+          <ToggleField
+            label={'Hide Warning'}
+            checked={acknowledgeWarning}
+            onChange={setWarning}
+          />
         </PanelSectionRow>
         <PanelSectionRow>
           <ToggleField
