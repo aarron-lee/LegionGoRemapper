@@ -10,7 +10,7 @@ const FanCurveSliders: VFC = () => {
   const sliders = Object.entries(activeFanCurve).map(
     ([temp, fanSpeed], idx) => {
       const updateFanCurveValue = (temp: string, fanSpeed: number) => {
-        if (idx >=6 && fanSpeed < 70) {
+        if (idx >= 6 && fanSpeed < 70) {
           fanSpeed = 70;
         }
         return dispatch(fanSlice.actions.updateFanCurve({ temp, fanSpeed }));
@@ -23,8 +23,8 @@ const FanCurveSliders: VFC = () => {
             showValue
             valueSuffix="%"
             step={5}
-            min={0}
-            max={100}
+            min={5}
+            max={115}
             validValues="range"
             bottomSeparator="none"
             key={idx}

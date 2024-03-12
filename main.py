@@ -111,11 +111,13 @@ class Plugin:
                 if not enable_full_fan_speed:
                     legion_space.set_full_fan_speed(False)
                     sleep(0.5)
-                    legion_space.set_fan_curve(active_fan_curve)
+                    legion_space.set_active_fan_curve(active_fan_curve)
                 else:
                     legion_space.set_full_fan_speed(True)
             elif not customFanCurvesEnabled and settings.supports_custom_fan_curves():
-                legion_space.set_default_fan_curve()
+                legion_space.set_tdp_mode("performance")
+                sleep(0.5)
+                legion_space.set_tdp_mode("custom")
 
             return True
         except Exception as e:
