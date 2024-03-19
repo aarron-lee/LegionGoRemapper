@@ -194,12 +194,10 @@ export const selectEnableFullFanSpeedMode = (state: RootState) => {
 // -------------
 
 const mutatingActionTypes = [
-  fanSlice.actions.setCustomFanCurvesEnabled.type,
   fanSlice.actions.setFanPerGameProfilesEnabled.type,
   fanSlice.actions.updateFanCurve.type,
   fanSlice.actions.updateFanProfiles.type,
-  fanSlice.actions.setEnableFullFanSpeedMode.type,
-  setCurrentGameId.type
+  fanSlice.actions.setEnableFullFanSpeedMode.type
 ];
 
 export const saveFanSettingsMiddleware =
@@ -209,33 +207,60 @@ export const saveFanSettingsMiddleware =
 
     const result = next(action);
 
+    const state = store.getState();
+
+    const {
+      fan: { fanPerGameProfilesEnabled, customFanCurvesEnabled },
+      ui: { currentGameId: currentId }
+    } = state;
+
+    let currentGameId;
+    if (fanPerGameProfilesEnabled && currentId) {
+      currentGameId = currentId;
+    } else {
+      currentGameId = 'default';
+    }
+
+    if (type === setCurrentGameId.type && customFanCurvesEnabled) {
+      setFanCurve(state, currentGameId);
+    }
+
+    if (type === fanSlice.actions.setCustomFanCurvesEnabled.type) {
+      if (action.payload === false) {
+        serverApi?.callPluginMethod('disable_fan_profiles', {
+          resetCurve: true
+        });
+      } else {
+        setFanCurve(state, currentGameId);
+      }
+    }
+
     if (mutatingActionTypes.includes(type)) {
       // save changes to backend
-      const {
-        fan: { fanProfiles, fanPerGameProfilesEnabled, customFanCurvesEnabled },
-        ui: { currentGameId: currentId }
-      } = store.getState();
-      let currentGameId;
-      if (fanPerGameProfilesEnabled && currentId) {
-        currentGameId = currentId;
-      } else {
-        currentGameId = 'default';
-      }
-
-      const fanInfo = {
-        fanProfiles,
-        fanPerGameProfilesEnabled,
-        customFanCurvesEnabled
-      };
-
-      serverApi?.callPluginMethod('save_fan_settings', {
-        fanInfo,
-        currentGameId
-      });
+      setFanCurve(state, currentGameId);
     }
 
     return result;
   };
+
+function setFanCurve(state: any, currentGameId: string) {
+  const serverApi = getServerApi();
+
+  const {
+    fan: { fanProfiles, fanPerGameProfilesEnabled, customFanCurvesEnabled }
+  } = state;
+
+  const fanInfo = {
+    fanProfiles,
+    fanPerGameProfilesEnabled,
+    customFanCurvesEnabled
+  };
+
+  serverApi?.callPluginMethod('save_fan_settings', {
+    fanInfo,
+    currentGameId
+  });
+}
 
 // -------------
 // Slice Util functions

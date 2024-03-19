@@ -86,6 +86,14 @@ class Plugin:
                     rgb.sync_rgb_settings(currentGameId)
         return result
 
+    async def disable_fan_profiles(self, resetCurve = False):
+        settings.set_setting('customFanCurvesEnabled', False)
+
+        if resetCurve:
+            legion_space.set_tdp_mode("performance")
+            sleep(0.5)
+            legion_space.set_tdp_mode("custom")
+
     async def save_fan_settings(self, fanInfo, currentGameId):
         fanProfiles = fanInfo.get('fanProfiles', {})
         fanPerGameProfilesEnabled = fanInfo.get('fanPerGameProfilesEnabled', False)
@@ -106,7 +114,7 @@ class Plugin:
     
                 enable_full_fan_speed = active_fan_profile.get("fullFanSpeedEnabled", False)
                 del active_fan_profile['fullFanSpeedEnabled']
-                active_fan_curve =list(active_fan_profile.values())
+                active_fan_curve = list(active_fan_profile.values())
 
                 if not enable_full_fan_speed:
                     legion_space.set_full_fan_speed(False)
