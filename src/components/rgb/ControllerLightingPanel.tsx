@@ -1,7 +1,8 @@
-import { PanelSection } from 'decky-frontend-lib';
+import { PanelSection, ToggleField } from 'decky-frontend-lib';
 import { VFC } from 'react';
 import {
   useEnableRgbControl,
+  usePowerLed,
   useRgbProfileDisplayName,
   useSeparateRgbManagementEnabled
 } from '../../hooks/rgb';
@@ -12,6 +13,7 @@ import { EnableRgbControlToggle } from './EnableRgbControlToggle';
 const ControllerLightingPanel: VFC = () => {
   const displayName = useRgbProfileDisplayName();
   const { rgbControlEnabled } = useEnableRgbControl();
+  const { powerLedEnabled, setPowerLed } = usePowerLed();
   const separateRgbManagementEnabled = useSeparateRgbManagementEnabled();
 
   let title =
@@ -21,16 +23,19 @@ const ControllerLightingPanel: VFC = () => {
 
   return (
     <PanelSection title={title}>
-      <div>
-        <EnableRgbControlToggle />
-        {rgbControlEnabled && (
-          <>
-            <RgbPerGameProfilesToggle />
-            <RgbSettings controller="RIGHT" />
-            {separateRgbManagementEnabled && <RgbSettings controller="LEFT" />}
-          </>
-        )}
-      </div>
+      <ToggleField
+        label="Enable Power LED"
+        checked={powerLedEnabled}
+        onChange={setPowerLed}
+      />
+      <EnableRgbControlToggle />
+      {rgbControlEnabled && (
+        <>
+          <RgbPerGameProfilesToggle />
+          <RgbSettings controller="RIGHT" />
+          {separateRgbManagementEnabled && <RgbSettings controller="LEFT" />}
+        </>
+      )}
     </PanelSection>
   );
 };
