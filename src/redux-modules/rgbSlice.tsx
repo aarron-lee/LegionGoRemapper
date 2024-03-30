@@ -46,13 +46,15 @@ type RgbState = {
   perGameProfilesEnabled: boolean;
   enableRgbControl: boolean;
   forceEnableSeparateLedManagement: boolean;
+  powerLedEnabled: boolean;
 };
 
 const initialState: RgbState = {
   rgbProfiles: {},
   perGameProfilesEnabled: false,
   enableRgbControl: true,
-  forceEnableSeparateLedManagement: false
+  forceEnableSeparateLedManagement: false,
+  powerLedEnabled: true
 };
 
 const bootstrapRgbProfile = (state: RgbState, newGameId: string) => {
@@ -213,6 +215,10 @@ export const rgbSlice = createSlice({
         key: 'hue',
         value: hue
       });
+    },
+    setPowerLedEnabled: (state, action: PayloadAction<boolean>) => {
+      const enabled = action.payload;
+      state.powerLedEnabled = enabled;
     }
   },
   extraReducers: (builder) => {
@@ -285,6 +291,10 @@ export const selectRgbProfileDisplayName = (state: RootState) => {
 
 export const selectEnableRgbControl = (state: RootState) => {
   return Boolean(state.rgb.enableRgbControl);
+};
+
+export const selectPowerLedEnabled = (state: RootState) => {
+  return Boolean(state.rgb.powerLedEnabled);
 };
 
 export const selectSeparateRgbManagementEnabled = (state: RootState) => {
