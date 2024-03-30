@@ -155,7 +155,6 @@ def set_tdp_mode(mode):
     return call(r"\_SB.GZFD.WMAA", [0, 0x2C, b])
 
 def get_tdp_mode():
-    decky_plugin.logger.debug(f"Retrieving TDP Mode.")
     if not call(r"\_SB.GZFD.WMAA", [0, 0x2D, 0], risky=False):
         decky_plugin.logger.error(f"Failed retrieving TDP Mode.")
         return None
@@ -182,7 +181,7 @@ def call(method: str, args: Sequence[bytes | int], risky: bool = True):
         else:
             cmd += f" b{arg.hex()}"
 
-    log = decky_plugin.logger.info if risky else decky_plugin.logger.debug
+    log = decky_plugin.logger.info
     log(f"Executing ACPI call:\n'{cmd}'")
 
     try:
@@ -216,3 +215,17 @@ def set_feature(id: int, value: int):
             + int.to_bytes(value, length=4, byteorder="little", signed=False),
         ],
     )
+
+def set_power_light(enabled: bool):
+    decky_plugin.logger.info(f"Setting power light status.")
+    return call(r"\_SB.GZFD.WMAF", [0, 0x02, bytes([0x03, int(enabled), 0x00])])
+
+
+def get_power_light():
+    decky_plugin.logger.info(f"Getting power light status.")
+    if not call(r"\_SB.GZFD.WMAF", [0, 0x01, 0x03], risky=False):
+        return None
+    o = read()
+    if isinstance(o, bytes) and len(o) == 2:
+        return bool(o[0])
+    return None
