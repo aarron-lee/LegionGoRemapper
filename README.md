@@ -13,6 +13,7 @@ Decky Plugin that replicates some of the Legion Space remapping functionality.
     - [Setup Instructions](#fan-curve-setup-instructions)
 - [Troubleshooting/FAQ](#troubleshooting--frequently-asked-questions)
   - [LED management seems to work temporarily](#led-management-seems-to-work-temporarily)
+  - [Can I turn off the power LED light while the device is asleep?](#can-i-turn-off-the-power-led-while-the-device-is-asleep)
   - [Can I set the RGB Lights separately?](#can-i-set-rgb-leds-separately-between-the-left-and-right-leds)
 - [Attribution](#attribution)
 
@@ -130,6 +131,10 @@ run `sudo modprobe acpi_call` in terminal, if this errors out, you need to insta
 If you are using HHD for your controller, it has it's own LED management that overwrites this plugin.
 
 Disable the LED management in HHD if you want to use LEDs via LegionGoRemapper instead.
+
+## Can I turn off the power LED while the device is asleep?
+
+Unfortunately, unless Lenovo enables configuring the sleep behavior of the LED via a bios update, this is not possible.
 
 ## Can I set RGB LEDs separately between the Left and Right LEDs?
 
