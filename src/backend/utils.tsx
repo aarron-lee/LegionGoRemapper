@@ -6,7 +6,8 @@ export enum ServerAPIMethods {
   RGB_OFF = 'rgb_off',
   REMAP_BUTTON = 'remap_button',
   LOG_INFO = 'log_info',
-  GET_SETTINGS = 'get_settings'
+  GET_SETTINGS = 'get_settings',
+  SET_POWER_LED = 'set_power_led'
 }
 
 const createRgbOn =
@@ -38,6 +39,13 @@ const createLogInfo = (serverAPI: ServerAPI) => async (info: any) => {
   });
 };
 
+const createSetPowerLed =
+  (serverAPI: ServerAPI) => async (enabled: boolean) => {
+    await serverAPI.callPluginMethod(ServerAPIMethods.SET_POWER_LED, {
+      enabled
+    });
+  };
+
 const createGetSettings = (serverAPI: ServerAPI) => async () => {
   return await serverAPI.callPluginMethod(ServerAPIMethods.GET_SETTINGS, {});
 };
@@ -64,7 +72,8 @@ export const createServerApiHelpers = (serverAPI: ServerAPI) => {
     rgbOff: createRgbOff(serverAPI),
     remapButton: createRemapButtons(serverAPI),
     logInfo: createLogInfo(serverAPI),
-    getSettings: createGetSettings(serverAPI)
+    getSettings: createGetSettings(serverAPI),
+    setPowerLed: createSetPowerLed(serverAPI)
   };
 };
 

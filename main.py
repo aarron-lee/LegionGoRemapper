@@ -136,6 +136,12 @@ class Plugin:
     async def sync_rgb_settings(self, currentGameId):
         return rgb.sync_rgb_settings(currentGameId)
 
+    async def set_power_led(self, enabled):
+        settings.set_setting('powerLedEnabled', enabled)
+
+        legion_space.set_power_light(enabled)
+
+
     async def remap_button(self, button: str, action: str):
         decky_plugin.logger.info(f"remap_button {button} {action}")
         controller_code = None

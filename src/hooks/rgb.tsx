@@ -8,7 +8,8 @@ import {
   selectPerGameProfilesEnabled,
   selectRgbMode,
   selectEnableRgbControl,
-  selectSeparateRgbManagementEnabled
+  selectSeparateRgbManagementEnabled,
+  selectPowerLedEnabled
 } from '../redux-modules/rgbSlice';
 
 export enum Colors {
@@ -29,6 +30,16 @@ export const useEnableRgbControl = () => {
   };
 
   return { rgbControlEnabled: enabled, setRgbControlEnabled: setEnabled };
+};
+
+export const usePowerLed = () => {
+  const enabled = useSelector(selectPowerLedEnabled);
+  const dispatch = useDispatch();
+  const setEnabled = (enabled: boolean) => {
+    return dispatch(rgbSlice.actions.setPowerLedEnabled(enabled));
+  };
+
+  return { powerLedEnabled: enabled, setPowerLed: setEnabled };
 };
 
 export const useRgbMode = (controller: ControllerType) => {

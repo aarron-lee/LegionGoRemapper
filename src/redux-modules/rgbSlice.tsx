@@ -3,7 +3,11 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { debounce, get, merge } from 'lodash';
 import type { RootState } from './store';
 import { setCurrentGameId, setInitialState } from './extraActions';
-import { extractCurrentGameId, getServerApi } from '../backend/utils';
+import {
+  createServerApiHelpers,
+  extractCurrentGameId,
+  getServerApi
+} from '../backend/utils';
 import { ControllerType, RgbModes } from '../backend/constants';
 import { Router } from 'decky-frontend-lib';
 
@@ -227,7 +231,12 @@ export const rgbSlice = createSlice({
       const perGameProfilesEnabled = Boolean(
         action.payload.rgbPerGameProfilesEnabled
       );
+      const powerLedEnabled = action.payload.powerLedEnabled;
       const enableRgbControl = Boolean(action.payload.enableRgbControl);
+
+      if (typeof powerLedEnabled === 'boolean') {
+        state.powerLedEnabled = powerLedEnabled;
+      }
 
       state.rgbProfiles = rgbProfiles;
       state.enableRgbControl = enableRgbControl;
@@ -349,6 +358,12 @@ export const saveRgbSettingsMiddleware =
     const serverApi = getServerApi();
 
     const result = next(action);
+
+    if (type === rgbSlice.actions.setPowerLedEnabled.type) {
+      const { setPowerLed } = createServerApiHelpers(serverApi);
+
+      setPowerLed(action.payload);
+    }
 
     if (mutatingActionTypes.includes(type)) {
       // save to backend

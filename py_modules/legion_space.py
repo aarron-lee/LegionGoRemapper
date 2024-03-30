@@ -217,6 +217,9 @@ def set_feature(id: int, value: int):
     )
 
 def set_power_light(enabled: bool):
+    if get_power_light() == enabled:
+        return
+
     decky_plugin.logger.info(f"Setting power light status.")
     return call(r"\_SB.GZFD.WMAF", [0, 0x02, bytes([0x03, int(enabled), 0x00])])
 
