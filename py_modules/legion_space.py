@@ -129,6 +129,11 @@ def get_tdp_mode():
             decky_plugin.logger.error(f"TDP mode '{v}' is unknown")
             return None
 
+
+def get_charge_limit():
+    decky_plugin.logger.info(f"Retrieving charge limit.")
+    return get_feature(0x03010001)
+
 # on
 # echo '\_SB.GZFD.WMAE 0 0x12 {0x01, 0x00, 0x01, 0x03, 0x01, 0x00, 0x00, 0x00}' | sudo tee /proc/acpi/call; sudo cat /proc/acpi/call   
 # off        
@@ -235,3 +240,13 @@ def get_power_light():
     if isinstance(o, bytes) and len(o) == 2:
         return bool(o[0])
     return None
+
+def get_feature(id: int):
+    if not call(
+        r"\_SB.GZFD.WMAE",
+        [0, 0x11, int.to_bytes(id, length=4, byteorder="little", signed=False)],
+        risky=False,
+    ):
+        return None
+
+    return read()
