@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { rgbSlice, saveRgbSettingsMiddleware } from './rgbSlice';
-import { uiSlice } from './uiSlice';
+import { uiSlice, uiSliceMiddleware } from './uiSlice';
 import {
   controllerSlice,
   saveControllerSettingsMiddleware
@@ -17,6 +17,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([
+      uiSliceMiddleware,
       saveRgbSettingsMiddleware,
       saveControllerSettingsMiddleware,
       saveFanSettingsMiddleware

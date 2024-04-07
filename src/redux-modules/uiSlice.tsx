@@ -2,13 +2,19 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { setCurrentGameId, setInitialState } from './extraActions';
 import { RootState } from './store';
-import { extractDisplayName, logInfo } from '../backend/utils';
+import {
+  createServerApiHelpers,
+  extractDisplayName,
+  getServerApi,
+  logInfo
+} from '../backend/utils';
 // import type { RootState } from './store';
 
 type UiStateType = {
   initialLoading: boolean;
   currentGameId: undefined | string;
   currentDisplayName: undefined | string;
+  chargeLimitEnabled?: boolean;
   pluginVersionNum?: string;
 };
 
@@ -27,6 +33,9 @@ export const uiSlice = createSlice({
   reducers: {
     setInitialLoading: (state, action: PayloadAction<boolean>) => {
       state.initialLoading = action.payload;
+    },
+    setChargeLimit(state, action: PayloadAction<boolean>) {
+      state.chargeLimitEnabled = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -34,6 +43,9 @@ export const uiSlice = createSlice({
       if (action) state.initialLoading = false;
       if (action.payload?.pluginVersionNum) {
         state.pluginVersionNum = `${action.payload.pluginVersionNum}`;
+      }
+      if (action.payload?.chargeLimitEnabled) {
+        state.chargeLimitEnabled = Boolean(action.payload?.chargeLimitEnabled);
       }
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -55,3 +67,22 @@ export const selectCurrentGameId = (state: RootState) =>
 
 export const selectCurrentGameDisplayName = (state: RootState) =>
   state.ui?.currentDisplayName || 'default';
+
+export const selectChargeLimitEnabled = (state: RootState) =>
+  Boolean(state.ui?.chargeLimitEnabled);
+
+export const uiSliceMiddleware =
+  (store: any) => (next: any) => (action: any) => {
+    const { type } = action;
+    const serverApi = getServerApi();
+
+    const result = next(action);
+
+    if (type === uiSlice.actions.setChargeLimit.type && serverApi) {
+      const { setChargeLimit } = createServerApiHelpers(serverApi);
+
+      setChargeLimit(action.payload);
+    }
+
+    return result;
+  };

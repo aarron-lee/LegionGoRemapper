@@ -1,4 +1,11 @@
-import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib';
+import {
+  definePlugin,
+  PanelSection,
+  PanelSectionRow,
+  ServerAPI,
+  staticClasses,
+  ToggleField
+} from 'decky-frontend-lib';
 import { memo, VFC } from 'react';
 
 import RemapButtons from './components/controller/RemapButtons';
@@ -13,14 +20,25 @@ import logo from '../assets/Icon.png';
 import FanPanel from './components/fan/FanPanel';
 import ErrorBoundary from './components/ErrorBoundary';
 import OtaUpdates from './components/OtaUpdates';
+import { useChargeLimitEnabled } from './hooks/ui';
 
 const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
   const loading = useSelector(getInitialLoading);
+  const { chargeLimitEnabled, setChargeLimit } = useChargeLimitEnabled();
   if (loading) {
     return null;
   }
   return (
     <>
+      <PanelSection>
+        <PanelSectionRow>
+          <ToggleField
+            label="Enable Charge Limit (80%)"
+            checked={chargeLimitEnabled}
+            onChange={setChargeLimit}
+          />
+        </PanelSectionRow>
+      </PanelSection>
       <ErrorBoundary title={'Controller Lighting Panel'}>
         <ControllerLightingPanel />
       </ErrorBoundary>

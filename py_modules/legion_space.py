@@ -139,8 +139,13 @@ def get_charge_limit():
 # off        
 # echo '\_SB.GZFD.WMAE 0 0x12 {0x01, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00}' | sudo tee /proc/acpi/call
 # 80% charge limit
-def set_charging_limit(enabled: bool):
-    if enabled:
+def set_charge_limit(enabled: bool):
+
+    current_charge_limit = get_charge_limit()
+
+    # decky_plugin.logger.info(f'charge limit {current_charge_limit} {current_charge_limit == 0}')
+
+    if enabled and current_charge_limit == 0:
         return call(
             r"\_SB.GZFD.WMAE",
             [
@@ -160,7 +165,7 @@ def set_charging_limit(enabled: bool):
                 ),
             ],
         )
-    else:
+    elif not enabled and current_charge_limit == 1:
         return call(
             r"\_SB.GZFD.WMAE",
             [
@@ -180,6 +185,8 @@ def set_charging_limit(enabled: bool):
                 ),
             ],
         )
+    # no changes required
+    return True
 
 def call(method: str, args: Sequence[bytes | int], risky: bool = True):
     cmd = method

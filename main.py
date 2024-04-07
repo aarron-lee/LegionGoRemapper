@@ -35,6 +35,9 @@ class Plugin:
     async def get_settings(self):
         results = settings.get_settings()
 
+        if results.get("chargeLimitEnabled", False):
+            legion_space.set_charge_limit(True)
+
         try:
             results['pluginVersionNum'] = f'{decky_plugin.DECKY_PLUGIN_VERSION}'
 
@@ -141,6 +144,13 @@ class Plugin:
 
         legion_space.set_power_light(enabled)
 
+    async def set_charge_limit(self, enabled):
+        try:
+            settings.set_setting('chargeLimitEnabled', enabled)
+
+            legion_space.set_charge_limit(enabled)
+        except Exception as e:
+            decky_plugin.logger.error(f'error while setting charge limit {e}')
 
     async def remap_button(self, button: str, action: str):
         decky_plugin.logger.info(f"remap_button {button} {action}")
