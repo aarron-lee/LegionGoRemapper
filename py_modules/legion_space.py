@@ -3,49 +3,6 @@ import decky_plugin
 from time import sleep
 from typing import NamedTuple, Sequence
 
-# all credit goes to corando98
-# source: https://github.com/corando98/LLG_Dev_scripts/blob/main/LegionSpace.py
-
-# def execute_acpi_command(command):
-#     """
-#     Executes an ACPI command and returns the output.
-#     Uses subprocess for robust command execution.
-
-#     Args:
-#         command (str): The ACPI command to be executed.
-
-#     Returns:
-#         str: The output from the ACPI command execution.
-#     """
-#     try:
-#         result = subprocess.run(command, shell=True, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#         return result.stdout.strip()
-#     except subprocess.CalledProcessError as e:
-#         decky_plugin.logger.error(f"Error executing command: {e.stderr}")
-#         return None
-
-# def set_default_fan_curve():
-#     """
-#         # Fan ID, Sensor ID, ignored
-#         0x00, 0x00,
-#         # Temperature array length (10; ignored; suspected use)
-#         0x0A, 0x00, 0x00, 0x00,
-#         # Speeds in uint16, except last that is a byte.
-#         0x2c, 0x00, # FSS0 44
-#         0x30, 0x00, # FSS1 48
-#         0x37, 0x00, # FSS2 55
-#         0x3c, 0x00, # FSS3 60
-#         0x47, 0x00, # FSS4 71
-#         0x4f, 0x00, # FSS5 79
-#         0x57, 0x00, # FSS6 87
-#         0x57, 0x00, # FSS7 87
-#         0x64, 0x00, # FSS8 100
-#         0x64, 0x00, # FSS9 100
-#         0x00, # Null termination (?)
-#     """
-#     command = "echo '\_SB.GZFD.WMAB 0 0x06 {0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x30, 0x00, 0x37, 0x00, 0x3c, 0x00, 0x47, 0x00, 0x4f, 0x00, 0x57, 0x00, 0x57, 0x00, 0x64, 0x00, 0x64, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x14, 0x00, 0x1e, 0x00, 0x28, 0x00, 0x32, 0x00, 0x3c, 0x00, 0x46, 0x00, 0x50, 0x00, 0x5a, 0x00, 0x64, 0x00, 0x00}' | tee /proc/acpi/call; cat /proc/acpi/call"
-#     return execute_acpi_command(command)
-
 # source: hhd-adjustor
 # https://github.com/hhd-dev/adjustor/blob/072411bff14bb5996b0fe00da06f36d17f31a389/src/adjustor/core/lenovo.py#L13
 
@@ -171,7 +128,53 @@ def get_tdp_mode():
         case v:
             decky_plugin.logger.error(f"TDP mode '{v}' is unknown")
             return None
-        
+
+# on
+# echo '\_SB.GZFD.WMAE 0 0x12 {0x01, 0x00, 0x01, 0x03, 0x01, 0x00, 0x00, 0x00}' | sudo tee /proc/acpi/call; sudo cat /proc/acpi/call   
+# off        
+# echo '\_SB.GZFD.WMAE 0 0x12 {0x01, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00}' | sudo tee /proc/acpi/call
+# 80% charge limit
+def set_charging_limit(enabled: bool):
+    if enabled:
+        return call(
+            r"\_SB.GZFD.WMAE",
+            [
+                0,
+                0x12,
+                bytes(
+                    [
+                        0x01,
+                        0x00,
+                        0x01,
+                        0x03,
+                        0x01,
+                        0x00,
+                        0x00,
+                        0x00
+                    ]
+                ),
+            ],
+        )
+    else:
+        return call(
+            r"\_SB.GZFD.WMAE",
+            [
+                0,
+                0x12,
+                bytes(
+                    [
+                        0x01,
+                        0x00,
+                        0x01,
+                        0x03,
+                        0x00,
+                        0x00,
+                        0x00,
+                        0x00
+                    ]
+                ),
+            ],
+        )
 
 def call(method: str, args: Sequence[bytes | int], risky: bool = True):
     cmd = method
