@@ -1,7 +1,12 @@
 import { FC } from 'react';
 import { Gyro, RemappableButtons } from '../../backend/constants';
 import RemapActionDropdown from './RemapActionDropdown';
-import { Field, PanelSection, PanelSectionRow, ToggleField } from 'decky-frontend-lib';
+import {
+  Field,
+  PanelSection,
+  PanelSectionRow,
+  ToggleField
+} from 'decky-frontend-lib';
 import {
   useControllerPerGameEnabled,
   useControllerProfileDisplayName,
@@ -17,7 +22,8 @@ const RemapButtons: FC = () => {
   const displayName = useControllerProfileDisplayName();
   const { controllerPerGameEnabled, setControllerPerGameEnabled } =
     useControllerPerGameEnabled();
-  const { controllerRemappingEnabled, setControllerRemappingEnabled } = useControllerRemappingEnabled()
+  const { controllerRemappingEnabled, setControllerRemappingEnabled } =
+    useControllerRemappingEnabled();
 
   const { touchpadEnabled, setTouchpad } = useTouchpadEnabled();
 
@@ -28,48 +34,51 @@ const RemapButtons: FC = () => {
     : 'Remap Buttons';
 
   return (
-      <>
-        <PanelSection title={title}>
-          <PanelSectionRow>
-            <ToggleField
-              label={'Enable controller remaps'}
-              checked={controllerRemappingEnabled}
-              onChange={setControllerRemappingEnabled}
-            />
-          </PanelSectionRow>
-        { controllerRemappingEnabled && 
-            <>
-              <PanelSectionRow>
-                <Field disabled>
-                  WARNING: Don't use this with Controller Emulators
-                </Field>
-              </PanelSectionRow>
-              <PanelSectionRow>
-                <ToggleField
-                  label={'Enable Per Game Remaps'}
-                  checked={controllerPerGameEnabled}
-                  onChange={setControllerPerGameEnabled}
-                />
-              </PanelSectionRow>
+    <>
+      <PanelSection title={title}>
+        <PanelSectionRow>
+          <ToggleField
+            label={'Enable controller remaps'}
+            checked={controllerRemappingEnabled}
+            onChange={setControllerRemappingEnabled}
+          />
+        </PanelSectionRow>
+        {controllerRemappingEnabled && (
+          <>
+            <PanelSectionRow>
+              <Field disabled>
+                ⚠️ WARNING ⚠️ - Don't use these remapping features with
+                Controller Emulators. If you are using Handheld Daemon (hhd),
+                use the Dualsense Edge controller + remap back buttons with
+                Steam Input
+              </Field>
+            </PanelSectionRow>
+            <PanelSectionRow>
               <ToggleField
-                label="Touchpad"
-                checked={touchpadEnabled}
-                onChange={(value) => setTouchpad(value)}
-              ></ToggleField>
-              {btns.map((btn, idx) => {
-                return (
-                  <IconRow btn={btn} key={idx}>
-                    <RemapActionDropdown btn={btn} />
-                  </IconRow>
-                );
-              })}
-              {gyros.map((gyro, idx) => {
-                return <GyroRemapSlider gyro={gyro} key={idx} />;
-              })}
-            </>
-          }
-        </PanelSection>
-      </>
+                label={'Enable Per Game Remaps'}
+                checked={controllerPerGameEnabled}
+                onChange={setControllerPerGameEnabled}
+              />
+            </PanelSectionRow>
+            <ToggleField
+              label="Touchpad"
+              checked={touchpadEnabled}
+              onChange={(value) => setTouchpad(value)}
+            ></ToggleField>
+            {btns.map((btn, idx) => {
+              return (
+                <IconRow btn={btn} key={idx}>
+                  <RemapActionDropdown btn={btn} />
+                </IconRow>
+              );
+            })}
+            {gyros.map((gyro, idx) => {
+              return <GyroRemapSlider gyro={gyro} key={idx} />;
+            })}
+          </>
+        )}
+      </PanelSection>
+    </>
   );
 };
 
