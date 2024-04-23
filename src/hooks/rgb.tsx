@@ -8,7 +8,6 @@ import {
   selectPerGameProfilesEnabled,
   selectRgbMode,
   selectEnableRgbControl,
-  selectSeparateRgbManagementEnabled,
   selectPowerLedEnabled
 } from '../redux-modules/rgbSlice';
 
