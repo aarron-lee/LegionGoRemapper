@@ -13,10 +13,10 @@ let currentBrightness = 40;
 export default function () {
   const [enabledAls, setAlsEnabled] = useState(false);
 
-  const previousAlsValues = [0, 0, 0, 0];
+  const previousAlsValues = [-1, -1, -1, -1];
 
   const serverApi = getServerApi();
-
+  const { readAls } = serverApi ? createServerApiHelpers(serverApi) : { readAls: async () => null };
 
   // Brightness steps
   // [ALS delta, brightness add in %]
@@ -25,86 +25,104 @@ export default function () {
     [25, 5],
     [50, 20],
     [75, 30],
+    [100, 50]
   ];
 
   const smoothTime = 1000;
   const stepCount = 10;
+  const ignoreThreshold = 5;
 
   let settingBrightness = false;
 
-  const brigtnessFunc = async () => {
-    if (!enabledAls || !serverApi || settingBrightness) {
-      return;
-    }
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const { readAls } = createServerApiHelpers(serverApi);
-    const alsValue = await readAls();
+  const brigtnessPromise = new Promise(async (resolve) => {
+    while (true) {
+      await sleep(250);
 
-    // Keep track of the last 4 values
-    previousAlsValues.push(alsValue);
-    previousAlsValues.shift();
-
-    const alsDeltas = [];
-    for (let i = 0; i < previousAlsValues.length - 1; i++) {
-      alsDeltas.push(previousAlsValues[i + 1] - previousAlsValues[i]);
-    }
-
-    const delta = Math.round(alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length);
-    const absDelta = Math.abs(delta);
-
-    // Ignore small changes
-    if (absDelta < 5) {
-      return;
-    }
-
-    logInfo(`Current brightness: ${currentBrightness}`);
-    logInfo(`ALS delta: ${delta}`);
-
-    // More sophisticated implementation
-    const negativeDelta = delta < 0;
-    let brightnessAdd = 0;
-    for (let i = 0; i < BRIGHTNESS_STEPS.length; i++) {
-      if (absDelta <= BRIGHTNESS_STEPS[i][0]) {
-        brightnessAdd = BRIGHTNESS_STEPS[i][1];
+      if (!enabledAls) {
         break;
       }
-    }
 
-    // Clamp brightness
-    if (negativeDelta) {
-      brightnessAdd = -brightnessAdd;
-    }
-    let targetBrightness = currentBrightness + brightnessAdd;
-    targetBrightness = Math.min(100, Math.max(0, targetBrightness));
-
-    logInfo(`Brightness add: ${brightnessAdd}`)
-    logInfo(`Target brightness: ${targetBrightness}`);
-
-    // Smoothing
-    let localCurrentBrightness = currentBrightness;
-    const brightnessPerMs = brightnessAdd / smoothTime * stepCount;
-
-    settingBrightness = true;
-    const brightnessHandler = setInterval(() => {
-      localCurrentBrightness = localCurrentBrightness + brightnessPerMs;
-      localCurrentBrightness = Math.min(100, Math.max(0, localCurrentBrightness));
-
-      logInfo(`Current brightness: ${localCurrentBrightness}, target: ${targetBrightness}`);
-      window.SteamClient.System.Display.SetBrightness(localCurrentBrightness / 100);
-
-      if (localCurrentBrightness >= targetBrightness) {
-        clearInterval(brightnessHandler);
-        settingBrightness = false;
+      if (!serverApi) {
+        continue;
       }
-    }, stepCount);
 
-  };
+      const alsValue = await readAls();
+
+      // Keep track of the last 4 values
+      previousAlsValues.push(alsValue);
+      previousAlsValues.shift();
+
+      // Set the initial values
+      if (previousAlsValues[0] === -1 || previousAlsValues[1] === -1
+        || previousAlsValues[2] === -1 || previousAlsValues[3] === -1) {
+        continue;
+      }
+
+      const alsDeltas = [];
+      for (let i = 0; i < previousAlsValues.length - 1; i++) {
+        alsDeltas.push(previousAlsValues[i + 1] - previousAlsValues[i]);
+      }
+
+      const delta = Math.round(alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length);
+      const absDelta = Math.abs(delta);
+
+      // Ignore small changes
+      if (absDelta < ignoreThreshold) {
+        continue;
+      }
+
+      // More sophisticated implementation
+      const negativeDelta = delta < 0;
+      let brightnessAdd = 0;
+      for (let i = 0; i < BRIGHTNESS_STEPS.length; i++) {
+        if (absDelta <= BRIGHTNESS_STEPS[i][0]) {
+          brightnessAdd = BRIGHTNESS_STEPS[i][1];
+          break;
+        }
+
+        if (i === BRIGHTNESS_STEPS.length - 1) {
+          brightnessAdd = BRIGHTNESS_STEPS[i][1];
+        }
+      }
+
+      // Clamp brightness
+      if (negativeDelta) {
+        brightnessAdd = -brightnessAdd;
+      }
+      let targetBrightness = currentBrightness + brightnessAdd;
+      targetBrightness = Math.min(100, Math.max(0, targetBrightness));
+
+
+      logInfo(`Current brightness: ${currentBrightness} | ALS delta: ${delta} | previous values: ${previousAlsValues} | Current Brightness ${currentBrightness} | Brightness add: ${brightnessAdd} | Target brightness: ${targetBrightness}`);
+
+      if (settingBrightness) {
+        logInfo('Setting brightness in progress');
+        return;
+      }
+
+      // Smoothing
+      let localCurrentBrightness = currentBrightness;
+      const brightnessPerMs = brightnessAdd / smoothTime * stepCount;
+
+      for (let i = 0; i < smoothTime / stepCount; i++) {
+        localCurrentBrightness += brightnessPerMs;
+        localCurrentBrightness = Math.min(100, Math.max(0, localCurrentBrightness));
+
+        logInfo(`Smooth brightness: ${localCurrentBrightness} | Target: ${targetBrightness} | Step: ${brightnessPerMs}`);
+        window.SteamClient.System.Display.SetBrightness(localCurrentBrightness / 100);
+
+        sleep(smoothTime / stepCount);
+      }
+    }
+    resolve('');
+  });
 
   useEffect(() => {
     const registration = window.SteamClient.System.Display.RegisterForBrightnessChanges(
       async (data: { flBrightness: number }) => {
         currentBrightness = data.flBrightness * 100;
-        logInfo(`Brightness changed: ${currentBrightness}`);
       }
     );
 
@@ -114,9 +132,12 @@ export default function () {
   }, []);
 
   useEffect(() => {
-    const brightnessHandler = setInterval(brigtnessFunc, 125);
-    return () => clearInterval(brightnessHandler);
-  });
+    return () => {
+      brigtnessPromise.then(() => {
+        logInfo('Brightness promise resolved');
+      });
+    }
+  }, [enabledAls]);
 
   const handleAlsEnabled = (enabled: boolean) => {
     setAlsEnabled(enabled);
