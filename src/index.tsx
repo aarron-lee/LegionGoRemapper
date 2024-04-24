@@ -18,6 +18,7 @@ import { Provider, useSelector } from 'react-redux';
 import { currentGameIdListener } from './backend/currentGameIdListener';
 import logo from '../assets/Icon.png';
 import FanPanel from './components/fan/FanPanel';
+import AlsPanel from './components/als/ALSPanel';
 import ErrorBoundary from './components/ErrorBoundary';
 import OtaUpdates from './components/OtaUpdates';
 import { useChargeLimitEnabled } from './hooks/ui';
@@ -39,6 +40,9 @@ const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
           />
         </PanelSectionRow>
       </PanelSection>
+      <ErrorBoundary title="Ambient Light Sensor">
+        <AlsPanel />
+      </ErrorBoundary>
       <ErrorBoundary title={'Controller Lighting Panel'}>
         <ControllerLightingPanel />
       </ErrorBoundary>

@@ -6,7 +6,6 @@ import {
   createServerApiHelpers,
   extractDisplayName,
   getServerApi,
-  logInfo
 } from '../backend/utils';
 // import type { RootState } from './store';
 
@@ -72,7 +71,7 @@ export const selectChargeLimitEnabled = (state: RootState) =>
   Boolean(state.ui?.chargeLimitEnabled);
 
 export const uiSliceMiddleware =
-  (store: any) => (next: any) => (action: any) => {
+  (_store: any) => (next: any) => (action: any) => {
     const { type } = action;
     const serverApi = getServerApi();
 

@@ -8,7 +8,6 @@ import { FC, useState } from 'react';
 import {
   useRgb,
   useRgbMode,
-  useSeparateRgbManagementEnabled
 } from '../../hooks/rgb';
 import RgbModeSlider from './RgbModeSlider';
 import { RgbModes, ControllerType } from '../../backend/constants';

@@ -359,7 +359,7 @@ export const saveRgbSettingsMiddleware =
 
     const result = next(action);
 
-    if (type === rgbSlice.actions.setPowerLedEnabled.type) {
+    if (type === rgbSlice.actions.setPowerLedEnabled.type && serverApi !== undefined) {
       const { setPowerLed } = createServerApiHelpers(serverApi);
 
       setPowerLed(action.payload);
