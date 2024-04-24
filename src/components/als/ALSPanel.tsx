@@ -21,28 +21,21 @@ export default function () {
   // Brightness steps
   // [ALS delta, brightness add in %]
   const BRIGHTNESS_STEPS = [
-    [0, 0],
-    [25, 5],
-    [50, 7.5],
-    [75, 10],
-    [100, 20]
+    [50, 0],
+    [75, 5],
+    [82.5, 7.5],
+    [100, 10]
   ];
 
   const smoothTime = 250;
   const stepCount = 10;
-  const ignoreThreshold = 5;
-
-  let settingBrightness = false;
+  const ignoreThreshold = 30;
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const brigtnessPromise = new Promise(async (resolve) => {
     while (true) {
       await sleep(100);
-
-      if (!enabledAls) {
-        continue;
-      }
 
       if (!serverApi) {
         continue;
@@ -58,9 +51,15 @@ export default function () {
       previousAlsValues.push(alsValue);
       previousAlsValues.shift();
 
+      //logInfo(`ALS value: ${alsValue}`);
+
       // Set the initial values
       if (previousAlsValues[0] === -1 || previousAlsValues[1] === -1
         || previousAlsValues[2] === -1 || previousAlsValues[3] === -1) {
+        continue;
+      }
+
+      if (!enabledAls) {
         continue;
       }
 
@@ -98,13 +97,7 @@ export default function () {
       let targetBrightness = currentBrightness + brightnessAdd;
       targetBrightness = Math.min(100, Math.max(0, targetBrightness));
 
-
-      logInfo(`Current brightness: ${currentBrightness} | ALS delta: ${delta} | previous values: ${previousAlsValues} | Current Brightness ${currentBrightness} | Brightness add: ${brightnessAdd} | Target brightness: ${targetBrightness}`);
-
-      if (settingBrightness) {
-        logInfo('Setting brightness in progress');
-        return;
-      }
+      //logInfo(`Current brightness: ${currentBrightness} | ALS delta: ${delta} | previous values: ${previousAlsValues} | Current Brightness ${currentBrightness} | Brightness add: ${brightnessAdd} | Target brightness: ${targetBrightness}`);
 
       // Smoothing
       let localCurrentBrightness = currentBrightness;
@@ -117,6 +110,10 @@ export default function () {
         window.SteamClient.System.Display.SetBrightness(localCurrentBrightness / 100);
 
         await sleep(smoothTime / stepCount);
+
+        // Ensure that we don't have stale data
+        previousAlsValues.push(alsValue);
+        previousAlsValues.shift();
       }
     }
     resolve('');
