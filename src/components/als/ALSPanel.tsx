@@ -8,11 +8,13 @@ import {
 import { useState, useEffect } from 'react';
 import { getServerApi, createServerApiHelpers, logInfo } from '../../backend/utils';
 
+let currentBrightness = 40;
+
 export default function () {
   const [enabledAls, setAlsEnabled] = useState(false);
 
   const previousAlsValues = [0, 0, 0, 0];
-  let currentBrightness = 50;
+
   const serverApi = getServerApi();
 
 
@@ -24,13 +26,14 @@ export default function () {
     [50, 20],
     [75, 30],
   ];
+
   const smoothTime = 1000;
   const stepCount = 10;
 
   let settingBrightness = false;
 
   const brigtnessFunc = async () => {
-    if (!enabledAls || !serverApi) {
+    if (!enabledAls || !serverApi || settingBrightness) {
       return;
     }
 
@@ -40,10 +43,6 @@ export default function () {
     // Keep track of the last 4 values
     previousAlsValues.push(alsValue);
     previousAlsValues.shift();
-
-    if (settingBrightness) {
-      return;
-    }
 
     const alsDeltas = [];
     for (let i = 0; i < previousAlsValues.length - 1; i++) {
@@ -58,6 +57,7 @@ export default function () {
       return;
     }
 
+    logInfo(`Current brightness: ${currentBrightness}`);
     logInfo(`ALS delta: ${delta}`);
 
     // More sophisticated implementation
@@ -80,14 +80,13 @@ export default function () {
     logInfo(`Brightness add: ${brightnessAdd}`)
     logInfo(`Target brightness: ${targetBrightness}`);
 
-
     // Smoothing
     let localCurrentBrightness = currentBrightness;
     const brightnessPerMs = brightnessAdd / smoothTime * stepCount;
 
     settingBrightness = true;
     const brightnessHandler = setInterval(() => {
-      localCurrentBrightness += brightnessPerMs;
+      localCurrentBrightness = localCurrentBrightness + brightnessPerMs;
       localCurrentBrightness = Math.min(100, Math.max(0, localCurrentBrightness));
 
       logInfo(`Current brightness: ${localCurrentBrightness}, target: ${targetBrightness}`);
@@ -101,12 +100,11 @@ export default function () {
 
   };
 
-  logInfo('Setting up ALS');
-
   useEffect(() => {
     const registration = window.SteamClient.System.Display.RegisterForBrightnessChanges(
       async (data: { flBrightness: number }) => {
         currentBrightness = data.flBrightness * 100;
+        logInfo(`Brightness changed: ${currentBrightness}`);
       }
     );
 
@@ -116,7 +114,7 @@ export default function () {
   }, []);
 
   useEffect(() => {
-    const brightnessHandler = setInterval(brigtnessFunc, 100);
+    const brightnessHandler = setInterval(brigtnessFunc, 125);
     return () => clearInterval(brightnessHandler);
   });
 
