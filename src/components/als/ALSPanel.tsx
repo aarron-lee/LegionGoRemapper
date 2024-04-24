@@ -12,9 +12,22 @@ export default function () {
   const [enabledAls, setAlsEnabled] = useState(false);
 
   const previousAlsValues = [0, 0, 0, 0];
-  const ALS_THRESHOLD = 50;
   let currentBrightness = 50;
   const serverApi = getServerApi();
+
+
+  // Brightness steps
+  // [ALS delta, brightness add in %]
+  const BRIGHTNESS_STEPS = [
+    [0, 0],
+    [25, 5],
+    [50, 20],
+    [75, 30],
+  ];
+  const smoothTime = 1000;
+  const stepCount = 10;
+
+  let settingBrightness = false;
 
   const brigtnessFunc = async () => {
     if (!enabledAls || !serverApi) {
@@ -28,34 +41,72 @@ export default function () {
     previousAlsValues.push(alsValue);
     previousAlsValues.shift();
 
+    if (settingBrightness) {
+      return;
+    }
+
     const alsDeltas = [];
     for (let i = 0; i < previousAlsValues.length - 1; i++) {
       alsDeltas.push(previousAlsValues[i + 1] - previousAlsValues[i]);
     }
 
-    const delta = alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length;
+    const delta = Math.round(alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length);
+    const absDelta = Math.abs(delta);
+
+    // Ignore small changes
+    if (absDelta < 5) {
+      return;
+    }
 
     logInfo(`ALS delta: ${delta}`);
 
-    if (delta > ALS_THRESHOLD) {
-      logInfo(`Increasing brightness to ${currentBrightness/100 + 0.1}`);
-      window.SteamClient.System.Display.SetBrightness(currentBrightness/100 + 0.1);
-    } else if (delta < -ALS_THRESHOLD) {
-      logInfo(`Decreasing brightness to ${currentBrightness/100 - 0.1}`);
-      window.SteamClient.System.Display.SetBrightness(currentBrightness/100 - 0.1);
-    } else {
-      logInfo(`Keeping brightness at ${currentBrightness/100}`);
+    // More sophisticated implementation
+    const negativeDelta = delta < 0;
+    let brightnessAdd = 0;
+    for (let i = 0; i < BRIGHTNESS_STEPS.length; i++) {
+      if (absDelta <= BRIGHTNESS_STEPS[i][0]) {
+        brightnessAdd = BRIGHTNESS_STEPS[i][1];
+        break;
+      }
     }
+
+    // Clamp brightness
+    if (negativeDelta) {
+      brightnessAdd = -brightnessAdd;
+    }
+    let targetBrightness = currentBrightness + brightnessAdd;
+    targetBrightness = Math.min(100, Math.max(0, targetBrightness));
+
+    logInfo(`Brightness add: ${brightnessAdd}`)
+    logInfo(`Target brightness: ${targetBrightness}`);
+
+
+    // Smoothing
+    let localCurrentBrightness = currentBrightness;
+    const brightnessPerMs = brightnessAdd / smoothTime * stepCount;
+
+    settingBrightness = true;
+    const brightnessHandler = setInterval(() => {
+      localCurrentBrightness += brightnessPerMs;
+      localCurrentBrightness = Math.min(100, Math.max(0, localCurrentBrightness));
+
+      logInfo(`Current brightness: ${localCurrentBrightness}, target: ${targetBrightness}`);
+      window.SteamClient.System.Display.SetBrightness(localCurrentBrightness / 100);
+
+      if (localCurrentBrightness >= targetBrightness) {
+        clearInterval(brightnessHandler);
+        settingBrightness = false;
+      }
+    }, stepCount);
+
   };
-z
+
   logInfo('Setting up ALS');
 
   useEffect(() => {
     const registration = window.SteamClient.System.Display.RegisterForBrightnessChanges(
       async (data: { flBrightness: number }) => {
         currentBrightness = data.flBrightness * 100;
-
-        logInfo(`Brightness changed to ${currentBrightness}`);
       }
     );
 
@@ -63,9 +114,6 @@ z
       registration.unregister();
     };
   }, []);
-
-  // Set the brightness of the display to 50%
-  //window.SteamClient.System.Display.SetBrightness(currentBrightness/100);
 
   useEffect(() => {
     const brightnessHandler = setInterval(brigtnessFunc, 100);
