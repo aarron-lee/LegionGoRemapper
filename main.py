@@ -6,6 +6,7 @@ import logging
 # or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
 
 import decky_plugin
+import ambient_light_sensor
 import legion_configurator
 import legion_space
 import controller_enums
@@ -50,6 +51,12 @@ class Plugin:
 
         return results
 
+    async def find_als(self):
+        return ambient_light_sensor.find_als()
+
+    async def read_als(self):
+        return ambient_light_sensor.read_als()
+
     async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
         return settings.set_setting('rgbPerGameProfilesEnabled', enabled)
 
@@ -57,7 +64,7 @@ class Plugin:
         controllerProfiles = controller.get('controllerProfiles')
         controllerPerGameProfilesEnabled = controller.get('perGameProfilesEnabled') or False
         controllerRemappingEnabled  = controller.get('controllerRemappingEnabled') or False
-        
+
         settings.set_setting('controllerPerGameProfilesEnabled', controllerPerGameProfilesEnabled)
         settings.set_setting('controllerRemappingEnabled', controllerRemappingEnabled)
         result = settings.set_all_controller_profiles(controllerProfiles)
@@ -114,7 +121,7 @@ class Plugin:
                     fan_profile = fanProfiles.get(currentGameId)
                     if fan_profile:
                         active_fan_profile = fan_profile
-    
+
                 enable_full_fan_speed = active_fan_profile.get("fullFanSpeedEnabled", False)
                 del active_fan_profile['fullFanSpeedEnabled']
                 active_fan_curve = list(active_fan_profile.values())

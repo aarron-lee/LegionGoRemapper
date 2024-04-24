@@ -1,5 +1,5 @@
 import os
-#import decky_plugin
+import decky_plugin
 
 def find_als():
     iio_path = '/sys/bus/iio/devices/'
