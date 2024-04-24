@@ -8,14 +8,14 @@ export enum ServerAPIMethods {
   LOG_INFO = 'log_info',
   GET_SETTINGS = 'get_settings',
   SET_POWER_LED = 'set_power_led',
-  SET_CHARGE_LIMIT = 'set_charge_limit'
+  SET_CHARGE_LIMIT = 'set_charge_limit',
+  SET_ALS_ENABLED = 'set_als_enabled'
 }
 
-const readAls =
-  (serverApi: ServerAPI) => async () => {
-    const { result } = await serverApi.callPluginMethod('read_als', {});
-    return Number(result);
-  };
+const readAls = (serverApi: ServerAPI) => async () => {
+  const { result } = await serverApi.callPluginMethod('read_als', {});
+  return Number(result);
+};
 
 const createRgbOn =
   (serverAPI: ServerAPI) => async (controller: ControllerType) => {
@@ -60,6 +60,13 @@ const createSetChargeLimit =
     });
   };
 
+const createSetAlsEnabled =
+  (serverAPI: ServerAPI) => async (enabled: boolean) => {
+    await serverAPI.callPluginMethod(ServerAPIMethods.SET_ALS_ENABLED, {
+      enabled
+    });
+  };
+
 const createGetSettings = (serverAPI: ServerAPI) => async () => {
   return await serverAPI.callPluginMethod(ServerAPIMethods.GET_SETTINGS, {});
 };
@@ -89,7 +96,8 @@ export const createServerApiHelpers = (serverAPI: ServerAPI) => {
     getSettings: createGetSettings(serverAPI),
     setPowerLed: createSetPowerLed(serverAPI),
     setChargeLimit: createSetChargeLimit(serverAPI),
-    readAls: readAls(serverAPI)
+    readAls: readAls(serverAPI),
+    setAlsEnabled: createSetAlsEnabled(serverAPI)
   };
 };
 

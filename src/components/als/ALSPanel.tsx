@@ -6,17 +6,36 @@ import {
 } from 'decky-frontend-lib';
 
 import { useState, useEffect } from 'react';
-import { getServerApi, createServerApiHelpers, logInfo } from '../../backend/utils';
+import {
+  getServerApi,
+  createServerApiHelpers,
+  logInfo
+} from '../../backend/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAlsEnabled, uiSlice } from '../../redux-modules/uiSlice';
 
 let currentBrightness = 40;
 
+const useAlsEnabled = () => {
+  const enabledAls = useSelector(selectAlsEnabled);
+  const dispatch = useDispatch();
+
+  const setAlsEnabled = (enabled: boolean) => {
+    return dispatch(uiSlice.actions.setAlsEnabled(enabled));
+  };
+
+  return { enabledAls, setAlsEnabled };
+};
+
 export default function () {
-  const [enabledAls, setAlsEnabled] = useState(false);
+  const { enabledAls, setAlsEnabled } = useAlsEnabled();
 
   const previousAlsValues = [-1, -1, -1, -1];
 
   const serverApi = getServerApi();
-  const { readAls } = serverApi ? createServerApiHelpers(serverApi) : { readAls: async () => null };
+  const { readAls } = serverApi
+    ? createServerApiHelpers(serverApi)
+    : { readAls: async () => null };
 
   // Brightness steps
   // [ALS delta, brightness add in %]
@@ -31,7 +50,8 @@ export default function () {
   const stepCount = 10;
   const ignoreThreshold = 30;
 
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
   const brigtnessPromise = new Promise(async (resolve) => {
     while (true) {
@@ -54,8 +74,12 @@ export default function () {
       //logInfo(`ALS value: ${alsValue}`);
 
       // Set the initial values
-      if (previousAlsValues[0] === -1 || previousAlsValues[1] === -1
-        || previousAlsValues[2] === -1 || previousAlsValues[3] === -1) {
+      if (
+        previousAlsValues[0] === -1 ||
+        previousAlsValues[1] === -1 ||
+        previousAlsValues[2] === -1 ||
+        previousAlsValues[3] === -1
+      ) {
         continue;
       }
 
@@ -68,7 +92,9 @@ export default function () {
         alsDeltas.push(previousAlsValues[i + 1] - previousAlsValues[i]);
       }
 
-      const delta = Math.round(alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length);
+      const delta = Math.round(
+        alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length
+      );
       const absDelta = Math.abs(delta);
 
       // Ignore small changes
@@ -101,13 +127,18 @@ export default function () {
 
       // Smoothing
       let localCurrentBrightness = currentBrightness;
-      const brightnessPerMs = brightnessAdd / smoothTime * stepCount;
+      const brightnessPerMs = (brightnessAdd / smoothTime) * stepCount;
 
       for (let i = 0; i < smoothTime / stepCount; i++) {
         localCurrentBrightness += brightnessPerMs;
-        localCurrentBrightness = Math.min(100, Math.max(0, localCurrentBrightness));
+        localCurrentBrightness = Math.min(
+          100,
+          Math.max(0, localCurrentBrightness)
+        );
 
-        window.SteamClient.System.Display.SetBrightness(localCurrentBrightness / 100);
+        window.SteamClient.System.Display.SetBrightness(
+          localCurrentBrightness / 100
+        );
 
         await sleep(smoothTime / stepCount);
 
@@ -120,41 +151,37 @@ export default function () {
   });
 
   useEffect(() => {
-    const registration = window.SteamClient.System.Display.RegisterForBrightnessChanges(
-      async (data: { flBrightness: number }) => {
-        currentBrightness = data.flBrightness * 100;
-      }
-    );
+    const registration =
+      window.SteamClient.System.Display.RegisterForBrightnessChanges(
+        async (data: { flBrightness: number }) => {
+          currentBrightness = data.flBrightness * 100;
+        }
+      );
 
     return () => {
       registration.unregister();
     };
-  }, []);
+  }, [enabledAls]);
 
   useEffect(() => {
     return () => {
       brigtnessPromise.then(() => {
         logInfo('Brightness promise resolved');
       });
-    }
-  }, []);
-
-  const handleAlsEnabled = (enabled: boolean) => {
-    setAlsEnabled(enabled);
-
-  }
+    };
+  }, [enabledAls]);
 
   return (
     <>
-      <PanelSection title='Ambient Light Sensor'>
+      <PanelSection title="Ambient Light Sensor">
         <PanelSectionRow>
           <ToggleField
             label={'Enable ALS'}
             checked={enabledAls}
-            onChange={handleAlsEnabled}
+            onChange={setAlsEnabled}
           />
         </PanelSectionRow>
       </PanelSection>
     </>
   );
-};
+}

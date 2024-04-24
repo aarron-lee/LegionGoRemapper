@@ -159,6 +159,13 @@ class Plugin:
         except Exception as e:
             decky_plugin.logger.error(f'error while setting charge limit {e}')
 
+    async def set_als_enabled(self, enabled):
+        try:
+            settings.set_setting('alsEnabled', enabled)
+        except Exception as e:
+            decky_plugin.logger.error(f'error while setting als {e}')
+
+
     async def remap_button(self, button: str, action: str):
         decky_plugin.logger.info(f"remap_button {button} {action}")
         controller_code = None

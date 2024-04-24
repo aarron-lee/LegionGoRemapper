@@ -5,7 +5,7 @@ import { RootState } from './store';
 import {
   createServerApiHelpers,
   extractDisplayName,
-  getServerApi,
+  getServerApi
 } from '../backend/utils';
 // import type { RootState } from './store';
 
@@ -14,6 +14,7 @@ type UiStateType = {
   currentGameId: undefined | string;
   currentDisplayName: undefined | string;
   chargeLimitEnabled?: boolean;
+  alsEnabled?: boolean;
   pluginVersionNum?: string;
 };
 
@@ -35,6 +36,9 @@ export const uiSlice = createSlice({
     },
     setChargeLimit(state, action: PayloadAction<boolean>) {
       state.chargeLimitEnabled = action.payload;
+    },
+    setAlsEnabled(state, action: PayloadAction<boolean>) {
+      state.alsEnabled = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -45,6 +49,9 @@ export const uiSlice = createSlice({
       }
       if (action.payload?.chargeLimitEnabled) {
         state.chargeLimitEnabled = Boolean(action.payload?.chargeLimitEnabled);
+      }
+      if (action.payload?.alsEnabled) {
+        state.alsEnabled = Boolean(action.payload?.alsEnabled);
       }
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -70,6 +77,9 @@ export const selectCurrentGameDisplayName = (state: RootState) =>
 export const selectChargeLimitEnabled = (state: RootState) =>
   Boolean(state.ui?.chargeLimitEnabled);
 
+export const selectAlsEnabled = (state: RootState) =>
+  Boolean(state.ui?.alsEnabled);
+
 export const uiSliceMiddleware =
   (_store: any) => (next: any) => (action: any) => {
     const { type } = action;
@@ -77,10 +87,16 @@ export const uiSliceMiddleware =
 
     const result = next(action);
 
-    if (type === uiSlice.actions.setChargeLimit.type && serverApi) {
-      const { setChargeLimit } = createServerApiHelpers(serverApi);
+    if (serverApi) {
+      const { setChargeLimit, setAlsEnabled } =
+        createServerApiHelpers(serverApi);
 
-      setChargeLimit(action.payload);
+      if (type === uiSlice.actions.setChargeLimit.type && serverApi) {
+        setChargeLimit(action.payload);
+      }
+      if (type === uiSlice.actions.setAlsEnabled.type && serverApi) {
+        setAlsEnabled(action.payload);
+      }
     }
 
     return result;
