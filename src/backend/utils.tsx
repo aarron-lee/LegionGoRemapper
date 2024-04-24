@@ -11,6 +11,12 @@ export enum ServerAPIMethods {
   SET_CHARGE_LIMIT = 'set_charge_limit'
 }
 
+const readAls =
+  (serverApi: ServerAPI) => async () => {
+    const { result } = await serverApi.callPluginMethod('read_als', {});
+    return Number(result);
+  };
+
 const createRgbOn =
   (serverAPI: ServerAPI) => async (controller: ControllerType) => {
     await serverAPI.callPluginMethod(ServerAPIMethods.RGB_ON, {
@@ -82,7 +88,8 @@ export const createServerApiHelpers = (serverAPI: ServerAPI) => {
     logInfo: createLogInfo(serverAPI),
     getSettings: createGetSettings(serverAPI),
     setPowerLed: createSetPowerLed(serverAPI),
-    setChargeLimit: createSetChargeLimit(serverAPI)
+    setChargeLimit: createSetChargeLimit(serverAPI),
+    readAls: readAls(serverAPI)
   };
 };
 
