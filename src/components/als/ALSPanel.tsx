@@ -23,12 +23,12 @@ export default function () {
   const BRIGHTNESS_STEPS = [
     [0, 0],
     [25, 5],
-    [50, 20],
-    [75, 30],
-    [100, 50]
+    [50, 7.5],
+    [75, 10],
+    [100, 20]
   ];
 
-  const smoothTime = 1000;
+  const smoothTime = 250;
   const stepCount = 10;
   const ignoreThreshold = 5;
 
@@ -38,10 +38,10 @@ export default function () {
 
   const brigtnessPromise = new Promise(async (resolve) => {
     while (true) {
-      await sleep(250);
+      await sleep(100);
 
       if (!enabledAls) {
-        break;
+        continue;
       }
 
       if (!serverApi) {
@@ -49,6 +49,10 @@ export default function () {
       }
 
       const alsValue = await readAls();
+
+      if (alsValue === null) {
+        continue;
+      }
 
       // Keep track of the last 4 values
       previousAlsValues.push(alsValue);
@@ -110,10 +114,9 @@ export default function () {
         localCurrentBrightness += brightnessPerMs;
         localCurrentBrightness = Math.min(100, Math.max(0, localCurrentBrightness));
 
-        logInfo(`Smooth brightness: ${localCurrentBrightness} | Target: ${targetBrightness} | Step: ${brightnessPerMs}`);
         window.SteamClient.System.Display.SetBrightness(localCurrentBrightness / 100);
 
-        sleep(smoothTime / stepCount);
+        await sleep(smoothTime / stepCount);
       }
     }
     resolve('');
@@ -137,7 +140,7 @@ export default function () {
         logInfo('Brightness promise resolved');
       });
     }
-  }, [enabledAls]);
+  }, []);
 
   const handleAlsEnabled = (enabled: boolean) => {
     setAlsEnabled(enabled);
