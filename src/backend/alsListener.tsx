@@ -20,12 +20,12 @@ let steamRegistration: any;
 let previousAlsValues = [-1, -1, -1, -1];
 let currentBrightness = 40;
 
-const sleep = (ms: number) =>
-  new Promise((resolve) => {
-    let id = window.setTimeout(resolve, ms);
-    timeoutId = id;
-    return id;
-  });
+// const sleep = (ms: number) =>
+//   new Promise((resolve) => {
+//     let id = window.setTimeout(resolve, ms);
+//     timeoutId = id;
+//     return id;
+//   });
 
 const handleAls = async () => {
   const serverAPI = getServerApi();
@@ -106,7 +106,7 @@ const handleAls = async () => {
         localCurrentBrightness / 100
       );
 
-      await sleep(smoothTime / stepCount);
+      //   await sleep(smoothTime / stepCount);
 
       // Ensure that we don't have stale data
       previousAlsValues.push(alsValue);
@@ -126,6 +126,7 @@ export const enableAlsListener = () => {
         currentBrightness = data.flBrightness * 100;
       }
     );
+  logInfo(`als listener enabled ${intervalId} ${steamRegistration}`);
 };
 
 export const clearAlsListener = () => {
@@ -146,4 +147,5 @@ export const clearAlsListener = () => {
     clearTimeout(timeoutId);
     timeoutId = undefined;
   }
+  logInfo(`als listener cleared`);
 };

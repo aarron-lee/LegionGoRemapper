@@ -98,10 +98,10 @@ export const uiSliceMiddleware =
         }
       }
 
-      if (type === uiSlice.actions.setChargeLimit.type && serverApi) {
+      if (type === uiSlice.actions.setChargeLimit.type) {
         setChargeLimit(action.payload);
       }
-      if (type === uiSlice.actions.setAlsEnabled.type && serverApi) {
+      if (type === uiSlice.actions.setAlsEnabled.type) {
         const enabled = action.payload;
         setAlsEnabled(enabled);
         if (enabled) {

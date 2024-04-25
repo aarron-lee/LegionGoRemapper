@@ -55,6 +55,7 @@ class Plugin:
         return ambient_light_sensor.find_als()
 
     async def read_als(self):
+        # decky_plugin.logger.info('read als called')
         return ambient_light_sensor.read_als()
 
     async def save_rgb_per_game_profiles_enabled(self, enabled: bool):
