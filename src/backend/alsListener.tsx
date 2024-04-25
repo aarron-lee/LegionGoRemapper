@@ -44,7 +44,7 @@ const handleAls = async () => {
 
     const alsValue = await readAls();
     log && logInfo(`ALS value: ${alsValue}`);
-    if (!alsValue) {
+    if (typeof alsValue !== 'number') {
       continue;
     }
 
