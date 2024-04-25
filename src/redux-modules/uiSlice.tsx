@@ -7,6 +7,7 @@ import {
   extractDisplayName,
   getServerApi
 } from '../backend/utils';
+import { clearAlsListener, enableAlsListener } from '../backend/alsListener';
 // import type { RootState } from './store';
 
 type UiStateType = {
@@ -91,11 +92,23 @@ export const uiSliceMiddleware =
       const { setChargeLimit, setAlsEnabled } =
         createServerApiHelpers(serverApi);
 
+      if (type === setInitialState.type) {
+        if (action.payload?.alsEnabled) {
+          enableAlsListener();
+        }
+      }
+
       if (type === uiSlice.actions.setChargeLimit.type && serverApi) {
         setChargeLimit(action.payload);
       }
       if (type === uiSlice.actions.setAlsEnabled.type && serverApi) {
-        setAlsEnabled(action.payload);
+        const enabled = action.payload;
+        setAlsEnabled(enabled);
+        if (enabled) {
+          enableAlsListener();
+        } else {
+          clearAlsListener();
+        }
       }
     }
 
