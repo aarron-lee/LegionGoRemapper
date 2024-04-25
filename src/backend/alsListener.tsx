@@ -141,7 +141,7 @@ export const enableAlsListener = () => {
         currentBrightness = data.flBrightness * 100;
       }
     );
-  logInfo(`als listener enabled ${JSON.stringify(steamRegistration)}`);
+  logInfo(`als listener enabled`);
 };
 
 export const clearAlsListener = () => {
@@ -155,4 +155,5 @@ export const clearAlsListener = () => {
     steamRegistration.unregister();
   }
   steamRegistration = undefined;
+  logInfo(`als listener disabled`);
 };
