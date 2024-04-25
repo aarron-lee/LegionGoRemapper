@@ -16,6 +16,7 @@ let enableAdaptiveBrightness = false;
 const smoothTime = 250;
 const stepCount = 10;
 const ignoreThreshold = 30;
+const alsPollingRate = 125;
 
 let steamRegistration: any;
 let previousAlsValues = [-1, -1, -1, -1];
@@ -34,7 +35,7 @@ const handleAls = async () => {
   const { readAls } = createServerApiHelpers(serverAPI);
 
   while (true) {
-    sleep(125);
+    sleep(alsPollingRate);
 
     if (!enableAdaptiveBrightness) {
       log && logInfo('Adaptive brightness disabled');
