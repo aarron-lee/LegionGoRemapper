@@ -1,7 +1,6 @@
 import { createServerApiHelpers, getServerApi, logInfo } from './utils';
 
-let intervalId: undefined | number;
-let timeoutId: undefined | number;
+const log = false;
 
 // Brightness steps
 // [ALS delta, brightness add in %]
@@ -12,6 +11,8 @@ const BRIGHTNESS_STEPS = [
   [100, 10]
 ];
 
+let enableAdaptiveBrightness = false;
+
 const smoothTime = 250;
 const stepCount = 10;
 const ignoreThreshold = 30;
@@ -20,21 +21,30 @@ let steamRegistration: any;
 let previousAlsValues = [-1, -1, -1, -1];
 let currentBrightness = 40;
 
-// const sleep = (ms: number) =>
-//   new Promise((resolve) => {
-//     let id = window.setTimeout(resolve, ms);
-//     timeoutId = id;
-//     return id;
-//   });
-
 const handleAls = async () => {
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   const serverAPI = getServerApi();
-  if (serverAPI) {
-    const { readAls } = createServerApiHelpers(serverAPI);
-    const alsValue = await readAls();
 
+  if (!serverAPI) {
+    logInfo('Server API not available');
+    return;
+  }
+
+  const { readAls } = createServerApiHelpers(serverAPI);
+
+  while (true) {
+    sleep(125);
+
+    if (!enableAdaptiveBrightness) {
+      log && logInfo('Adaptive brightness disabled');
+      break;
+    }
+
+    const alsValue = await readAls();
+    log && logInfo(`ALS value: ${alsValue}`);
     if (!alsValue) {
-      return;
+      continue;
     }
 
     // Keep track of the last 4 values
@@ -48,7 +58,8 @@ const handleAls = async () => {
       previousAlsValues[2] === -1 ||
       previousAlsValues[3] === -1
     ) {
-      return;
+      log && logInfo('Initial values are being set');
+      continue;
     }
 
     const alsDeltas = [];
@@ -63,7 +74,8 @@ const handleAls = async () => {
 
     // Ignore small changes
     if (absDelta < ignoreThreshold) {
-      return;
+      log && logInfo(`Ignoring small change: ${absDelta}`);
+      continue;
     }
 
     // More sophisticated implementation
@@ -87,9 +99,10 @@ const handleAls = async () => {
     let targetBrightness = currentBrightness + brightnessAdd;
     targetBrightness = Math.min(100, Math.max(0, targetBrightness));
 
-    logInfo(
-      `Current brightness: ${currentBrightness} | ALS delta: ${delta} | previous values: ${previousAlsValues} | Current Brightness ${currentBrightness} | Brightness add: ${brightnessAdd} | Target brightness: ${targetBrightness}`
-    );
+    log &&
+      logInfo(
+        `Current brightness: ${currentBrightness} | ALS delta: ${delta} | previous values: ${previousAlsValues} | Current Brightness ${currentBrightness} | Brightness add: ${brightnessAdd} | Target brightness: ${targetBrightness}`
+      );
 
     // Smoothing
     let localCurrentBrightness = currentBrightness;
@@ -106,7 +119,7 @@ const handleAls = async () => {
         localCurrentBrightness / 100
       );
 
-      //   await sleep(smoothTime / stepCount);
+      await sleep(smoothTime / stepCount);
 
       // Ensure that we don't have stale data
       previousAlsValues.push(alsValue);
@@ -116,9 +129,10 @@ const handleAls = async () => {
 };
 
 export const enableAlsListener = () => {
-  intervalId = window.setInterval(() => {
-    handleAls();
-  }, 100);
+  enableAdaptiveBrightness = true;
+  new Promise(async () => {
+    await handleAls();
+  });
 
   steamRegistration =
     window.SteamClient.System.Display.RegisterForBrightnessChanges(
@@ -126,26 +140,18 @@ export const enableAlsListener = () => {
         currentBrightness = data.flBrightness * 100;
       }
     );
-  logInfo(`als listener enabled ${intervalId} ${steamRegistration}`);
+  logInfo(`als listener enabled ${JSON.stringify(steamRegistration)}`);
 };
 
 export const clearAlsListener = () => {
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = undefined;
+  enableAdaptiveBrightness = false;
 
-    previousAlsValues = [-1, -1, -1, -1];
-    if (
-      steamRegistration &&
-      typeof steamRegistration?.unregister === 'function'
-    ) {
-      steamRegistration.unregister();
-    }
-    steamRegistration = undefined;
+  previousAlsValues = [-1, -1, -1, -1];
+  if (
+    steamRegistration &&
+    typeof steamRegistration?.unregister === 'function'
+  ) {
+    steamRegistration.unregister();
   }
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-    timeoutId = undefined;
-  }
-  logInfo(`als listener cleared`);
+  steamRegistration = undefined;
 };
