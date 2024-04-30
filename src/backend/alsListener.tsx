@@ -1,6 +1,6 @@
 import { createServerApiHelpers, getServerApi, logInfo } from './utils';
 
-const log = false;
+const log = true;
 
 // Brightness steps
 // [ALS delta, brightness add in %]
@@ -13,13 +13,13 @@ const BRIGHTNESS_STEPS = [
 
 let enableAdaptiveBrightness = false;
 
-const smoothTime = 250;
+const smoothTime = 300;
 const stepCount = 10;
-const ignoreThreshold = 30;
+const ignoreThreshold = BRIGHTNESS_STEPS[0][0];
 const alsPollingRate = 125;
 
 let steamRegistration: any;
-let previousAlsValues = [-1, -1, -1, -1];
+let previousAlsValues = Array(10).fill(-1);
 let currentBrightness = 40;
 
 const handleAls = async () => {
@@ -28,19 +28,13 @@ const handleAls = async () => {
   const serverAPI = getServerApi();
 
   if (!serverAPI) {
-    logInfo('Server API not available');
     return;
   }
 
   const { readAls } = createServerApiHelpers(serverAPI);
 
-  while (true) {
+  while (enableAdaptiveBrightness) {
     sleep(alsPollingRate);
-
-    if (!enableAdaptiveBrightness) {
-      log && logInfo('Adaptive brightness disabled');
-      break;
-    }
 
     const alsValue = await readAls();
     log && logInfo(`ALS value: ${alsValue}`);
@@ -48,18 +42,12 @@ const handleAls = async () => {
       continue;
     }
 
-    // Keep track of the last 4 values
+    // Keep track of the last N values
     previousAlsValues.push(alsValue);
     previousAlsValues.shift();
 
     // Set the initial values
-    if (
-      previousAlsValues[0] === -1 ||
-      previousAlsValues[1] === -1 ||
-      previousAlsValues[2] === -1 ||
-      previousAlsValues[3] === -1
-    ) {
-      log && logInfo('Initial values are being set');
+    if (previousAlsValues.includes(-1)) {
       continue;
     }
 
@@ -75,7 +63,6 @@ const handleAls = async () => {
 
     // Ignore small changes
     if (absDelta < ignoreThreshold) {
-      log && logInfo(`Ignoring small change: ${absDelta}`);
       continue;
     }
 
@@ -121,10 +108,6 @@ const handleAls = async () => {
       );
 
       await sleep(smoothTime / stepCount);
-
-      // Ensure that we don't have stale data
-      previousAlsValues.push(alsValue);
-      previousAlsValues.shift();
     }
   }
 };
@@ -141,7 +124,6 @@ export const enableAlsListener = () => {
         currentBrightness = data.flBrightness * 100;
       }
     );
-  logInfo(`als listener enabled`);
 };
 
 export const clearAlsListener = () => {
@@ -155,5 +137,4 @@ export const clearAlsListener = () => {
     steamRegistration.unregister();
   }
   steamRegistration = undefined;
-  logInfo(`als listener disabled`);
 };
