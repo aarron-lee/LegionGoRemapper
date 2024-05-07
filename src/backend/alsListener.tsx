@@ -24,7 +24,9 @@ const BRIGHTNESS_THRESHOLDS = [
   [450, 100]
 ];
 
+let steamRegistration: any;
 let enableAdaptiveBrightness = false;
+let manualBrightnessTimeout: number = 120 * 1000; // 2 minutes
 
 const pollingRate = 100; // Time in milliseconds
 const smoothTime = 500; // Time in milliseconds
@@ -46,7 +48,9 @@ const handleAls = async () => {
   const { readAls } = createServerApiHelpers(serverAPI);
 
   while (enableAdaptiveBrightness) {
-    await sleep(pollingRate);
+    await sleep(manualBrightnessTimeout || pollingRate);
+
+    manualBrightnessTimeout = 0;
 
     const alsValue = await readAls();
     if (typeof alsValue !== 'number') {
@@ -66,11 +70,6 @@ const handleAls = async () => {
     const averageAlsValue =
       previousAlsValues.reduce((acc, val) => acc + val, 0) /
       previousAlsValues.length;
-
-    // Ignore the value if it's too low
-    if (Math.abs(averageAlsValue - alsValue) < ignoreThreshold) {
-      continue;
-    }
 
     // Find the target brightness
     let targetBrightness = currentBrightness;
@@ -123,9 +122,27 @@ export const enableAlsListener = () => {
   new Promise(async () => {
     await handleAls();
   });
+
+  steamRegistration =
+    window.SteamClient.System.Display.RegisterForBrightnessChanges(
+      async (data: { flBrightness: number }) => {
+        currentBrightness = data.flBrightness * 100;
+
+        manualBrightnessTimeout = 120 * 1000;
+      }
+    );
 };
+
 
 export const clearAlsListener = () => {
   enableAdaptiveBrightness = false;
+
   previousAlsValues.fill(-1);
+  if (
+    steamRegistration &&
+    typeof steamRegistration?.unregister === 'function'
+  ) {
+    steamRegistration.unregister();
+  }
+  steamRegistration = undefined;
 };
