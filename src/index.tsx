@@ -40,7 +40,7 @@ const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
           />
         </PanelSectionRow>
       </PanelSection>
-      <ErrorBoundary title="Adaptive ">
+      <ErrorBoundary title="Adaptive Brightness">
         <AlsPanel />
       </ErrorBoundary>
       <ErrorBoundary title={'Controller Lighting Panel'}>
