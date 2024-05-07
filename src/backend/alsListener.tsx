@@ -26,14 +26,12 @@ const BRIGHTNESS_THRESHOLDS = [
 
 let steamRegistration: any;
 let enableAdaptiveBrightness = false;
-let manualBrightnessTimeout: number = 0; // 2 minutes
 
 const pollingRate = 100; // Time in milliseconds
 const smoothTime = 500; // Time in milliseconds
 const stepCount = 10; // Less steps = smoother transition
-const ignoreThreshold = 15; // Ignore values that are too close to the average
 
-let previousAlsValues = Array(25).fill(-1); // Increase length to increase read times (less sensitive to changes)
+let previousAlsValues = Array(75).fill(-1); // Increase length to increase read times (less sensitive to changes)
 let currentBrightness = 50;
 
 const handleAls = async () => {
@@ -49,8 +47,6 @@ const handleAls = async () => {
 
   while (enableAdaptiveBrightness) {
     await sleep(pollingRate);
-
-    manualBrightnessTimeout = 0;
 
     const alsValue = await readAls();
     if (typeof alsValue !== 'number') {
@@ -88,7 +84,7 @@ const handleAls = async () => {
       continue;
     }
 
-    logInfo(`ALS value: ${ alsValue } | Average ALS value: ${ averageAlsValue } | Target brightness: ${ targetBrightness } | Current brightness: ${ currentBrightness }`);
+    //logInfo(`ALS value: ${ alsValue } | Average ALS value: ${ averageAlsValue } | Target brightness: ${ targetBrightness } | Current brightness: ${ currentBrightness }`);
 
     let localCurrentBrightness = currentBrightness;
     const numSteps = smoothTime / stepCount;
@@ -127,8 +123,6 @@ export const enableAlsListener = () => {
     window.SteamClient.System.Display.RegisterForBrightnessChanges(
       async (data: { flBrightness: number }) => {
         currentBrightness = data.flBrightness * 100;
-
-        //manualBrightnessTimeout = 120 * 1000;
       }
     );
 };
