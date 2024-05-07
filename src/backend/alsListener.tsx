@@ -1,26 +1,38 @@
 import { createServerApiHelpers, getServerApi, logInfo } from './utils';
 
-const log = true;
-
-// Brightness steps
-// [ALS delta, brightness add in %]
-const BRIGHTNESS_STEPS = [
-  [50, 0],
-  [75, 5],
-  [82.5, 7.5],
-  [100, 10]
+// Brightness thresholds
+// [ALS value, brightness as percentage]
+const BRIGHTNESS_THRESHOLDS = [
+  [0, 10],
+  [25, 15],
+  [50, 20],
+  [75, 25],
+  [100, 30],
+  [125, 35],
+  [150, 40],
+  [175, 45],
+  [200, 50],
+  [225, 55],
+  [250, 60],
+  [275, 65],
+  [300, 70],
+  [325, 75],
+  [350, 80],
+  [375, 85],
+  [400, 90],
+  [425, 95],
+  [450, 100]
 ];
 
 let enableAdaptiveBrightness = false;
 
-const smoothTime = 300;
-const stepCount = 10;
-const ignoreThreshold = BRIGHTNESS_STEPS[0][0];
-const alsPollingRate = 125;
+const pollingRate = 100; // Time in milliseconds
+const smoothTime = 500; // Time in milliseconds
+const stepCount = 10; // Less steps = smoother transition
+const ignoreThreshold = 15; // Ignore values that are too close to the average
 
-let steamRegistration: any;
-let previousAlsValues = Array(10).fill(-1);
-let currentBrightness = 40;
+let previousAlsValues = Array(15).fill(-1); // Increase length to increase read times (less sensitive to changes)
+let currentBrightness = 50;
 
 const handleAls = async () => {
   const sleep = (ms: number) =>
@@ -34,10 +46,9 @@ const handleAls = async () => {
   const { readAls } = createServerApiHelpers(serverAPI);
 
   while (enableAdaptiveBrightness) {
-    sleep(alsPollingRate);
+    await sleep(pollingRate);
 
     const alsValue = await readAls();
-    log && logInfo(`ALS value: ${alsValue}`);
     if (typeof alsValue !== 'number') {
       continue;
     }
@@ -51,64 +62,59 @@ const handleAls = async () => {
       continue;
     }
 
-    const alsDeltas = [];
-    for (let i = 0; i < previousAlsValues.length - 1; i++) {
-      alsDeltas.push(previousAlsValues[i + 1] - previousAlsValues[i]);
-    }
+    // Get the average of the last N values
+    const averageAlsValue =
+      previousAlsValues.reduce((acc, val) => acc + val, 0) /
+      previousAlsValues.length;
 
-    const delta = Math.round(
-      alsDeltas.reduce((acc, val) => acc + val, 0) / alsDeltas.length
-    );
-    const absDelta = Math.abs(delta);
-
-    // Ignore small changes
-    if (absDelta < ignoreThreshold) {
+    // Ignore the value if it's too low
+    if (Math.abs(averageAlsValue - alsValue) < ignoreThreshold) {
       continue;
     }
 
-    // More sophisticated implementation
-    const negativeDelta = delta < 0;
-    let brightnessAdd = 0;
-    for (let i = 0; i < BRIGHTNESS_STEPS.length; i++) {
-      if (absDelta <= BRIGHTNESS_STEPS[i][0]) {
-        brightnessAdd = BRIGHTNESS_STEPS[i][1];
+    // Find the target brightness
+    let targetBrightness = currentBrightness;
+    for (let i = 0; i < BRIGHTNESS_THRESHOLDS.length; i++) {
+      if (averageAlsValue <= BRIGHTNESS_THRESHOLDS[i][0]) {
+        targetBrightness = BRIGHTNESS_THRESHOLDS[i][1];
         break;
       }
 
-      if (i === BRIGHTNESS_STEPS.length - 1) {
-        brightnessAdd = BRIGHTNESS_STEPS[i][1];
+      if (i === BRIGHTNESS_THRESHOLDS.length - 1) {
+        targetBrightness = BRIGHTNESS_THRESHOLDS[i][1];
       }
     }
 
-    // Clamp brightness
-    if (negativeDelta) {
-      brightnessAdd = -brightnessAdd;
+    if (targetBrightness === currentBrightness) {
+      continue;
     }
-    let targetBrightness = currentBrightness + brightnessAdd;
-    targetBrightness = Math.min(100, Math.max(0, targetBrightness));
 
-    log &&
-      logInfo(
-        `Current brightness: ${currentBrightness} | ALS delta: ${delta} | previous values: ${previousAlsValues} | Current Brightness ${currentBrightness} | Brightness add: ${brightnessAdd} | Target brightness: ${targetBrightness}`
-      );
+    // logInfo(`ALS value: ${ alsValue } | Average ALS value: ${ averageAlsValue } | Target brightness: ${ targetBrightness } | Current brightness: ${ currentBrightness }`);
 
-    // Smoothing
     let localCurrentBrightness = currentBrightness;
-    const brightnessPerMs = (brightnessAdd / smoothTime) * stepCount;
+    const numSteps = smoothTime / stepCount;
 
-    for (let i = 0; i < smoothTime / stepCount; i++) {
-      localCurrentBrightness += brightnessPerMs;
+    let brightnessPerStep = (targetBrightness - currentBrightness) / numSteps;
+
+    for (let i = 0; i < numSteps; i++) {
+      await sleep(numSteps);
+
+      localCurrentBrightness = localCurrentBrightness + brightnessPerStep;
+
       localCurrentBrightness = Math.min(
         100,
         Math.max(0, localCurrentBrightness)
       );
 
+      // logInfo(`Setting brightness to ${localCurrentBrightness}, target: ${targetBrightness}, brightnessPerStep: ${brightnessPerStep}`);
+
       window.SteamClient.System.Display.SetBrightness(
         localCurrentBrightness / 100
       );
-
-      await sleep(smoothTime / stepCount);
     }
+
+    currentBrightness = targetBrightness;
+    previousAlsValues.fill(-1);
   }
 };
 
@@ -117,24 +123,9 @@ export const enableAlsListener = () => {
   new Promise(async () => {
     await handleAls();
   });
-
-  steamRegistration =
-    window.SteamClient.System.Display.RegisterForBrightnessChanges(
-      async (data: { flBrightness: number }) => {
-        currentBrightness = data.flBrightness * 100;
-      }
-    );
 };
 
 export const clearAlsListener = () => {
   enableAdaptiveBrightness = false;
-
-  previousAlsValues = [-1, -1, -1, -1];
-  if (
-    steamRegistration &&
-    typeof steamRegistration?.unregister === 'function'
-  ) {
-    steamRegistration.unregister();
-  }
-  steamRegistration = undefined;
+  previousAlsValues.fill(-1);
 };
