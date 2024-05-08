@@ -17,6 +17,10 @@ type UiStateType = {
   chargeLimitEnabled?: boolean;
   alsEnabled?: boolean;
   pluginVersionNum?: string;
+  alsInfo: {
+    pollingRate: number;
+    smoothTime: number;
+  };
 };
 
 // Define the initial state using that type
@@ -24,7 +28,11 @@ const initialState: UiStateType = {
   initialLoading: true,
   currentGameId: undefined,
   currentDisplayName: undefined,
-  pluginVersionNum: ''
+  pluginVersionNum: '',
+  alsInfo: {
+    pollingRate: 100,
+    smoothTime: 500
+  }
 };
 
 export const uiSlice = createSlice({
@@ -40,6 +48,12 @@ export const uiSlice = createSlice({
     },
     setAlsEnabled(state, action: PayloadAction<boolean>) {
       state.alsEnabled = action.payload;
+    },
+    setPollingRate(state, action: PayloadAction<number>) {
+      state.alsInfo.pollingRate = action.payload;
+    },
+    setSmoothTime(state, action: PayloadAction<number>) {
+      state.alsInfo.smoothTime = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -89,13 +103,22 @@ export const uiSliceMiddleware =
     const result = next(action);
 
     if (serverApi) {
-      const { setChargeLimit, setAlsEnabled } =
+      const { setChargeLimit, setAlsEnabled, saveSettings } =
         createServerApiHelpers(serverApi);
 
       if (type === setInitialState.type) {
         if (action.payload?.alsEnabled) {
           enableAlsListener();
         }
+      }
+
+      if (type === uiSlice.actions.setPollingRate.type) {
+        const alsInfo = { pollingRate: action.payload };
+        saveSettings({ alsInfo });
+      }
+      if (type === uiSlice.actions.setSmoothTime.type) {
+        const alsInfo = { smoothTime: action.payload };
+        saveSettings({ alsInfo });
       }
 
       if (type === uiSlice.actions.setChargeLimit.type) {

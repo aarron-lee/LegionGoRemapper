@@ -99,6 +99,14 @@ def set_all_fan_profiles(fan_profiles):
     setting_file.settings['fan'] = profiles
     setting_file.commit()
 
+def merge_settings(new_settings):
+    settings = get_settings()
+
+    deep_merge(new_settings, settings)
+
+    setting_file.settings = settings
+    setting_file.commit()
+
 def modprobe_acpi_call():
     os.system("modprobe acpi_call")
     result = subprocess.run(["modprobe", "acpi_call"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)

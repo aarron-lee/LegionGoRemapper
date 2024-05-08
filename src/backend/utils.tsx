@@ -9,7 +9,8 @@ export enum ServerAPIMethods {
   GET_SETTINGS = 'get_settings',
   SET_POWER_LED = 'set_power_led',
   SET_CHARGE_LIMIT = 'set_charge_limit',
-  SET_ALS_ENABLED = 'set_als_enabled'
+  SET_ALS_ENABLED = 'set_als_enabled',
+  SAVE_SETTINGS = 'save_settings'
 }
 
 const readAls = (serverApi: ServerAPI) => async () => {
@@ -67,6 +68,13 @@ const createSetAlsEnabled =
     });
   };
 
+const createSaveSettings =
+  (serverAPI: ServerAPI) => async (new_settings: { [s: string]: any }) => {
+    await serverAPI.callPluginMethod(ServerAPIMethods.SAVE_SETTINGS, {
+      new_settings
+    });
+  };
+
 const createGetSettings = (serverAPI: ServerAPI) => async () => {
   return await serverAPI.callPluginMethod(ServerAPIMethods.GET_SETTINGS, {});
 };
@@ -97,7 +105,8 @@ export const createServerApiHelpers = (serverAPI: ServerAPI) => {
     setPowerLed: createSetPowerLed(serverAPI),
     setChargeLimit: createSetChargeLimit(serverAPI),
     readAls: readAls(serverAPI),
-    setAlsEnabled: createSetAlsEnabled(serverAPI)
+    setAlsEnabled: createSetAlsEnabled(serverAPI),
+    saveSettings: createSaveSettings(serverAPI)
   };
 };
 

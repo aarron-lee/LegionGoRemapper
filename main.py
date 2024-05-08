@@ -166,6 +166,11 @@ class Plugin:
         except Exception as e:
             decky_plugin.logger.error(f'error while setting als {e}')
 
+    async def save_settings(self, new_settings):
+        try:
+            settings.merge_settings(new_settings)
+        except Exception as e:
+            decky_plugin.logger.error(f'error save_settings {e}')
 
     async def remap_button(self, button: str, action: str):
         decky_plugin.logger.info(f"remap_button {button} {action}")
