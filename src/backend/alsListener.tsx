@@ -1,5 +1,8 @@
 import { createServerApiHelpers, getServerApi, logInfo } from './utils';
 
+// poll rate for the sensor
+// smooth time
+
 // Brightness thresholds
 // [ALS value, brightness as percentage]
 const BRIGHTNESS_THRESHOLDS = [
@@ -27,8 +30,18 @@ const BRIGHTNESS_THRESHOLDS = [
 let steamRegistration: any;
 let enableAdaptiveBrightness = false;
 
-const pollingRate = 100; // Time in milliseconds
-const smoothTime = 500; // Time in milliseconds
+export const pollInfo = {
+  range: [100, 500],
+  step: 50
+};
+
+export const smoothTimeInfo = {
+  range: [100, 1000],
+  step: 50
+};
+
+let pollingRate = 100; // Time in milliseconds
+let smoothTime = 500; // Time in milliseconds
 const stepCount = 10; // Less steps = smoother transition
 
 let previousAlsValues = Array(75).fill(-1); // Increase length to increase read times (less sensitive to changes)
@@ -101,7 +114,9 @@ const handleAls = async () => {
         Math.max(0, localCurrentBrightness)
       );
 
-      logInfo(`Setting brightness to ${localCurrentBrightness}, target: ${targetBrightness}, brightnessPerStep: ${brightnessPerStep}`);
+      logInfo(
+        `Setting brightness to ${localCurrentBrightness}, target: ${targetBrightness}, brightnessPerStep: ${brightnessPerStep}`
+      );
 
       window.SteamClient.System.Display.SetBrightness(
         localCurrentBrightness / 100
@@ -127,6 +142,13 @@ export const enableAlsListener = () => {
     );
 };
 
+export const setPollRate = (newRate: number) => {
+  pollingRate = newRate;
+};
+
+export const setSmoothTime = (newTime: number) => {
+  smoothTime = newTime;
+};
 
 export const clearAlsListener = () => {
   enableAdaptiveBrightness = false;
