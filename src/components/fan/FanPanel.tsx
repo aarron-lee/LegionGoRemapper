@@ -58,7 +58,7 @@ const FanPanel = () => {
   return (
     <>
       <PanelSection title={title}>
-        {!acknowledgeWarning && (
+        {/* {!acknowledgeWarning && (
           <PanelSectionRow>
             ⚠️ Warning ⚠️ - recently reported bugs indicate that custom fan
             curves sometimes stop working for unknown reasons. Use this feature
@@ -71,7 +71,7 @@ const FanPanel = () => {
             checked={acknowledgeWarning}
             onChange={setWarning}
           />
-        </PanelSectionRow>
+        </PanelSectionRow> */}
         <PanelSectionRow>
           <ToggleField
             label={'Enable Custom Fan Curves'}

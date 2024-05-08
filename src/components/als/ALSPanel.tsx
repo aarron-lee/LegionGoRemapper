@@ -61,7 +61,7 @@ export default function () {
       <PanelSection title="Ambient Light Sensor">
         <PanelSectionRow>
           <ToggleField
-            label={'Enable ALS'}
+            label={'Enable Auto Brightness (Experimental)'}
             checked={enabledAls}
             onChange={setAlsEnabled}
           />
