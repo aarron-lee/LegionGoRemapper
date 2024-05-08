@@ -137,12 +137,13 @@ export const enableAlsListener = () => {
     await handleAls();
   });
 
-  steamRegistration =
-    window.SteamClient.System.Display.RegisterForBrightnessChanges(
-      async (data: { flBrightness: number }) => {
-        currentBrightness = data.flBrightness * 100;
-      }
-    );
+  if (!steamRegistration)
+    steamRegistration =
+      window.SteamClient.System.Display.RegisterForBrightnessChanges(
+        async (data: { flBrightness: number }) => {
+          currentBrightness = data.flBrightness * 100;
+        }
+      );
 };
 
 export const setPollRate = (newRate: number) => {
@@ -157,11 +158,11 @@ export const clearAlsListener = () => {
   enableAdaptiveBrightness = false;
 
   previousAlsValues.fill(-1);
-  if (
-    steamRegistration &&
-    typeof steamRegistration?.unregister === 'function'
-  ) {
-    steamRegistration.unregister();
-  }
-  steamRegistration = undefined;
+  // if (
+  //   steamRegistration &&
+  //   typeof steamRegistration?.unregister === 'function'
+  // ) {
+  //   steamRegistration.unregister();
+  // }
+  // steamRegistration = undefined;
 };
