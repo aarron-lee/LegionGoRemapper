@@ -7,7 +7,12 @@ import {
   extractDisplayName,
   getServerApi
 } from '../backend/utils';
-import { clearAlsListener, enableAlsListener } from '../backend/alsListener';
+import {
+  clearAlsListener,
+  enableAlsListener,
+  setPollRate,
+  setSmoothTime
+} from '../backend/alsListener';
 // import type { RootState } from './store';
 
 type UiStateType = {
@@ -50,9 +55,11 @@ export const uiSlice = createSlice({
       state.alsEnabled = action.payload;
     },
     setPollingRate(state, action: PayloadAction<number>) {
+      setPollRate(action.payload);
       state.alsInfo.pollingRate = action.payload;
     },
     setSmoothTime(state, action: PayloadAction<number>) {
+      setSmoothTime(action.payload);
       state.alsInfo.smoothTime = action.payload;
     }
   },
@@ -94,6 +101,11 @@ export const selectChargeLimitEnabled = (state: RootState) =>
 
 export const selectAlsEnabled = (state: RootState) =>
   Boolean(state.ui?.alsEnabled);
+
+export const selectAlsPollingRate = (state: RootState) =>
+  state.ui.alsInfo.pollingRate;
+export const selectSmoothTime = (state: RootState) =>
+  state.ui.alsInfo.smoothTime;
 
 export const uiSliceMiddleware =
   (_store: any) => (next: any) => (action: any) => {

@@ -5,7 +5,12 @@ import {
   ToggleField
 } from 'decky-frontend-lib';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAlsEnabled, uiSlice } from '../../redux-modules/uiSlice';
+import {
+  selectAlsEnabled,
+  selectAlsPollingRate,
+  selectSmoothTime,
+  uiSlice
+} from '../../redux-modules/uiSlice';
 import { pollInfo, smoothTimeInfo } from '../../backend/alsListener';
 
 // let currentBrightness = 40;
@@ -21,8 +26,32 @@ const useAlsEnabled = () => {
   return { enabledAls, setAlsEnabled };
 };
 
+const useAlsPollingRate = () => {
+  const pollingRate = useSelector(selectAlsPollingRate);
+  const dispatch = useDispatch();
+
+  const setPollingRate = (newRate: number) => {
+    return dispatch(uiSlice.actions.setPollingRate(newRate));
+  };
+
+  return { pollingRate, setPollingRate };
+};
+
+const useSmoothTime = () => {
+  const smoothTime = useSelector(selectSmoothTime);
+  const dispatch = useDispatch();
+
+  const setSmoothTime = (newTime: number) => {
+    return dispatch(uiSlice.actions.setSmoothTime(newTime));
+  };
+
+  return { smoothTime, setSmoothTime };
+};
+
 export default function () {
   const { enabledAls, setAlsEnabled } = useAlsEnabled();
+  const { pollingRate, setPollingRate } = useAlsPollingRate();
+  const { smoothTime, setSmoothTime } = useSmoothTime();
 
   const [minPollRate, maxPollRate] = pollInfo.range;
   const [minSmoothTime, maxSmoothTime] = smoothTimeInfo.range;
@@ -42,9 +71,10 @@ export default function () {
             <PanelSectionRow>
               <SliderField
                 label="Poll Rate (ms)"
-                value={100}
+                value={pollingRate}
                 min={minPollRate}
                 max={maxPollRate}
+                onChange={setPollingRate}
                 step={pollInfo.step}
                 notchTicksVisible
                 showValue
@@ -53,9 +83,10 @@ export default function () {
             <PanelSectionRow>
               <SliderField
                 label="Smooth Time (ms)"
-                value={100}
+                value={smoothTime}
                 min={minSmoothTime}
                 max={maxSmoothTime}
+                onChange={setSmoothTime}
                 step={smoothTimeInfo.step}
                 notchTicksVisible
                 showValue
