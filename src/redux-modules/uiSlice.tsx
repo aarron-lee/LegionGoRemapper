@@ -75,6 +75,9 @@ export const uiSlice = createSlice({
       if (action.payload?.alsEnabled) {
         state.alsEnabled = Boolean(action.payload?.alsEnabled);
       }
+      if (action.payload?.alsInfo) {
+        state.alsInfo = action.payload.alsInfo;
+      }
     });
     builder.addCase(setCurrentGameId, (state, action) => {
       if (action?.payload) {
