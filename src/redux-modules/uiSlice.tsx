@@ -8,6 +8,8 @@ import {
   getServerApi
 } from '../backend/utils';
 import {
+  DEFAULT_POLLING_RATE,
+  DEFAULT_SMOOTH_TIME,
   clearAlsListener,
   enableAlsListener,
   setPollRate,
@@ -35,8 +37,8 @@ const initialState: UiStateType = {
   currentDisplayName: undefined,
   pluginVersionNum: '',
   alsInfo: {
-    pollingRate: 100,
-    smoothTime: 500
+    pollingRate: DEFAULT_POLLING_RATE,
+    smoothTime: DEFAULT_SMOOTH_TIME
   }
 };
 
@@ -76,7 +78,10 @@ export const uiSlice = createSlice({
         state.alsEnabled = Boolean(action.payload?.alsEnabled);
       }
       if (action.payload?.alsInfo) {
+        const { pollingRate, smoothTime } = action.payload.alsInfo;
         state.alsInfo = action.payload.alsInfo;
+        setPollRate(pollingRate || DEFAULT_POLLING_RATE);
+        setSmoothTime(smoothTime || DEFAULT_SMOOTH_TIME);
       }
     });
     builder.addCase(setCurrentGameId, (state, action) => {

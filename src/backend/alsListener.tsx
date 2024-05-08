@@ -40,8 +40,11 @@ export const smoothTimeInfo = {
   step: 50
 };
 
-let pollingRate = 100; // Time in milliseconds
-let smoothTime = 500; // Time in milliseconds
+export const DEFAULT_POLLING_RATE = 100;
+export const DEFAULT_SMOOTH_TIME = 500;
+
+let pollingRate = DEFAULT_POLLING_RATE; // Time in milliseconds
+let smoothTime = DEFAULT_SMOOTH_TIME; // Time in milliseconds
 const stepCount = 10; // Less steps = smoother transition
 
 let previousAlsValues = Array(75).fill(-1); // Increase length to increase read times (less sensitive to changes)
