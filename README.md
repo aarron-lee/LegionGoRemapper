@@ -142,6 +142,18 @@ Due to a controller firmware update, Lenovo disabled the ability to set the LEDs
 
 If you are on the latest firmware, the plugin will update both LEDs.
 
+## The Plugin isn't working
+
+First try reinstalling or updating the plugin to the latest version, there's an update button at the bottom of the plugin. You can also re-run the installer to update:
+
+```
+curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh
+```
+
+If this doesn't fix your issue, next try deleting your `$HOME/homebrew/settings/LegionGoRemapper/settings.json` file, and rebooting.
+
+If neither works, please create a github issue.
+
 # Attribution
 
 Special thanks to [antheas](https://github.com/antheas) for [reverse engineering and documenting the HID protocols](https://github.com/antheas/hwinfo/tree/master/devices/legion_go) for the Legion Go Controllers, etc.
