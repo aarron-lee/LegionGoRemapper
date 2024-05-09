@@ -86,8 +86,9 @@ export const uiSlice = createSlice({
         state.alsEnabled = Boolean(action.payload?.alsEnabled);
       }
       if (action.payload?.alsInfo) {
-        const { pollingRate, smoothTime, sensitivity } = action.payload.alsInfo;
-        state.alsInfo = action.payload.alsInfo;
+        const { pollingRate, smoothTime, sensitivity } =
+          action.payload.alsInfo || {};
+        state.alsInfo = { ...state.alsInfo, ...action.payload.alsInfo };
         setPollRate(pollingRate || DEFAULT_POLLING_RATE);
         setSmoothTime(smoothTime || DEFAULT_SMOOTH_TIME);
         setSensitivity(sensitivity || DEFAULT_SENSITIVITY);
