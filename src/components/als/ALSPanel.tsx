@@ -8,10 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   selectAlsEnabled,
   selectAlsPollingRate,
+  selectSensitivity,
   selectSmoothTime,
   uiSlice
 } from '../../redux-modules/uiSlice';
-import { pollInfo, smoothTimeInfo } from '../../backend/alsListener';
+import {
+  pollInfo,
+  sensitivityInfo,
+  smoothTimeInfo
+} from '../../backend/alsListener';
 
 // let currentBrightness = 40;
 
@@ -37,6 +42,17 @@ const useAlsPollingRate = () => {
   return { pollingRate, setPollingRate };
 };
 
+const useSensitivity = () => {
+  const sensitivity = useSelector(selectSensitivity);
+  const dispatch = useDispatch();
+
+  const setSensitivity = (val: number) => {
+    return dispatch(uiSlice.actions.setSensitivity(val));
+  };
+
+  return { sensitivity, setSensitivity };
+};
+
 const useSmoothTime = () => {
   const smoothTime = useSelector(selectSmoothTime);
   const dispatch = useDispatch();
@@ -52,9 +68,11 @@ export default function () {
   const { enabledAls, setAlsEnabled } = useAlsEnabled();
   const { pollingRate, setPollingRate } = useAlsPollingRate();
   const { smoothTime, setSmoothTime } = useSmoothTime();
+  const { sensitivity, setSensitivity } = useSensitivity();
 
   const [minPollRate, maxPollRate] = pollInfo.range;
   const [minSmoothTime, maxSmoothTime] = smoothTimeInfo.range;
+  const [minSensitivity, maxSensitivity] = sensitivityInfo.range;
 
   return (
     <>
@@ -68,6 +86,18 @@ export default function () {
         </PanelSectionRow>
         {enabledAls && (
           <>
+            <PanelSectionRow>
+              <SliderField
+                label="Sensitivity"
+                value={sensitivity}
+                min={minSensitivity}
+                max={maxSensitivity}
+                onChange={setSensitivity}
+                step={sensitivityInfo.step}
+                notchTicksVisible
+                showValue
+              />
+            </PanelSectionRow>
             <PanelSectionRow>
               <SliderField
                 label="Poll Rate (ms)"

@@ -30,6 +30,11 @@ const BRIGHTNESS_THRESHOLDS = [
 let steamRegistration: any;
 let enableAdaptiveBrightness = false;
 
+export const sensitivityInfo = {
+  range: [25, 100],
+  step: 25
+};
+
 export const pollInfo = {
   range: [100, 500],
   step: 50
@@ -42,12 +47,13 @@ export const smoothTimeInfo = {
 
 export const DEFAULT_POLLING_RATE = 100;
 export const DEFAULT_SMOOTH_TIME = 500;
+export const DEFAULT_SENSITIVITY = 50;
 
 let pollingRate = DEFAULT_POLLING_RATE; // Time in milliseconds
 let smoothTime = DEFAULT_SMOOTH_TIME; // Time in milliseconds
 const stepCount = 10; // Less steps = smoother transition
 
-let previousAlsValues = Array(75).fill(-1); // Increase length to increase read times (less sensitive to changes)
+let previousAlsValues = Array(DEFAULT_SENSITIVITY).fill(-1); // Increase length to increase read times (less sensitive to changes)
 let currentBrightness = 50;
 
 const handleAls = async () => {
@@ -158,11 +164,8 @@ export const clearAlsListener = () => {
   enableAdaptiveBrightness = false;
 
   previousAlsValues.fill(-1);
-  // if (
-  //   steamRegistration &&
-  //   typeof steamRegistration?.unregister === 'function'
-  // ) {
-  //   steamRegistration.unregister();
-  // }
-  // steamRegistration = undefined;
+};
+
+export const setSensitivity = (arrSize: number) => {
+  previousAlsValues = Array(arrSize).fill(-1);
 };

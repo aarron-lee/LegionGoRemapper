@@ -9,10 +9,12 @@ import {
 } from '../backend/utils';
 import {
   DEFAULT_POLLING_RATE,
+  DEFAULT_SENSITIVITY,
   DEFAULT_SMOOTH_TIME,
   clearAlsListener,
   enableAlsListener,
   setPollRate,
+  setSensitivity,
   setSmoothTime
 } from '../backend/alsListener';
 // import type { RootState } from './store';
@@ -27,6 +29,7 @@ type UiStateType = {
   alsInfo: {
     pollingRate: number;
     smoothTime: number;
+    sensitivity: number;
   };
 };
 
@@ -38,7 +41,8 @@ const initialState: UiStateType = {
   pluginVersionNum: '',
   alsInfo: {
     pollingRate: DEFAULT_POLLING_RATE,
-    smoothTime: DEFAULT_SMOOTH_TIME
+    smoothTime: DEFAULT_SMOOTH_TIME,
+    sensitivity: DEFAULT_SENSITIVITY
   }
 };
 
@@ -63,6 +67,10 @@ export const uiSlice = createSlice({
     setSmoothTime(state, action: PayloadAction<number>) {
       setSmoothTime(action.payload);
       state.alsInfo.smoothTime = action.payload;
+    },
+    setSensitivity(state, action: PayloadAction<number>) {
+      setSensitivity(action.payload);
+      state.alsInfo.sensitivity = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -78,10 +86,11 @@ export const uiSlice = createSlice({
         state.alsEnabled = Boolean(action.payload?.alsEnabled);
       }
       if (action.payload?.alsInfo) {
-        const { pollingRate, smoothTime } = action.payload.alsInfo;
+        const { pollingRate, smoothTime, sensitivity } = action.payload.alsInfo;
         state.alsInfo = action.payload.alsInfo;
         setPollRate(pollingRate || DEFAULT_POLLING_RATE);
         setSmoothTime(smoothTime || DEFAULT_SMOOTH_TIME);
+        setSensitivity(sensitivity || DEFAULT_SENSITIVITY);
       }
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -114,6 +123,8 @@ export const selectAlsPollingRate = (state: RootState) =>
   state.ui.alsInfo.pollingRate;
 export const selectSmoothTime = (state: RootState) =>
   state.ui.alsInfo.smoothTime;
+export const selectSensitivity = (state: RootState) =>
+  state.ui.alsInfo.sensitivity;
 
 export const uiSliceMiddleware =
   (_store: any) => (next: any) => (action: any) => {
@@ -138,6 +149,10 @@ export const uiSliceMiddleware =
       }
       if (type === uiSlice.actions.setSmoothTime.type) {
         const alsInfo = { smoothTime: action.payload };
+        saveSettings({ alsInfo });
+      }
+      if (type === uiSlice.actions.setSensitivity.type) {
+        const alsInfo = { sensitivity: action.payload };
         saveSettings({ alsInfo });
       }
 
