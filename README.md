@@ -1,5 +1,7 @@
 # Legion Go Remapper - Decky Plugin
 
+[![](https://img.shields.io/github/downloads/aarron-lee/LegionGoRemapper/total.svg)](https://github.com/aarron-lee/LegionGoRemapper/releases)
+
 Decky Plugin that replicates some of the Legion Space remapping functionality.
 
 - [Functionality](#functionality)
