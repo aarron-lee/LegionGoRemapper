@@ -22,24 +22,28 @@ import AlsPanel from './components/als/ALSPanel';
 import ErrorBoundary from './components/ErrorBoundary';
 import OtaUpdates from './components/OtaUpdates';
 import { useChargeLimitEnabled } from './hooks/ui';
+import { useSupportsCustomFanCurves } from './hooks/fan';
 
 const Content: VFC<{ serverAPI?: ServerAPI }> = memo(() => {
   const loading = useSelector(getInitialLoading);
   const { chargeLimitEnabled, setChargeLimit } = useChargeLimitEnabled();
+  const supportsAcpiCall = useSupportsCustomFanCurves();
   if (loading) {
     return null;
   }
   return (
     <>
-      <PanelSection>
-        <PanelSectionRow>
-          <ToggleField
-            label="Enable Charge Limit (80%)"
-            checked={chargeLimitEnabled}
-            onChange={setChargeLimit}
-          />
-        </PanelSectionRow>
-      </PanelSection>
+      {supportsAcpiCall && (
+        <PanelSection>
+          <PanelSectionRow>
+            <ToggleField
+              label="Enable Charge Limit (80%)"
+              checked={chargeLimitEnabled}
+              onChange={setChargeLimit}
+            />
+          </PanelSectionRow>
+        </PanelSection>
+      )}
       <ErrorBoundary title="Adaptive Brightness">
         <AlsPanel />
       </ErrorBoundary>
