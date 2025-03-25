@@ -38,6 +38,7 @@ Included Functionality in this plugin:
 - Enabling/Disabling the touchpad
 - Gyro remapping to Left or Right Control Stick
 - allow any of these settings on a per-game basis
+- (requires acpi_call) 80% charge limit toggle and custom fan curves
 
 # Install Instructions
 
