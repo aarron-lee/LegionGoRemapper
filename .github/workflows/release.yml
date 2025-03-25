@@ -22,7 +22,7 @@ jobs:
           pacman -Syu git npm --noconfirm
           git config --global --add safe.directory $(realpath .)
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: build plugin
         run: |
@@ -38,7 +38,7 @@ jobs:
           tar -tzvf LegionGoRemapper.tar.gz
 
       - name: Publish Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LegionGoRemapper
           path: LegionGoRemapper.tar.gz
@@ -51,7 +51,7 @@ jobs:
       - run: mkdir /tmp/artifacts
 
       - name: download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/artifacts
 
