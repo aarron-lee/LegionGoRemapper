@@ -27,6 +27,8 @@ Decky Plugin that replicates some of the Legion Space remapping functionality, c
 
 # Functionality
 
+For the **Legion Go S**, See Huesync for RGB controls: https://github.com/honjow/HueSync
+
 ### This plugin uses the Lenovo-built remapping + bios functionality that's used for Legion Space, which means that this plugin can only do what Legion Space is capable of
 
 This remapping plugin also only covers remapping for the X-input mode of the controller, it does NOT support FPS mode or D-input modes.
