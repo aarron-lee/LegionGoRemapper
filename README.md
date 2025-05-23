@@ -4,6 +4,8 @@
 
 Decky Plugin that replicates some of the Legion Space remapping functionality, currently only for the original Legion Go Z1E.
 
+### For the Legion Go S, use [HueSync](https://github.com/honjow/HueSync) instead
+
 - [Functionality](#functionality)
 - [Install Instructions](#install-instructions)
   - [Prerequisites](#prerequisites)
@@ -27,6 +29,8 @@ Decky Plugin that replicates some of the Legion Space remapping functionality, c
 
 # Functionality
 
+For the **Legion Go S**, See Huesync for RGB controls: https://github.com/honjow/HueSync
+
 ### This plugin uses the Lenovo-built remapping + bios functionality that's used for Legion Space, which means that this plugin can only do what Legion Space is capable of
 
 This remapping plugin also only covers remapping for the X-input mode of the controller, it does NOT support FPS mode or D-input modes.
@@ -47,6 +51,8 @@ Included Functionality in this plugin:
 Decky Loader must already be installed.
 
 ### Quick Install / Update
+
+For the **Legion Go S**, see Huesync for RGB controls: https://github.com/honjow/HueSync
 
 Run the following in terminal, then reboot. Note that this works both for installing or updating the plugin
 
