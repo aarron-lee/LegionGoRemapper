@@ -7,9 +7,13 @@ import controller_settings as settings
 # sync the state of the RGB lights to the values in settings.json
 def sync_rgb_settings(current_game_id):
     s = settings.get_settings()
+    # Lenovo diabled the ability to set LEDs per left/right controller
     # enable_separate_rgb_management = s.get('forceEnableSeparateLedManagement', False)
 
     controllers = ['LEFT', 'RIGHT']
+
+    rgb_light = None
+    rgb_mode = None
 
     should_update_controllers = False
 
@@ -22,11 +26,10 @@ def sync_rgb_settings(current_game_id):
             should_update_controllers = True
 
     for controller in controllers:
-        if should_update_controllers:
-            rgb_on(current_game_id, controller)
+        if should_update_controllers and rgb_mode and rgb_light:
+            rgb_on(controller)
             time.sleep(0.1)
             rgb_color(
-                current_game_id,
                 controller,
                 rgb_mode,
                 rgb_light.get('red'),
@@ -36,22 +39,22 @@ def sync_rgb_settings(current_game_id):
                 rgb_light.get('speed')
             )
         else:
-            rgb_off(current_game_id, controller)
+            rgb_off(controller)
 
-def rgb_on(current_game_id, controller: str):
+def rgb_on(controller: str):
     controller_code = controller_enums.Controller[controller].value
     rgb_on_command = legion_configurator.create_rgb_on_off_command(controller_code, True)
     # decky_plugin.logger.info(rgb_on_command)
     legion_configurator.send_command(rgb_on_command)
 
-def rgb_off(current_game_id, controller: str):
+def rgb_off(controller: str):
     controller_code = controller_enums.Controller[controller].value
     rgb_off_command = legion_configurator.create_rgb_on_off_command(controller_code, False)
     # decky_plugin.logger.info(rgb_off_command)
     legion_configurator.send_command(rgb_off_command)
 
 
-def rgb_color(current_game_id, controller: str, mode: str, red, blue, green, brightness, speed):
+def rgb_color(controller: str, mode: str, red, blue, green, brightness, speed):
     hex_brightness = int(brightness)
     hex_speed = int(100) - int(speed)
     # Controller method is probably delay, meaning that it is the inverse of speed. Doing the above line as a bandaid
