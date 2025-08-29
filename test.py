@@ -1,16 +1,28 @@
 import hid
 import time
-# Global variables
+
+# Lenovo Vendor ID
 vendor_id = 0x17EF
-product_id_match = lambda x: x & 0xFFF0 == 0x6180
+
+# Legion Go controller product IDs
+base_product_ids = [
+    # Legion Go controllers with firmwares from before 2025
+    0x6180,
+    # Legion Go controllers with firmwares from 2025 and after
+    0x61E0,
+]
+
+# Vendor defined HID usage page
 usage_page = 0xFFA0
 global_config = None  # Global configuration for the device
 
 # Enumerate and set the global configuration
 for dev in hid.enumerate(vendor_id):
-    if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
-        global_config = dev
-        break
+    for product_id in base_product_ids:
+        product_id_match = lambda x: x & 0xFFF0 == product_id
+        if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
+            global_config = dev
+            break
 
 if not global_config:
     print("Legion go configuration device not found.")
