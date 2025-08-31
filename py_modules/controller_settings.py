@@ -93,7 +93,7 @@ def set_all_fan_profiles(fan_profiles):
     settings = get_settings()
     if not settings.get('fan'):
         settings['fan'] = {}
-    
+
     profiles = settings['fan']
     deep_merge(fan_profiles, profiles)
     setting_file.settings['fan'] = profiles
@@ -108,8 +108,10 @@ def merge_settings(new_settings):
     setting_file.commit()
 
 def modprobe_acpi_call():
+    env = os.environ.copy()
+    env["LD_LIBRARY_PATH"] = ""
     os.system("modprobe acpi_call")
-    result = subprocess.run(["modprobe", "acpi_call"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = subprocess.run(["modprobe", "acpi_call"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env)
 
     if result.stderr:
         return False
