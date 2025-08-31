@@ -1,6 +1,6 @@
 # Legion Go Remapper - Decky Plugin
 
-[![](https://img.shields.io/github/downloads/InnoVision-Games/LegionGoRemapper/total.svg)](https://github.com/InnoVision-Games/LegionGoRemapper/releases)
+[![](https://img.shields.io/github/downloads/aarron-lee/LegionGoRemapper/total.svg)](https://github.com/aarron-lee/LegionGoRemapper/releases)
 
 Decky Plugin that replicates some of the Legion Space remapping functionality, currently only for the original Legion Go Z1E.
 
@@ -57,7 +57,7 @@ For the **Legion Go S**, see Huesync for RGB controls: https://github.com/honjow
 Run the following in terminal, then reboot. Note that this works both for installing or updating the plugin
 
 ```
-curl -L https://github.com/InnoVision-Games/LegionGoRemapper/raw/main/install.sh | sh
+curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh
 ```
 
 ### Manual Install
@@ -80,7 +80,7 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="17ef", MODE="0666"
 
 After saving the file, then run `sudo udevadm control --reload` in terminal.
 
-Download the latest release from the [releases page](https://github.com/InnoVision-Games/LegionGoRemapper/releases)
+Download the latest release from the [releases page](https://github.com/aarron-lee/LegionGoRemapper/releases)
 
 Unzip the `tar.gz` file, and move the `LegionGoRemapper` folder to your `$HOME/homebrew/plugins` directory
 
@@ -97,7 +97,7 @@ then reboot your machine.
 - Node.js v16.14+ and pnpm installed
 
 ```bash
-git clone https://github.com/InnoVision-Games/LegionGoRemapper.git
+git clone https://github.com/aarron-lee/LegionGoRemapper.git
 
 cd LegionGoRemapper
 
@@ -156,7 +156,7 @@ If you are on the latest firmware, the plugin will update both LEDs.
 First try reinstalling or updating the plugin to the latest version, there's an update button at the bottom of the plugin. You can also re-run the installer to update:
 
 ```
-curl -L https://github.com/InnoVision-Games/LegionGoRemapper/raw/main/install.sh | sh
+curl -L https://github.com/aarron-lee/LegionGoRemapper/raw/main/install.sh | sh
 ```
 
 If this doesn't fix your issue, next try deleting your `$HOME/homebrew/settings/LegionGoRemapper/settings.json` file, and rebooting.
