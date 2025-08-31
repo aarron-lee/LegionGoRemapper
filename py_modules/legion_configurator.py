@@ -1,11 +1,22 @@
 import legion_hid
-import time
 import decky_plugin
-# Global variables
+
+# Lenovo Vendor ID
 vendor_id = 0x17EF
-product_id_match = lambda x: x & 0xFFF0 == 0x6180
+
+# Legion Go controller product IDs
+base_product_ids = [
+    # Legion Go controllers with firmwares from before 2025
+    0x6180,
+    # Legion Go controllers with firmwares from 2025 and after
+    0x61E0,
+]
+
+# Vendor defined HID usage page
 usage_page = 0xFFA0
+
 global_config = None
+
 
 def get_config():
     global global_config
@@ -13,16 +24,16 @@ def get_config():
     try:
         # Enumerate and set the global configuration
         for dev in legion_hid.enumerate(vendor_id):
-            if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
-                global_config = dev
-                break
+            for product_id in base_product_ids:
+                product_id_match = lambda x: x & 0xFFF0 == product_id
+                if product_id_match(dev["product_id"]) and dev["usage_page"] == usage_page:
+                    global_config = dev
+                    break
     except Exception as e:
         decky_plugin.logger.error("legion_configurator error: couldn't find device config {e}")
 
     if not global_config:
         decky_plugin.logger.error("Legion go configuration device not found.")
-    # else:
-    #     decky_plugin.logger.info(global_config)
 
 def send_command(command):
     global global_config
@@ -187,11 +198,3 @@ def create_fps_remap_command(controller, profile, button, action):
     ]
     return bytes(command) + bytes([0xCD] * (64 - len(command)))
 
-# # vibration_command = create_vibration_command(0x04, 0x01)  # Strong vibration on right 
-# # send_command(vibration_command)
-# # vibration_command = create_vibration_command(0x03, 0x03)  # Strong vibration on right controller
-# send_command(vibration_command)
-# gyro_left = create_gyro_remap_command(0x02, 0x02)
-# send_command(gyro_left)
-# gyro_right = create_gyro_remap_command(0x01, 0x00)
-# send_command(gyro_right)
