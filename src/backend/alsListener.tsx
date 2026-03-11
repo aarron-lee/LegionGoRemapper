@@ -29,6 +29,7 @@ const BRIGHTNESS_THRESHOLDS = [
 
 let steamRegistration: any;
 let enableAdaptiveBrightness = false;
+let isLegionGo2Device = false;
 
 export const sensitivityInfo = {
   range: [25, 100],
@@ -45,13 +46,20 @@ export const smoothTimeInfo = {
   step: 50
 };
 
+export const brightnessOffsetInfo = {
+  range: [-30, 30],
+  step: 5
+};
+
 export const DEFAULT_POLLING_RATE = 100;
 export const DEFAULT_SMOOTH_TIME = 500;
 export const DEFAULT_SENSITIVITY = 50;
+export const DEFAULT_BRIGHTNESS_OFFSET = 0;
 
 let pollingRate = DEFAULT_POLLING_RATE; // Time in milliseconds
 let smoothTime = DEFAULT_SMOOTH_TIME; // Time in milliseconds
 const stepCount = 10; // Less steps = smoother transition
+let brightnessOffset = DEFAULT_BRIGHTNESS_OFFSET;
 
 let previousAlsValues = Array(DEFAULT_SENSITIVITY).fill(-1); // Increase length to increase read times (less sensitive to changes)
 let currentBrightness = 50;
@@ -65,7 +73,8 @@ const handleAls = async () => {
     return;
   }
 
-  const { readAls } = createServerApiHelpers(serverAPI);
+  const { readAls, setGamescopeBrightnessPct } =
+    createServerApiHelpers(serverAPI);
 
   while (enableAdaptiveBrightness) {
     await sleep(pollingRate);
@@ -102,6 +111,9 @@ const handleAls = async () => {
       }
     }
 
+    // Apply brightness offset
+    targetBrightness = Math.min(100, Math.max(0, targetBrightness + brightnessOffset));
+
     if (targetBrightness === currentBrightness) {
       continue;
     }
@@ -127,9 +139,13 @@ const handleAls = async () => {
         `Setting brightness to ${localCurrentBrightness}, target: ${targetBrightness}, brightnessPerStep: ${brightnessPerStep}`
       );
 
-      window.SteamClient.System.Display.SetBrightness(
-        localCurrentBrightness / 100
-      );
+      if (isLegionGo2Device) {
+        await setGamescopeBrightnessPct(localCurrentBrightness);
+      } else {
+        window.SteamClient.System.Display.SetBrightness(
+          localCurrentBrightness / 100
+        );
+      }
     }
 
     currentBrightness = targetBrightness;
@@ -168,4 +184,28 @@ export const clearAlsListener = () => {
 
 export const setSensitivity = (arrSize: number) => {
   previousAlsValues = Array(arrSize).fill(-1);
+};
+
+export const setBrightnessOffset = (offset: number) => {
+  const delta = offset - brightnessOffset;
+  brightnessOffset = offset;
+  if (!enableAdaptiveBrightness || delta === 0) return;
+
+  const newTarget = Math.min(100, Math.max(0, currentBrightness + delta));
+  if (newTarget === currentBrightness) return;
+
+  currentBrightness = newTarget;
+  const serverAPI = getServerApi();
+  if (!serverAPI) return;
+  const { setGamescopeBrightnessPct } = createServerApiHelpers(serverAPI);
+
+  if (isLegionGo2Device) {
+    setGamescopeBrightnessPct(newTarget);
+  } else {
+    window.SteamClient.System.Display.SetBrightness(newTarget / 100);
+  }
+};
+
+export const setIsLegionGo2 = (val: boolean) => {
+  isLegionGo2Device = val;
 };

@@ -8,11 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   selectAlsEnabled,
   selectAlsPollingRate,
+  selectBrightnessOffset,
   selectSensitivity,
   selectSmoothTime,
   uiSlice
 } from '../../redux-modules/uiSlice';
 import {
+  brightnessOffsetInfo,
   pollInfo,
   sensitivityInfo,
   smoothTimeInfo
@@ -53,6 +55,17 @@ const useSensitivity = () => {
   return { sensitivity, setSensitivity };
 };
 
+const useBrightnessOffset = () => {
+  const brightnessOffset = useSelector(selectBrightnessOffset);
+  const dispatch = useDispatch();
+
+  const setBrightnessOffset = (val: number) => {
+    return dispatch(uiSlice.actions.setBrightnessOffset(val));
+  };
+
+  return { brightnessOffset, setBrightnessOffset };
+};
+
 const useSmoothTime = () => {
   const smoothTime = useSelector(selectSmoothTime);
   const dispatch = useDispatch();
@@ -69,10 +82,12 @@ export default function () {
   const { pollingRate, setPollingRate } = useAlsPollingRate();
   const { smoothTime, setSmoothTime } = useSmoothTime();
   const { sensitivity, setSensitivity } = useSensitivity();
+  const { brightnessOffset, setBrightnessOffset } = useBrightnessOffset();
 
   const [minPollRate, maxPollRate] = pollInfo.range;
   const [minSmoothTime, maxSmoothTime] = smoothTimeInfo.range;
   const [minSensitivity, maxSensitivity] = sensitivityInfo.range;
+  const [minOffset, maxOffset] = brightnessOffsetInfo.range;
 
   return (
     <>
@@ -118,6 +133,18 @@ export default function () {
                 max={maxSmoothTime}
                 onChange={setSmoothTime}
                 step={smoothTimeInfo.step}
+                notchTicksVisible
+                showValue
+              />
+            </PanelSectionRow>
+            <PanelSectionRow>
+              <SliderField
+                label="Brightness Offset"
+                value={brightnessOffset}
+                min={minOffset}
+                max={maxOffset}
+                onChange={setBrightnessOffset}
+                step={brightnessOffsetInfo.step}
                 notchTicksVisible
                 showValue
               />
