@@ -8,11 +8,14 @@ import {
   getServerApi
 } from '../backend/utils';
 import {
+  DEFAULT_BRIGHTNESS_OFFSET,
   DEFAULT_POLLING_RATE,
   DEFAULT_SENSITIVITY,
   DEFAULT_SMOOTH_TIME,
   clearAlsListener,
   enableAlsListener,
+  setBrightnessOffset,
+  setIsLegionGo2,
   setPollRate,
   setSensitivity,
   setSmoothTime
@@ -30,6 +33,7 @@ type UiStateType = {
     pollingRate: number;
     smoothTime: number;
     sensitivity: number;
+    brightnessOffset: number;
   };
 };
 
@@ -42,7 +46,8 @@ const initialState: UiStateType = {
   alsInfo: {
     pollingRate: DEFAULT_POLLING_RATE,
     smoothTime: DEFAULT_SMOOTH_TIME,
-    sensitivity: DEFAULT_SENSITIVITY
+    sensitivity: DEFAULT_SENSITIVITY,
+    brightnessOffset: DEFAULT_BRIGHTNESS_OFFSET
   }
 };
 
@@ -71,6 +76,10 @@ export const uiSlice = createSlice({
     setSensitivity(state, action: PayloadAction<number>) {
       setSensitivity(action.payload);
       state.alsInfo.sensitivity = action.payload;
+    },
+    setBrightnessOffset(state, action: PayloadAction<number>) {
+      setBrightnessOffset(action.payload);
+      state.alsInfo.brightnessOffset = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -79,6 +88,9 @@ export const uiSlice = createSlice({
       if (action.payload?.pluginVersionNum) {
         state.pluginVersionNum = `${action.payload.pluginVersionNum}`;
       }
+      if (action.payload?.isLegionGo2) {
+        setIsLegionGo2(true);
+      }
       if (action.payload?.chargeLimitEnabled) {
         state.chargeLimitEnabled = Boolean(action.payload?.chargeLimitEnabled);
       }
@@ -86,12 +98,13 @@ export const uiSlice = createSlice({
         state.alsEnabled = Boolean(action.payload?.alsEnabled);
       }
       if (action.payload?.alsInfo) {
-        const { pollingRate, smoothTime, sensitivity } =
+        const { pollingRate, smoothTime, sensitivity, brightnessOffset: savedOffset } =
           action.payload.alsInfo || {};
         state.alsInfo = { ...state.alsInfo, ...action.payload.alsInfo };
         setPollRate(pollingRate || DEFAULT_POLLING_RATE);
         setSmoothTime(smoothTime || DEFAULT_SMOOTH_TIME);
         setSensitivity(sensitivity || DEFAULT_SENSITIVITY);
+        setBrightnessOffset(savedOffset ?? DEFAULT_BRIGHTNESS_OFFSET);
       }
     });
     builder.addCase(setCurrentGameId, (state, action) => {
@@ -126,6 +139,8 @@ export const selectSmoothTime = (state: RootState) =>
   state.ui.alsInfo.smoothTime;
 export const selectSensitivity = (state: RootState) =>
   state.ui.alsInfo.sensitivity;
+export const selectBrightnessOffset = (state: RootState) =>
+  state.ui.alsInfo.brightnessOffset;
 
 export const uiSliceMiddleware =
   (_store: any) => (next: any) => (action: any) => {
@@ -154,6 +169,10 @@ export const uiSliceMiddleware =
       }
       if (type === uiSlice.actions.setSensitivity.type) {
         const alsInfo = { sensitivity: action.payload };
+        saveSettings({ alsInfo });
+      }
+      if (type === uiSlice.actions.setBrightnessOffset.type) {
+        const alsInfo = { brightnessOffset: action.payload };
         saveSettings({ alsInfo });
       }
 

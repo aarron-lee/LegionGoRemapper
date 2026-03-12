@@ -79,6 +79,17 @@ const createGetSettings = (serverAPI: ServerAPI) => async () => {
   return await serverAPI.callPluginMethod(ServerAPIMethods.GET_SETTINGS, {});
 };
 
+const createIsLegionGo2 = (serverAPI: ServerAPI) => async () => {
+  const { result } = await serverAPI.callPluginMethod('is_legion_go_2', {});
+  return Boolean(result);
+};
+
+const createSetGamescopeBrightnessPct =
+  (serverAPI: ServerAPI) => async (pct: number) => {
+    await serverAPI.callPluginMethod('set_gamescope_brightness_pct', { pct });
+  };
+
+
 let serverApi: undefined | ServerAPI;
 
 export const saveServerApi = (s: ServerAPI) => {
@@ -106,7 +117,9 @@ export const createServerApiHelpers = (serverAPI: ServerAPI) => {
     setChargeLimit: createSetChargeLimit(serverAPI),
     readAls: readAls(serverAPI),
     setAlsEnabled: createSetAlsEnabled(serverAPI),
-    saveSettings: createSaveSettings(serverAPI)
+    saveSettings: createSaveSettings(serverAPI),
+    isLegionGo2: createIsLegionGo2(serverAPI),
+    setGamescopeBrightnessPct: createSetGamescopeBrightnessPct(serverAPI)
   };
 };
 

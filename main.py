@@ -5,10 +5,12 @@ import logging
 # For easy intellisense checkout the decky-loader code one directory up
 # or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
 
+import asyncio
 import decky_plugin
 import ambient_light_sensor
 import legion_configurator
 import legion_space
+import legion_go2_brightness
 import controller_enums
 import rgb
 import controllers
@@ -33,6 +35,12 @@ class Plugin:
     async def _main(self):
         decky_plugin.logger.info("Hello World!")
 
+        if legion_go2_brightness.is_legion_go_2():
+            decky_plugin.logger.info("Legion Go 2 detected, starting backlight watcher")
+            self._backlight_task = asyncio.create_task(
+                legion_go2_brightness.backlight_watcher_loop()
+            )
+
     async def get_settings(self):
         results = settings.get_settings()
 
@@ -41,6 +49,8 @@ class Plugin:
 
         try:
             results['pluginVersionNum'] = f'{decky_plugin.DECKY_PLUGIN_VERSION}'
+
+            results['isLegionGo2'] = legion_go2_brightness.is_legion_go_2()
 
             if settings.supports_custom_fan_curves():
                 results['supportsCustomFanCurves'] = True
@@ -160,11 +170,18 @@ class Plugin:
         except Exception as e:
             decky_plugin.logger.error(f'error while setting charge limit {e}')
 
+    async def is_legion_go_2(self):
+        return legion_go2_brightness.is_legion_go_2()
+
     async def set_als_enabled(self, enabled):
         try:
             settings.set_setting('alsEnabled', enabled)
         except Exception as e:
             decky_plugin.logger.error(f'error while setting als {e}')
+
+    async def set_gamescope_brightness_pct(self, pct):
+        legion_go2_brightness.set_gamescope_brightness_pct(pct)
+
 
     async def save_settings(self, new_settings):
         try:
@@ -204,7 +221,9 @@ class Plugin:
     # Function called first during the unload process, utilize this to handle your plugin being removed
     async def _unload(self):
         decky_plugin.logger.info("Goodbye World!")
-        pass
+        legion_go2_brightness.stop_backlight_watcher()
+        if hasattr(self, '_backlight_task'):
+            self._backlight_task.cancel()
 
     # Migrations that should be performed before entering `_main()`.
     async def _migration(self):
